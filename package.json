@@ -1,0 +1,27 @@
+{
+  "name": "kubernetes_learning",
+  "version": "1.0.0",
+  "description": "k8s learning notes from ali",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Danny5487401/kubernetes_learning.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Danny5487401/kubernetes_learning/issues"
+  },
+  "homepage": "https://github.com/Danny5487401/kubernetes_learning#readme",
+  "devDependencies": {
+    "cz-conventional-changelog": "^3.3.0"
+  },
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    }
+  }
+}
