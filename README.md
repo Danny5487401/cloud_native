@@ -10,3 +10,5 @@ k8s learning notes from ali
 ##第四章 应用编排deployment
 
 ##第五章 应用编排Job$CronJobs和DaemonSet
+
+##第六章 ConfigMap
