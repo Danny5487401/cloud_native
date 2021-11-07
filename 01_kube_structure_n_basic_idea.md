@@ -1,21 +1,21 @@
 #Kubernetes架构
-![](img/kube_structure.png)
+![](img/.01_basis_idea/kube_structure.png)
 
 ##Pod
-![](img/pod.png)
+![](img/.01_basis_idea/pod.png)
 
 ##Volume
-![](img/volume.png)
+![](img/.01_basis_idea/volume.png)
 
 ##deployment
-![](img/deployment.png)
+![](img/.01_basis_idea/deployment.png)
 
 ##service
-![](img/service.png)
+![](img/.01_basis_idea/service.png)
 
 ##namespace
-![](img/namespace.png)
+![](img/.01_basis_idea/namespace.png)
 
 ##API/label
-![](img/selector_label.png)
+![](img/.01_basis_idea/selector_label.png)
 

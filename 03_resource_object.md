@@ -8,20 +8,20 @@ Metadata:
     OwnerReference
 ```
 ##Labels
-![](.03_resource_object_images/label.png)
+![](img/.03_resource_object_images/label.png)
 selector
-![](.03_resource_object_images/selector.png)
-![](.03_resource_object_images/other_selector.png)
+![](img/.03_resource_object_images/selector.png)
+![](img/.03_resource_object_images/other_selector.png)
 
 ##annotations
-![](.03_resource_object_images/annotations.png)
+![](img/.03_resource_object_images/annotations.png)
 
 ##ownereference
-![](.03_resource_object_images/ownereference.png)
+![](img/.03_resource_object_images/ownereference.png)
 
 
 ##控制循环
-![](.03_resource_object_images/control_loop.png)
+![](img/.03_resource_object_images/control_loop.png)
 
     控制型模式最核心的就是控制循环的概念。在控制循环中包括了控制器，被控制的系统，以及能够观测系统的传感器，三个逻辑组件。
     
@@ -30,7 +30,7 @@ selector
     控制器的各个组件将都会是独立自主地运行，不断使系统向 spec 表示终态趋近
 
 ###Sensor
-![](.03_resource_object_images/sensor.png)
+![](img/.03_resource_object_images/sensor.png)
 
     控制循环中逻辑的传感器主要由 Reflector、Informer、Indexer 三个组件构成。
     
@@ -49,11 +49,11 @@ selector
     一般情况下会把资源的名字重新加入到工作队列中，从而方便之后进行重试
 
 ###控制循环案例-扩容
-![](.03_resource_object_images/replicaset_from_2_to_3.png)
+![](img/.03_resource_object_images/replicaset_from_2_to_3.png)
 
     ReplicaSet 是一个用来描述无状态应用的扩缩容行为的资源， ReplicaSet controler 通过监听 ReplicaSet 资源来维持应用希望的状态数量，
     ReplicaSet 中通过 selector 来匹配所关联的 Pod，在这里考虑 ReplicaSet rsA 的，replicas 从 2 被改到 3 的场景
-![](.03_resource_object_images/relicaset_control_process.png)
+![](img/.03_resource_object_images/relicaset_control_process.png)
 
     首先，Reflector 会 watch 到 ReplicaSet 和 Pod 两种资源的变化，为什么我们还会 watch pod 资源的变化稍后会讲到。
     发现 ReplicaSet 发生变化后，在 delta 队列中塞入了对象是 rsA，而且类型是更新的记录。
