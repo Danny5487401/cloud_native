@@ -1,6 +1,6 @@
 #Deployment
 
-##问题
+## 问题
 ![](img/.04_deployment_images/deplyment_problem.png)
 
     首先，如何保证集群内可用 Pod 的数量？也就是说我们应用 A 四个 Pod 如果出现了一些宿主机故障，或者一些网络问题，如何能保证它可用的数量？
@@ -8,7 +8,7 @@
     然后在更新过程中，如何保证服务的可用性？
     以及更新过程中，如果发现了问题，如何快速回滚到上一个版本
 
-##解决方式
+## 解决方式
 Deployment控制器可以解决的事
 
 ![](img/.04_deployment_images/deployment_advances.png)
@@ -23,7 +23,7 @@ Deployment控制器可以解决的事
 
     如果更新过程中发生问题的话，即所谓“一键”回滚，也就是说你通过一条命令或者一行修改能够将 Deployment 下面所有 Pod 更新为某一个旧版本 。
 
-##语法解读
+## 语法解读
 ![](img/.04_deployment_images/deployment_yaml.png)
 
 “apiVersion：apps/v1”，也就是说 Deployment 当前所属的组是 apps，版本是 v1。“metadata”是我们看到的 Deployment 元信息，
@@ -32,7 +32,7 @@ Deployment 作为一个 K8s 资源，它有自己的 metadata 元信息，这里
 Deployment.spec 中首先要有一个核心的字段，即 replicas，这里定义期望的 Pod 数量为三个；selector 其实是 Pod 选择器，
 那么所有扩容出来的 Pod，它的 Labels 必须匹配 selector 层上的 image.labels，也就是 app.nginx
 
-###spec 字段解析
+### spec 字段解析
 ![](img/.04_deployment_images/spec_segment.png)
 
 升级策略解析
@@ -53,7 +53,7 @@ MaxSurge：滚动过程中最多存在多少个 Pod 超过预期 replicas 数量
 所以说这两个值不能同时为 0。用户可以根据自己的实际场景来设置对应的、合适的值
 
 
-###查看pod
+### 查看pod
 ![](img/.04_deployment_images/get_pod_information.png)
 最前面一段：nginx-deployment，其实是 Pod 所属 Deployment.name；中间一段：template-hash，这里三个 Pod 是一样的，因为这三个 Pod 其实都是同一个 template 中创建出来的。
 
@@ -61,22 +61,22 @@ MaxSurge：滚动过程中最多存在多少个 Pod 超过预期 replicas 数量
 这个 ReplicaSet 的 name，其实是 nginx-deployment 加上 pod.template-hash，后面会提到。
 所有的 Pod 都是 ReplicaSet 创建出来的，而 ReplicaSet 它对应的某一个具体的 Deployment.template 版本
 
-###Deployment状态
+### Deployment状态
 ![](img/.04_deployment_images/deployment_status.png)
 
 
-###历史版本保留 revisionHistoryLimit
+### 历史版本保留 revisionHistoryLimit
 ![](img/.04_deployment_images/revisionHistoryLimit.png)
 
-##架构设计
-###管理模式
+## 架构设计
+### 管理模式
 ![](img/.04_deployment_images/management_mode.png)
 首先简单看一下管理模式：Deployment 只负责管理不同版本的 ReplicaSet，由 ReplicaSet 来管理具体的 Pod 副本数，每个 ReplicaSet 对应 Deployment template 的一个版本。
 在上文的例子中可以看到，每一次修改 template，都会生成一个新的 ReplicaSet，这个 ReplicaSet 底下的 Pod 其实都是相同的版本。
 
 如上图所示：Deployment 创建 ReplicaSet，而 ReplicaSet 创建 Pod。他们的 OwnerRef 其实都对应了其控制器的资源
 
-###Deployment 控制器
+### Deployment 控制器
 ![](img/.04_deployment_images/deployment_controller.png)
 首先，我们所有的控制器都是通过 Informer 中的 Event 做一些 Handler 和 Watch。这个地方 Deployment 控制器，其实是关注 Deployment 和 ReplicaSet 中的 event，收到事件后会加入到队列中。
 而 Deployment controller 从队列中取出来之后，它的逻辑会判断 Check Paused，这个 Paused 其实是 Deployment 是否需要新的发布，
@@ -88,7 +88,7 @@ MaxSurge：滚动过程中最多存在多少个 Pod 超过预期 replicas 数量
 那么如果 paused 为 false 的话，它就会做 Rollout，也就是通过 Create 或者是 Rolling 的方式来做更新，
 更新的方式其实也是通过 Create/Update/Delete 这种 ReplicaSet 来做实现的
 
-###ReplicaSet 控制器
+### ReplicaSet 控制器
 ![](img/.04_deployment_images/replicaset_controller.png)
 当 Deployment 分配 ReplicaSet 之后，ReplicaSet 控制器本身也是从 Informer 中 watch 一些事件，这些事件包含了 ReplicaSet 和 Pod 的事件。
 从队列中取出之后，ReplicaSet controller 的逻辑很简单，就只管理副本数。

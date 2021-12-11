@@ -1,18 +1,18 @@
-#数据卷
+# 数据卷
 
-##Volumes   
-###背景
+## Volumes   
+### 背景
 
 场景一：如果 pod 中的某一个容器在运行时异常退出，被 kubelet 重新拉起之后，如何保证之前容器产生的重要数据没有丢失？
 场景二：如果同一个 pod 中的多个容器想要共享数据，应该如何去做？
 
-###pod volume
+### pod volume
 常见类型
 
     * 本地存储，常用的有 emptydir/hostpath；
     * 网络存储：网络存储当前的实现方式有两种，一种是 in-tree，它的实现的代码是放在 K8s 代码仓库中的，随着k8s对存储类型支持的增多，这种方式会给k8s本身的维护和发展带来很大的负担；而第二种实现方式是 out-of-tree，它的实现其实是给 K8s 本身解耦的，通过抽象接口将不同存储的driver实现从k8s代码仓库中剥离，因此out-of-tree 是后面社区主推的一种实现网络存储插件的方式；
     * Projected Volumes：它其实是将一些配置信息，如 secret/configmap 用卷的形式挂载在容器中，让容器中的程序可以通过POSIX接口来访问配置数据；
-####Persistent Volumes（PV）
+#### Persistent Volumes（PV）
 ![](img/.07_volume_images/PV.png)
 既然已经有了 Pod Volumes，为什么又要引入 PV 呢？我们知道 pod 中声明的 volume 生命周期与 pod 是相同的，以下有几种常见的场景：
 
@@ -29,14 +29,14 @@
 通过不同的组件来管理存储资源和计算资源，然后解耦 pod 和 Volume 之间生命周期的关联。
 这样，当把 pod 删除之后，它使用的PV仍然存在，还可以被新建的 pod 复用。
 
-####Persistent Volume Claim(PVC)
+#### Persistent Volume Claim(PVC)
 ![](img/.07_volume_images/PVC.png)
 通过 PVC 和 PV 的概念，将用户需求和实现细节解耦开，用户只用通过 PVC 声明自己的存储需求。
 PV是有集群管理员和存储相关团队来统一运维和管控，这样的话，就简化了用户使用存储的方式。可以看到，PV 和 PVC 的设计其实有点像面向对象的接口与实现的关系。
 用户在使用功能时，只需关心用户接口，不需关心它内部复杂的实现细节
 
-#####PV 这个对象是怎么产生的
-######静态产生方式 - 静态 Provisioning
+##### PV 这个对象是怎么产生的
+###### 静态产生方式 - 静态 Provisioning
 ![](img/.07_volume_images/static_volume_provisioning.png)
 静态 Provisioning：由集群管理员事先去规划这个集群中的用户会怎样使用存储，它会先预分配一些存储，也就是预先创建一些 PV；
 然后用户在提交自己的存储需求（也就是 PVC）的时候，K8s 内部相关组件会帮助它把 PVC 和 PV 做绑定；
@@ -44,16 +44,16 @@ PV是有集群管理员和存储相关团队来统一运维和管控，这样的
 
 静态产生方式有什么不足呢？可以看到，首先需要集群管理员预分配，预分配其实是很难预测用户真实需求的。
 举一个最简单的例子：如果用户需要的是 20G，然而集群管理员在分配的时候可能有 80G 、100G 的，但没有 20G 的，这样就很难满足用户的真实需求，也会造成资源浪费。
-######动态 Dynamic Provisioning
+###### 动态 Dynamic Provisioning
 ![](img/.07_volume_images/dynamic_volume_provision.png)
 动态供给是什么意思呢？就是说现在集群管理员不预分配 PV，他写了一个模板文件，这个模板文件是用来表示创建某一类型存储（块存储，文件存储等）所需的一些参数，
 这些参数是用户不关心的，给存储本身实现有关的参数。用户只需要提交自身的存储需求，也就是PVC文件，并在 PVC 中指定使用的存储模板（StorageClass）。
 
 K8s 集群中的管控组件，会结合 PVC 和 StorageClass 的信息动态，生成用户所需要的存储（PV），将 PVC 和 PV 进行绑定后，pod 就可以使用 PV 了。
 通过 StorageClass 配置生成存储所需要的存储模板，再结合用户的需求动态创建 PV 对象，做到按需分配，在没有增加用户使用难度的同时也解放了集群管理员的运维工作
-####使用
+#### 使用
 
-#####Pod Volumes 的使用
+##### Pod Volumes 的使用
 ![](img/.07_volume_images/pod_volume.png)
 如上图左侧所示，我们可以在 pod yaml 文件中的 Volumes 字段中，声明我们卷的名字以及卷的类型。
 声明的两个卷，一个是用的是 emptyDir，另外一个用的是 hostPath，这两种都是本地卷。在容器中应该怎么去使用这个卷呢？
@@ -69,7 +69,7 @@ K8s 集群中的管控组件，会结合 PVC 和 StorageClass 的信息动态，
 
 另外emptyDir、hostPath 都是本地存储，它们之间有什么细微的差别呢？emptyDir 其实是在 pod 创建的过程中会临时创建的一个目录，这个目录随着 pod 删除也会被删除，里面的数据会被清空掉；
 hostPath 顾名思义，其实就是宿主机上的一个路径，在 pod 删除之后，这个目录还是存在的，它的数据也不会被丢失。这就是它们两者之间一个细微的差别。
-#####静态PV使用
+##### 静态PV使用
 ![](img/.07_volume_images/PV_creation.png)
 静态 PV 的话，首先是由管理员来创建的，管理员我们这里以 NAS，就是阿里云文件存储为例。我需要先在阿里云的文件存储控制台上去创建 NAS 存储
 ，然后把 NAS 存储的相关信息要填到 PV 对象中，这个 PV 对象预创建出来后，用户可以通过 PVC 来声明自己的存储需求，
@@ -85,7 +85,7 @@ PVC 对象里面，只需要指定存储需求，不用关心存储本身的具�
 之后，用户在提交 pod yaml 的时候，可以在卷里面写上 PVC声明，在 PVC声明里面可以通过 claimName 来声明要用哪个 PVC。这时，挂载方式其实跟前面讲的一样，
 当提交完 yaml 的时候，它可以通过 PVC 找到 bound 着的那个 PV，然后就可以用那块存储了。这是静态 Provisioning到被pod使用的一个过程
 
-#####动态PV使用
+##### 动态PV使用
 ![](img/.07_volume_images/dynamic_PV.png)
 
     这个模板文件叫 StorageClass，在StorageClass里面，我们需要填的重要信息：第一个是 provisioner，provisioner 是什么？
@@ -133,7 +133,7 @@ PV状态流转
     第二种是我们在删除 pod 之后，不要去删除 PVC 对象，这样给 PV 绑定的 PVC 还是存在的，下次 pod 使用的时候，就可以直接通过 PVC 去复用。
     K8s中的 StatefulSet 管理的 Pod 带存储的迁移就是通过这种方式。
     
-#####操作演示
+##### 操作演示
 静态provisioning
 
     
@@ -163,7 +163,7 @@ PV状态流转
     
     pod yaml 很简单，也是通过 PVC 声明，表明使用这个 PVC。然后是挂载点
     
-###架构设计
+### 架构设计
 csi 的全称是 container storage interface
 ![](img/.07_volume_images/structure_csi.png)
     
@@ -174,7 +174,7 @@ csi 的全称是 container storage interface
     用户在提交 pod 之后，首先会被调度器调度选中某一个合适的node，之后该 node 上面的 kubelet 在创建 pod 流程中会通过首先 csi-node-server 将我们之前创建的 PV 挂载到我们 pod 可以使用的路径，
     然后 kubelet 开始  create && start pod 中的所有 container。
 
-####PV、PVC 以及通过 csi 使用存储流程
+#### PV、PVC 以及通过 csi 使用存储流程
 ![](img/.07_volume_images/pv_pvc_use_csi.png)
 主要分为三个阶段：
 

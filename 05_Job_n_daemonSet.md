@@ -1,6 +1,6 @@
-#Job
+# Job
 
-##背景
+## 背景
 我们知道 K8s 里面，最小的调度单元是 Pod，我们可以直接通过 Pod 来运行任务进程。这样做将会产生以下几种问题：
     
     * 我们如何保证 Pod 内进程正确的结束？
@@ -8,14 +8,14 @@
     * 如何管理多个任务，且任务之间有依赖关系？
     * 如何并行地运行任务，并管理任务的队列大小
     
-##Job的功能
+## Job的功能
     * 首先 kubernetes 的 Job 是一个管理任务的控制器，它可以创建一个或多个 Pod 来指定 Pod 的数量，并可以监控它是否成功地运行或终止；
     * 我们可以根据 Pod 的状态来给 Job 设置重置的方式及重试的次数；
     * 我们还可以根据依赖关系，保证上一个任务运行完成之后再运行下一个任务；
     * 同时还可以控制任务的并行度，根据并行度来确保 Pod 运行过程中的并行次数和总体完成大小
     
-##语法分析
-job.yaml
+## 语法分析
+job.yaml  
 ![](img/.05_Job_n_daemonSet_images/job.yaml.png)
 
     上图是 Job 最简单的一个 yaml 格式，这里主要新引入了一个 kind 叫 Job，这个 Job 其实就是 job-controller 里面的一种类型。 
@@ -30,7 +30,7 @@ job.yaml
 
 所以在 Job 里面，我们主要重点关注的一个是 restartPolicy 重启策略和 backoffLimit 重试次数限制。
 
-###查看pod
+### 查看pod
 ![](img/.05_Job_n_daemonSet_images/job.png)
 
 下面我们来看一下 Pod，其实 Job 最后的执行单元还是 Pod。我们刚才创建的 Job 会创建出来一个叫“pi”的一个 Pod，这个任务就是来计算这个圆周率，
@@ -40,7 +40,7 @@ Pod 的名称会以“${job-name}-${random-suffix}”，我们可以看一下下
     可以看到这里的 ownerReferences 是归 batch/v1，也就是上一个 Job 来管理的。
     这里就声明了它的 controller 是谁，然后可以通过 pod 返查到它的控制器是谁，同时也能根据 Job 来查一下它下属有哪些 Pod。
 
-##并行运行Job
+## 并行运行Job
 ![](img/.05_Job_n_daemonSet_images/parallelism_job.png)
 
 我们有时候有些需求：希望 Job 运行的时候可以最大化的并行，并行出 n 个 Pod 去快速地执行。
@@ -52,15 +52,15 @@ Pod 的名称会以“${job-name}-${random-suffix}”，我们可以看一下下
 第二个参数代表这个并行执行的个数。所谓并行执行的次数，其实就是一个管道或者缓冲器中缓冲队列的大小，把它设置成 2，
 也就是说这个 Job 一定要执行 8 次，每次并行 2 个 Pod，这样的话，一共会执行 4 个批次
 
-##CronJob
-###语法分析
+## CronJob
+### 语法分析
 ![](img/.05_Job_n_daemonSet_images/crobJob_yaml.png)
 concurrencyPolicy：就是说是否允许并行运行。所谓的并行运行就是，比如说我每分钟执行一次，但是这个 Job 可能运行的时间特别长，
 假如两分钟才能运行成功，也就是第二个 Job 要到时间需要去运行的时候，上一个 Job 还没完成。
 如果这个 policy 设置为 true 的话，那么不管你前面的 Job 是否运行完成，每分钟都会去执行；
 如果是 false，它就会等上一个 Job 运行完成之后才会运行下一个
 
-##架构设计
+## 架构设计
 ![](img/.05_Job_n_daemonSet_images/job_management.png)
 ![](img/.05_Job_n_daemonSet_images/job_controller.png)
 所有的 job 都是一个 controller，它会 watch 这个 API Server，我们每次提交一个 Job 的 yaml 都会经过 api-server 传到 ETCD 里面去，
@@ -72,20 +72,20 @@ concurrencyPolicy：就是说是否允许并行运行。所谓的并行运行就
 同时要去检查它是否是并行的 job，或者是串行的 job，根据设置的配置并行度、串行度，及时地把 pod 的数量给创建出来。
 最后，它会把 job 的整个的状态更新到 API Server 里面去，这样我们就能看到呈现出来的最终效果了
 
-#DaemonSet
-##背景
+# DaemonSet
+## 背景
     * 首先如果希望每个节点都运行同样一个 pod 怎么办？
     * 如果新节点加入集群的时候，想要立刻感知到它，然后去部署一个 pod，帮助我们初始化一些东西，这个需求如何做？
     * 如果有节点退出的时候，希望对应的 pod 会被删除掉，应该怎么操作？
     * 如果 pod 状态异常的时候，我们需要及时地监控这个节点异常，然后做一些监控或者汇报的一些动作，那么这些东西运用什么控制器来做？
     
-##DaemonSet功能
+## DaemonSet功能
     * 首先能保证集群内的每一个节点都运行一组相同的 pod；
     * 同时还能根据节点的状态保证新加入的节点自动创建对应的 pod；
     * 在移除节点的时候，能删除对应的 pod；
     * 而且它会跟踪每个 pod 的状态，当这个 pod 出现异常、Crash 掉了，会及时地去 recovery 这个状态
     
-##语法分析
+## 语法分析
 ![](img/.05_Job_n_daemonSet_images/daemonSet_yaml.png)
 
     首先是存储，GlusterFS 或者 Ceph 之类的东西，需要每台节点上都运行一个类似于 Agent 的东西，DaemonSet 就能很好地满足这个诉求；
@@ -103,7 +103,7 @@ concurrencyPolicy：就是说是否允许并行运行。所谓的并行运行就
     OnDelete 其实也是一个很好的更新策略，就是模板更新之后，pod 不会有任何变化，需要我们手动控制。
     我们去删除某一个节点对应的 pod，它就会重建，不删除的话它就不会重建，这样的话对于一些我们需要手动控制的特殊需求也会有特别好的作用
     
-##架构设计
+## 架构设计
 ![](img/.05_Job_n_daemonSet_images/daemonSet_management.png)
 ![](img/.05_Job_n_daemonSet_images/daemonSet_controller.png)
 DaemonSet 其实和 Job controller 做的差不多：两者都需要根据 watch 这个 API Server 的状态。

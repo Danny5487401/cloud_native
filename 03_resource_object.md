@@ -1,4 +1,4 @@
-#K8s资源对象
+# K8s资源对象
 ```yaml
 Spec: 期望的状态
 Status: 观测到的状态
@@ -7,20 +7,20 @@ Metadata:
     Annotations
     OwnerReference
 ```
-##Labels
+## Labels
 ![](img/.03_resource_object_images/label.png)
 selector
 ![](img/.03_resource_object_images/selector.png)
 ![](img/.03_resource_object_images/other_selector.png)
 
-##annotations
+## annotations
 ![](img/.03_resource_object_images/annotations.png)
 
-##ownereference
+## ownereference
 ![](img/.03_resource_object_images/ownereference.png)
 
 
-##控制循环
+## 控制循环
 ![](img/.03_resource_object_images/control_loop.png)
 
     控制型模式最核心的就是控制循环的概念。在控制循环中包括了控制器，被控制的系统，以及能够观测系统的传感器，三个逻辑组件。
@@ -29,7 +29,7 @@ selector
     diff 最后会用来决定执行对系统进行什么样的控制操作，控制操作会使得系统产生新的输出，并被传感器以资源 status 形式上报，
     控制器的各个组件将都会是独立自主地运行，不断使系统向 spec 表示终态趋近
 
-###Sensor
+### Sensor 
 ![](img/.03_resource_object_images/sensor.png)
 
     控制循环中逻辑的传感器主要由 Reflector、Informer、Indexer 三个组件构成。
@@ -48,7 +48,7 @@ selector
     Worker 在处理资源对象时，一般需要用资源的名字来重新获得最新的资源数据，用来创建或者更新资源对象，或者调用其他的外部服务，Worker 如果处理失败的时候，
     一般情况下会把资源的名字重新加入到工作队列中，从而方便之后进行重试
 
-###控制循环案例-扩容
+### 控制循环案例-扩容
 ![](img/.03_resource_object_images/replicaset_from_2_to_3.png)
 
     ReplicaSet 是一个用来描述无状态应用的扩缩容行为的资源， ReplicaSet controler 通过监听 ReplicaSet 资源来维持应用希望的状态数量，

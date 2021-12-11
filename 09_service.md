@@ -1,12 +1,12 @@
-#Service 
+# Service 
 
-##Service：Kubernetes 中的服务返现与负载均衡
+## Service：Kubernetes 中的服务返现与负载均衡
 ![](img/.09_service_images/service.png)
 K8s 对接了另外一组 pod，即可以通过 K8s Service 的方式去负载均衡到一组 pod 上面去，这样相当于解决了前面所说的复发性问题，
 或者提供了统一的访问入口去做服务发现，然后又可以给外部网络访问，解决不同的 pod 之间的访问，提供统一的访问地址
 
 
-##使用yaml格式
+## 使用yaml格式
 ![](img/.09_service_images/service_yaml.png)
 
     声明了一个名叫 my-service 的一个 K8s Service，它有一个 app:my-service 的 label，它选择了 app:MyApp 这样一个 label 的 pod 作为它的后端
@@ -20,7 +20,7 @@ K8s 对接了另外一组 pod，即可以通过 K8s Service 的方式去负载�
     
      Endpoints 的属性，就是我们通过 Endpoints 可以看到：通过前面所声明的 selector 去选择了哪些 pod？以及这些 pod 都是什么样一个状态？比如说通过 selector，我们看到它选择了这些 pod 的一个 IP，以及这些 pod 所声明的 targetPort 的一个端口。
 
-##集群内访问 Service
+## 集群内访问 Service
 三种方式
 
 ![](img/.09_service_images/pod_visit_service_ip.png)
@@ -42,7 +42,7 @@ K8s 对接了另外一组 pod，即可以通过 K8s Service 的方式去负载�
     或者是它的端口号等等。比如在集群的某一个 pod 里面，可以直接通过 curl $ 取到一个环境变量的值，比如取到 MY_SERVICE_SERVICE_HOST 就是它的一个 IP 地址，
     MY_SERVICE 就是刚才我们声明的 MY_SERVICE，SERVICE_PORT 就是它的端口号，这样也可以请求到集群里面的 MY_SERVICE 这个 service
     
-###Headless Service
+### Headless Service
 ![](img/.09_service_images/headless_svc.png)  
 
     service 有一个特别的形态就是 Headless Service。service 创建的时候可以指定 clusterIP:None，告诉 K8s 说我不需要 clusterIP（就是刚才所说的集群里面的一个虚拟 IP），
@@ -55,7 +55,7 @@ K8s 对接了另外一组 pod，即可以通过 K8s Service 的方式去负载�
     可以从上图看一下跟刚才我们声明的模板的区别，就是在中间加了一个 clusterIP:None，即表明不需要虚拟 IP。
     实际效果就是集群的 pod 访问 my-service 时，会直接解析到所有的 service 对应 pod 的 IP 地址，返回给 pod，然后 pod 里面自己去选择一个 IP 地址去直接访问。
 
-##向集群外暴露 Service
+## 向集群外暴露 Service
 方式：一个是 NodePort，一个是 LoadBalancer
 
     NodePort 的方式就是在集群的 node 上面（即集群的节点的宿主机上面）去暴露节点上的一个端口，这样相当于在节点的一个端口上面访问到之后就会再去做一层转发，
@@ -68,7 +68,7 @@ K8s 对接了另外一组 pod，即可以通过 K8s Service 的方式去负载�
     比如在阿里云上挂一个 SLB，这个负载均衡会提供一个统一的入口，并把所有它接触到的流量负载均衡到每一个集群节点的 node pod 上面去。然后 node pod 再转化成 ClusterIP，去访问到实际的 pod 上面。
     
     
-#架构设计
+# 架构设计
 ![](img/.09_service_images/structure.png)
 k8s 分为 master 节点和 worker 节点：
      

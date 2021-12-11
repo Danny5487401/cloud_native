@@ -1,24 +1,24 @@
-
-#配置管理
-##背景
-    * 第一，比如说一些可变的配置。因为我们不可能把一些可变的配置写到镜像里面，当这个配置需要变化的时候，可能需要我们重新编译一次镜像，这个肯定是不能接受的；
-    * 第二就是一些敏感信息的存储和使用。比如说应用需要使用一些密码，或者用一些 token；
-    * 第三就是我们容器要访问集群自身。比如我要访问 kube-apiserver，那么本身就有一个身份认证的问题；
-    * 第四就是容器在节点上运行之后，它的资源需求；
-    * 第五个就是容器在节点上，它们是共享内核的，那么它的一个安全管控怎么办？
-    * 最后一点我们说一下容器启动之前的一个前置条件检验。比如说，一个容器启动之前，我可能要确认一下 DNS 服务是不是好用？
-    又或者确认一下网络是不是联通的？那么这些其实就是一些前置的校验。
+# 配置管理
+## 背景
+* 第一，比如说一些可变的配置。因为我们不可能把一些可变的配置写到镜像里面，当这个配置需要变化的时候，可能需要我们重新编译一次镜像，这个肯定是不能接受的；
+* 第二就是一些敏感信息的存储和使用。比如说应用需要使用一些密码，或者用一些 token；
+* 第三就是我们容器要访问集群自身。比如我要访问 kube-apiserver，那么本身就有一个身份认证的问题；
+* 第四就是容器在节点上运行之后，它的资源需求；
+* 第五个就是容器在节点上，它们是共享内核的，那么它的一个安全管控怎么办？
+* 最后一点我们说一下容器启动之前的一个前置条件检验。比如说，一个容器启动之前，我可能要确认一下 DNS 服务是不是好用？
     
-##Pod的配置管理
+又或者确认一下网络是不是联通的？那么这些其实就是一些前置的校验。
+    
+## Pod的配置管理
 ![](img/.06_configMap_images/pod_config_management.png)
 
-##ConfigMap
+## ConfigMap
 ![](img/.06_configMap_images/configMap.png)
 主要是管理一些可变配置信息，比如说我们应用的一些配置文件，或者说它里面的一些环境变量，或者一些命令行参数。
 
 好处在于它可以让一些可变配置和容器镜像进行解耦，这样也保证了容器的可移植性。
 
-###configMap使用
+### configMap使用
 ![](img/.06_configMap_images/configMap_used_in_pod.png)
     
     *第一种是环境变量。环境变量的话通过 valueFrom，然后 ConfigMapKeyRef 这个字段，下面的 name 是指定 ConfigMap 名，key 是 ConfigMap.data 里面的 key。
@@ -43,7 +43,7 @@
     * 最后一点是：什么样的 pod 才能使用 ConfigMap？这里只有通过 K8s api 创建的 pod 才能使用 ConfigMap，
     比如说通过用命令行 kubectl 来创建的 pod，肯定是可以使用 ConfigMap 的，但其他方式创建的 pod，比如说 kubelet 通过 manifest 创建的 static pod，它是不能使用 ConfigMap 的
 
-##Secret
+## Secret
 ![](img/.06_configMap_images/secret.png)
 Secret 是一个主要用来存储密码 token 等一些敏感信息的资源对象。其中，敏感信息是采用 base-64 编码保存起来的.
 Secret 类型种类比较多，下面列了常用的四种类型：
@@ -53,7 +53,7 @@ Secret 类型种类比较多，下面列了常用的四种类型：
     第三种是 dockerconfigjson，这是拉取私有仓库镜像的用的一种 Secret；
     第四种是 bootstrap.token，是用于节点接入集群校验用的 Secret
 
-###创建
+### 创建
 ![](img/.06_configMap_images/secret_making.png)
 有两种创建方式：
 
@@ -65,10 +65,10 @@ Secret 类型种类比较多，下面列了常用的四种类型：
 上图中两个例子。第一个是通过指定文件，创建了一个拉取私有仓库镜像的 Secret，指定的文件是 /root/.docker/config.json。type 的话指定的是 dockerconfigjson，
 另外一个我们指定键值对，我们 type 没有指定，默认是 Opaque。键值对是 key:value 的形式，其中对 value 内容进行 base64 加密。创建 Secret 就是这么一个情况。
 
-###secret使用
+### secret使用
 ![](img/.06_configMap_images/secret_application.png)
 它主要是被 pod 来使用，一般是通过 volume 形式挂载到容器里指定的目录，然后容器里的业务进程再到目录下读取 Secret 来进行使用。另外在需要访问私有镜像仓库时，也是通过引用 Secret 来实现。
-####使用私有镜像
+#### 使用私有镜像
 ![](img/.06_configMap_images/private_image.png)
 
 注意⚠️
@@ -83,7 +83,7 @@ Secret 类型种类比较多，下面列了常用的四种类型：
     第三个就是 Secret 读取的最佳实践，建议不要用 list/watch，如果用 list/watch 操作的话，会把 namespace 下的所有 Secret 全部拉取下来，这样其实暴露了更多的信息。
     推荐使用 GET 的方法，这样只获取你自己需要的那个 Secret。
 
-##ServiceAccount
+## ServiceAccount
 ServiceAccount 首先是用于解决 pod 在集群里面的身份认证问题，身份认证信息是存在于 Secret 里面。
 ![](img/.06_configMap_images/service_account.png)
 
@@ -94,7 +94,7 @@ ServiceAccount 首先是用于解决 pod 在集群里面的身份认证问题，
 ![](img/.06_configMap_images/service_account_principle.png)
 
 
-##资源配置管理
+## 资源配置管理
 ![](img/.06_configMap_images/resource_management.png)
 Pod 服务质量 (QoS) 配置
     
@@ -104,7 +104,7 @@ Pod 服务质量 (QoS) 配置
     Burstable：Burstable 至少有一个容器存在内存和 CPU 的一个 request；
     BestEffort：只要不是 Guaranteed 和 Burstable，那就是 BestEffort。
 
-##SecurityContext
+## SecurityContext
 
 ![](img/.06_configMap_images/security_context.png)
 SecurityContext 主要是用于限制容器的一个行为，它能保证系统和其他容器的安全。
@@ -131,7 +131,7 @@ SecurityContext 主要分为三个级别：
 
 
 
-##initContainer
+## initContainer
 ![](img/.06_configMap_images/initContainer.png)
 首先介绍 InitContainer 和普通 container 的区别，有以下三点内容：
 

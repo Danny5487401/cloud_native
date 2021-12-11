@@ -1,21 +1,21 @@
-#Kubernetes架构
+# Kubernetes架构
 ![](img/.01_basis_idea/kube_structure.png)
 
-##Pod
+## Pod
 ![](img/.01_basis_idea/pod.png)
 
-##Volume
+## Volume
 ![](img/.01_basis_idea/volume.png)
 
-##deployment
+## deployment
 ![](img/.01_basis_idea/deployment.png)
 
-##service
+## service
 ![](img/.01_basis_idea/service.png)
 
-##namespace
+## namespace
 ![](img/.01_basis_idea/namespace.png)
 
-##API/label
+## API/label
 ![](img/.01_basis_idea/selector_label.png)
 
