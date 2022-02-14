@@ -86,25 +86,29 @@ PVC 对象里面，只需要指定存储需求，不用关心存储本身的具�
 当提交完 yaml 的时候，它可以通过 PVC 找到 bound 着的那个 PV，然后就可以用那块存储了。这是静态 Provisioning到被pod使用的一个过程
 
 ##### 动态PV使用
+###### 管理员使用   
 ![](img/.07_volume_images/dynamic_PV.png)
 
-    这个模板文件叫 StorageClass，在StorageClass里面，我们需要填的重要信息：第一个是 provisioner，provisioner 是什么？
-    它其实就是说我当时创建 PV 和对应的存储的时候，应该用哪个存储插件来去创建。
+这个模板文件叫 StorageClass，在StorageClass里面，我们需要填的重要信息：第一个是 provisioner，provisioner 是什么？
+它其实就是说我当时创建 PV 和对应的存储的时候，应该用哪个存储插件来去创建。
     
     
-    这些参数是通过k8s创建存储的时候，需要指定的一些细节参数。对于这些参数，用户是不需要关心的，像这里 regionld、zoneld、fsType 和它的类型。
-    ReclaimPolicy跟我们刚才讲解的 PV 里的意思是一样的，就是说动态创建出来的这块 PV,当使用方使用结束、Pod 及 PVC 被删除后，这块 PV 应该怎么处理，
-    我们这个地方写的是 delete，意思就是说当使用方 pod 和 PVC 被删除之后，这个 PV 也会被删除掉。
+这些参数是通过k8s创建存储的时候，需要指定的一些细节参数。对于这些参数，用户是不需要关心的，像这里 regionld、zoneld、fsType 和它的类型。
+ReclaimPolicy跟我们刚才讲解的 PV 里的意思是一样的，就是说动态创建出来的这块 PV,当使用方使用结束、Pod 及 PVC 被删除后，这块 PV 应该怎么处理，
+我们这个地方写的是 delete，意思就是说当使用方 pod 和 PVC 被删除之后，这个 PV 也会被删除掉。
+
+###### 用户使用
 ![](img/.07_volume_images/pvc_storage_class.png)
-    PVC 的文件里存储的大小、访问模式是不变的。现在需要新加一个字段，叫 StorageClassName，它的意思是指定动态创建PV的模板文件的名字，这里StorageClassName填的就是上面声明的csi-disk。
+
+PVC 的文件里存储的大小、访问模式是不变的。现在需要新加一个字段，叫 StorageClassName，它的意思是指定动态创建PV的模板文件的名字，这里StorageClassName填的就是上面声明的csi-disk。
     
     在提交完 PVC之后，K8s 集群中的相关组件就会根据 PVC 以及对应的 StorageClass 动态生成这块 PV 给这个 PVC 做一个绑定，之后用户在提交自己的 yaml 时，
     用法和接下来的流程和前面的静态使用方式是一样的，通过 PVC 找到我们动态创建的 PV，然后把它挂载到相应的容器中就可以使用了
 
 字段解析
 
-    Capacity：这个很好理解，就是存储对象的大小；
-    AccessModes：也是用户需要关心的，就是说我使用这个 PV 的方式。它有三种使用方式。
+- Capacity：这个很好理解，就是存储对象的大小；
+- AccessModes：也是用户需要关心的，就是说我使用这个 PV 的方式。它有三种使用方式。
         一种是单 node 读写访问；
         第二种是多个 node 只读访问，是常见的一种数据的共享方式；
         第三种是多个 node 上读写访问。
@@ -112,14 +116,16 @@ PVC 对象里面，只需要指定存储需求，不用关心存储本身的具�
     首先它是通过为 PV 建立的 AccessModes 索引找到所有能够满足用户的 PVC 里面的 AccessModes 要求的 PV list，
     然后根据PVC的 Capacity，StorageClassName, Label Selector 进一步筛选 PV，如果满足条件的 PV 有多个，选择 PV 的 size 最小的，accessmodes 列表最短的 PV，也即最小适合原则。
     
-    ReclaimPolicy：这个就是刚才提到的，我的用户方 PV 的 PVC 在删除之后，我的 PV 应该做如何处理？常见的有三种方式。
+- ReclaimPolicy：这个就是刚才提到的，我的用户方 PV 的 PVC 在删除之后，我的 PV 应该做如何处理？常见的有三种方式。
         第一种方式我们就不说了，现在 K8s 中已经不推荐使用了；
         第二种方式 delete，也就是说 PVC 被删除之后，PV 也会被删除；
         第三种方式 Retain，就是保留，保留之后，后面这个 PV 需要管理员来手动处理。
-    StorageClassName：StorageClassName 这个我们刚才说了，我们动态 Provisioning 时必须指定的一个字段，就是说我们要指定到底用哪一个模板文件来生成 PV ；
-    NodeAffinity：就是说我创建出来的 PV，它能被哪些 node 去挂载使用，其实是有限制的。然后通过 NodeAffinity 来声明对node的限制，
+- StorageClassName：StorageClassName 这个我们刚才说了，我们动态 Provisioning 时必须指定的一个字段，就是说我们要指定到底用哪一个模板文件来生成 PV ；
+- NodeAffinity：就是说我创建出来的 PV，它能被哪些 node 去挂载使用，其实是有限制的。然后通过 NodeAffinity 来声明对node的限制，
     这样其实对 使用该PV的pod调度也有限制，就是说 pod 必须要调度到这些能访问 PV 的 node 上，才能使用这块 PV，这个字段在我们下一讲讲解存储拓扑调度时在细说。
+
 PV状态流转
+
 ![](img/.07_volume_images/pv_state.png)
 
     available 状态意思就是可以使用的状态，用户在提交 PVC 之后，被 K8s 相关组件做完 bound（即：找到相应的 PV），这个时候 PV 和 PVC 就结合到一起了，此时两者都处在 bound 状态。
@@ -150,6 +156,7 @@ PV状态流转
     通过反亲和性，将两个副本调度在不同的 node 上面
 
 动态 Provisioning 
+
 ![](img/.07_volume_images/storageclass_disk.yaml.png)
 
     parameters部分是创建存储所需要的一些参数，但是用户不需要关心这些信息；
@@ -165,6 +172,7 @@ PV状态流转
     
 ### 架构设计
 csi 的全称是 container storage interface
+
 ![](img/.07_volume_images/structure_csi.png)
     
     用户在提交 PVCyaml 的时候，首先会在集群中生成一个 PVC 对象，然后 PVC 对象会被 csi-provisioner controller watch到，
@@ -176,6 +184,7 @@ csi 的全称是 container storage interface
 
 #### PV、PVC 以及通过 csi 使用存储流程
 ![](img/.07_volume_images/pv_pvc_use_csi.png)
+
 主要分为三个阶段：
 
     第一个阶段(Create阶段)是用户提交完 PVC，由 csi-provisioner 创建存储，并生成 PV 对象，之后 PV controller 将 PVC 及生成的 PV 对象做 bound，bound 之后，create 阶段就完成了；

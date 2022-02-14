@@ -9,7 +9,8 @@ Metadata:
 ```
 ## Labels
 ![](img/.03_resource_object_images/label.png)
-selector
+
+selector  
 ![](img/.03_resource_object_images/selector.png)
 ![](img/.03_resource_object_images/other_selector.png)
 

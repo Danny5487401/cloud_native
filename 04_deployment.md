@@ -55,6 +55,7 @@ MaxSurge：滚动过程中最多存在多少个 Pod 超过预期 replicas 数量
 
 ### 查看pod
 ![](img/.04_deployment_images/get_pod_information.png)
+
 最前面一段：nginx-deployment，其实是 Pod 所属 Deployment.name；中间一段：template-hash，这里三个 Pod 是一样的，因为这三个 Pod 其实都是同一个 template 中创建出来的。
 
 最后一段，是一个 random 的字符串，我们通过 get.pod 可以看到，Pod 的 ownerReferences 即 Pod 所属的 controller 资源，并不是 Deployment，而是一个 ReplicaSet。
@@ -71,6 +72,7 @@ MaxSurge：滚动过程中最多存在多少个 Pod 超过预期 replicas 数量
 ## 架构设计
 ### 管理模式
 ![](img/.04_deployment_images/management_mode.png)
+
 首先简单看一下管理模式：Deployment 只负责管理不同版本的 ReplicaSet，由 ReplicaSet 来管理具体的 Pod 副本数，每个 ReplicaSet 对应 Deployment template 的一个版本。
 在上文的例子中可以看到，每一次修改 template，都会生成一个新的 ReplicaSet，这个 ReplicaSet 底下的 Pod 其实都是相同的版本。
 
@@ -78,6 +80,7 @@ MaxSurge：滚动过程中最多存在多少个 Pod 超过预期 replicas 数量
 
 ### Deployment 控制器
 ![](img/.04_deployment_images/deployment_controller.png)
+
 首先，我们所有的控制器都是通过 Informer 中的 Event 做一些 Handler 和 Watch。这个地方 Deployment 控制器，其实是关注 Deployment 和 ReplicaSet 中的 event，收到事件后会加入到队列中。
 而 Deployment controller 从队列中取出来之后，它的逻辑会判断 Check Paused，这个 Paused 其实是 Deployment 是否需要新的发布，
 如果 Paused 设置为 true 的话，就表示这个 Deployment 只会做一个数量上的维持，不会做新的发布
@@ -90,6 +93,7 @@ MaxSurge：滚动过程中最多存在多少个 Pod 超过预期 replicas 数量
 
 ### ReplicaSet 控制器
 ![](img/.04_deployment_images/replicaset_controller.png)
+
 当 Deployment 分配 ReplicaSet 之后，ReplicaSet 控制器本身也是从 Informer 中 watch 一些事件，这些事件包含了 ReplicaSet 和 Pod 的事件。
 从队列中取出之后，ReplicaSet controller 的逻辑很简单，就只管理副本数。
 也就是说如果 controller 发现 replicas 比 Pod 数量大的话，就会扩容，而如果发现实际数量超过期望数量的话，就会删除 Pod。
