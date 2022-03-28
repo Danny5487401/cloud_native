@@ -18,15 +18,15 @@
 job.yaml  
 ![](img/.05_Job_n_daemonSet_images/job.yaml.png)
 
-    上图是 Job 最简单的一个 yaml 格式，这里主要新引入了一个 kind 叫 Job，这个 Job 其实就是 job-controller 里面的一种类型。 
-    然后 metadata 里面的 name 来指定这个 Job 的名称，下面 spec.template 里面其实就是 pod 的 spec。
-    
-    这里面的内容都是一样的，唯一多了两个点：
-    
-    
-    第一个是 restartPolicy，在 Job 里面我们可以设置 Never、OnFailure、Always 这三种重试策略。
-    在希望 Job 需要重新运行的时候，我们可以用 Never；希望在失败的时候再运行，再重试可以用 OnFailure；或者不论什么情况下都重新运行时 Alway；
-    另外，Job 在运行的时候不可能去无限的重试，所以我们需要一个参数来控制重试的次数。这个 backoffLimit 就是来保证一个 Job 到底能重试多少次
+上图是 Job 最简单的一个 yaml 格式，这里主要新引入了一个 kind 叫 Job，这个 Job 其实就是 job-controller 里面的一种类型。 
+然后 metadata 里面的 name 来指定这个 Job 的名称，下面 spec.template 里面其实就是 pod 的 spec。
+
+这里面的内容都是一样的，唯一多了两个点：
+
+
+1. 第一个是 restartPolicy，在 Job 里面我们可以设置 Never、OnFailure、Always 这三种重试策略。
+在希望 Job 需要重新运行的时候，我们可以用 Never；希望在失败的时候再运行，再重试可以用 OnFailure；或者不论什么情况下都重新运行时 Alway；
+2. 另外，Job 在运行的时候不可能去无限的重试，所以我们需要一个参数来控制重试的次数。这个 backoffLimit 就是来保证一个 Job 到底能重试多少次
 
 所以在 Job 里面，我们主要重点关注的一个是 restartPolicy 重启策略和 backoffLimit 重试次数限制。
 
@@ -36,9 +36,11 @@ job.yaml
 下面我们来看一下 Pod，其实 Job 最后的执行单元还是 Pod。我们刚才创建的 Job 会创建出来一个叫“pi”的一个 Pod，这个任务就是来计算这个圆周率，
 Pod 的名称会以“${job-name}-${random-suffix}”，我们可以看一下下面 Pod 的 yaml 格式
     
-    它比普通的 Pod 多了一个叫 ownerReferences，这个东西来声明此 pod 是归哪个上一层 controller 来管理。
-    可以看到这里的 ownerReferences 是归 batch/v1，也就是上一个 Job 来管理的。
-    这里就声明了它的 controller 是谁，然后可以通过 pod 返查到它的控制器是谁，同时也能根据 Job 来查一下它下属有哪些 Pod。
+它比普通的 Pod 多了一个叫 ownerReferences，这个东西来声明此 pod 是归哪个上一层 controller 来管理。
+可以看到这里的 ownerReferences 是归 batch/v1，也就是上一个 Job 来管理的。
+这里就声明了它的 controller 是谁，然后可以通过 pod 返查到它的控制器是谁，同时也能根据 Job 来查一下它下属有哪些 Pod。
+
+Pod模板中，被自动加上了一个controller-uid=< 一个随机字符串 > 这样的 Label。
 
 ## 并行运行Job
 ![](img/.05_Job_n_daemonSet_images/parallelism_job.png)
@@ -48,17 +50,26 @@ Pod 的名称会以“${job-name}-${random-suffix}”，我们可以看一下下
 
 这里主要看两个参数：一个是 completions，一个是 parallelism。
 
-首先第一个参数是用来指定本 Pod 队列执行次数。可能这个不是很好理解，其实可以把它认为是这个 Job 指定的可以运行的总次数。比如这里设置成 8，即这个任务一共会被执行 8 次；
-第二个参数代表这个并行执行的个数。所谓并行执行的次数，其实就是一个管道或者缓冲器中缓冲队列的大小，把它设置成 2，
+1. 首先第一个参数是用来指定本 Pod 队列执行次数。可能这个不是很好理解，其实可以把它认为是这个 Job 指定的可以运行的总次数。比如这里设置成 8，即这个任务一共会被执行 8 次；
+2. 第二个参数代表这个并行执行的个数。所谓并行执行的次数，其实就是一个管道或者缓冲器中缓冲队列的大小，把它设置成 2，
 也就是说这个 Job 一定要执行 8 次，每次并行 2 个 Pod，这样的话，一共会执行 4 个批次
 
-## CronJob
+## CronJob定时任务
 ### 语法分析
 ![](img/.05_Job_n_daemonSet_images/crobJob_yaml.png)
 concurrencyPolicy：就是说是否允许并行运行。所谓的并行运行就是，比如说我每分钟执行一次，但是这个 Job 可能运行的时间特别长，
 假如两分钟才能运行成功，也就是第二个 Job 要到时间需要去运行的时候，上一个 Job 还没完成。
 如果这个 policy 设置为 true 的话，那么不管你前面的 Job 是否运行完成，每分钟都会去执行；
-如果是 false，它就会等上一个 Job 运行完成之后才会运行下一个
+如果是 false，它就会等上一个 Job 运行完成之后才会运行下一个。
+
+我们可以通过修改spec.concurrencyPolicy来定义处理策略：
+- Allow，这也是默认情况，这意味着这些 Job 可以同时存在；
+- Forbid，这意味着不会创建新的 Pod，该创建周期被跳过；
+- Replace，这意味着新产生的 Job 会替换旧的、没有执行完的 Job。
+
+如果某一次 Job 创建失败，这次创建就会被标记为“miss”。当在指定的时间窗口内，miss 的数目达到 100 时，那么 CronJob 会停止再创建这个 Job。
+
+spec.startingDeadlineSeconds可以指定这个时间窗口。startingDeadlineSeconds=200意味着过去 200 s 里，如果 miss 的数目达到了 100 次，那么这个 Job 就不会被创建执行了。
 
 ## 架构设计
 ![](img/.05_Job_n_daemonSet_images/job_management.png)
@@ -71,6 +82,9 @@ concurrencyPolicy：就是说是否允许并行运行。所谓的并行运行就
 
 同时要去检查它是否是并行的 job，或者是串行的 job，根据设置的配置并行度、串行度，及时地把 pod 的数量给创建出来。
 最后，它会把 job 的整个的状态更新到 API Server 里面去，这样我们就能看到呈现出来的最终效果了
+
+
+
 
 # DaemonSet
 ## 背景
