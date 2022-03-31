@@ -26,3 +26,9 @@
 
 ## [第十二章 hpa-Pod自动弹性伸缩](12_hpa.md)
 
+## 工具篇
+- [1 wait包](01_k8s_util/01_wait/wait_util.md)
+  - [wait.Until使用](01_k8s_util/01_wait/01_util/main.go)
+  - [wait.Group{}](01_k8s_util/01_wait/02_waitGroup/main.go)
+- 2 sets包
+  - [判断两个map的key是否重合](01_k8s_util/02_sets/main.go)
