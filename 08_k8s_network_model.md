@@ -15,7 +15,6 @@ docker官方并没有提供多主机的容器通信方案，单机网络的模�
 
 
 ## Netns(network namespace)
-
 需要了解的内容
 ![](img/.08_k8s_network_model_images/netns_menu.png)
 
@@ -124,7 +123,7 @@ docker官方并没有提供多主机的容器通信方案，单机网络的模�
 ![](img/.08_k8s_network_model_images/route_device_info.png)
 ![](img/.08_k8s_network_model_images/nat_translate.png)
 
-类型:最常用napt
+类型:最常用napt   
 ![](img/.08_k8s_network_model_images/net_class.png)
 ![](img/.08_k8s_network_model_images/static_nat.png)
 ![](img/.08_k8s_network_model_images/pool_nat.png)
@@ -141,7 +140,7 @@ docker官方并没有提供多主机的容器通信方案，单机网络的模�
 它的 backend 其实是独立的，也就是说这个包如何离开 Host，是采用哪种封装方式，还是不需要封装，都是可选择的
 
 三种主要的 backend：
-
+![](img/.08_k8s_network_model_images/flannel_backend.png)
 * 一种是用户态的 udp，这种是最早期的实现；
 * 然后是内核的 Vxlan，这两种都算是 overlay 的方案。Vxlan 的性能会比较好一点，但是它对内核的版本是有要求的，需要内核支持 Vxlan 的特性功能；
 * 如果你的集群规模不够大，又处于同一个二层域，也可以选择采用 host-gw 的方式。这种方式的 backend 基本上是由一段广播路由规则来启动的，性能比较高
@@ -151,7 +150,6 @@ docker官方并没有提供多主机的容器通信方案，单机网络的模�
 2. flannel在每个主机中运行flanneld作为agent，它会为所在主机从集群的网络地址空间中，获取一个小的网段subnet，本主机内所有容器的IP地址都将从中分配。
 3. flanneld再将本主机获取的subnet以及用于主机间通信的Public IP，同样通过kubernetes API或者etcd存储起来。
 4. flannel利用各种backend ，例如udp，vxlan，host-gw等等，跨主机转发容器间的网络流量，完成容器间的跨主机通信。
-
 
 
 #### Flannel的设置方式
@@ -174,4 +172,26 @@ kubelet调用Containered CRI插件以创建容器，而Containered CRI插件调�
 
 Configuration
 ![](img/.08_k8s_network_model_images/configuration.png)
-    
+
+
+#### 实现原理
+Flannel为每个主机提供独立的子网，整个集群的网络信息存储在etcd上。对于跨主机的转发，目标容器的IP地址，需要从etcd获取。
+![](img/.08_k8s_network_model_images/flannel_process.png)
+步骤：
+
+- IP数据报被封装并通过容器的eth0发送。
+- Container1的eth0通过veth对与Docker0交互并将数据包发送到Docker0。然后Docker0转发包。
+- Docker0确定Container3的IP地址，通过查询本地路由表到外部容器，并将数据包发送到虚拟NIC Flannel0。
+- Flannel0收到的数据包被转发到Flanneld进程。 Flanneld进程封装了数据包通过查询etcd维护的路由表并发送数据包通过主机的eth0。
+- 数据包确定网络中的目标主机主机。
+- 目的主机的Flanneld进程监听8285端口，负责解封包。
+- 解封装的数据包将转发到虚拟NICFlannel0。
+- Flannel0查询路由表，解封包，并将数据包发送到Docker0。
+- Docker0确定目标容器并发送包到目标容器。
+
+1. 在常用的vxlan模式中，涉及到上面步骤提到的封包和拆包，这也是Flannel网络传输效率相对低的原因。
+![](img/.08_k8s_network_model_images/vxlan_info.png)
+
+2. hostgw是最简单的backend:
+它的原理非常简单，直接添加路由，将目的主机当做网关，直接路由原始封包。
+例如，我们从etcd中监听到一个EventAdded事件subnet为10.1.15.0/24被分配给主机Public IP 192.168.0.100，hostgw要做的工作就是在本主机上添加一条目的地址为10.1.15.0/24，网关地址为192.168.0.100，输出设备为上文中选择的集群间交互的网卡即可。对于EventRemoved事件，只需删除对应的路由
