@@ -26,6 +26,8 @@
 
 ## [第十二章 hpa-Pod自动弹性伸缩](12_hpa.md)
 
+## [第十三章 kubelet](13_kubelet.md)
+
 ## 源码篇
 - [1 wait工具包](01_k8s_util/01_wait/wait_util.md)
   - [wait.Until使用](01_k8s_util/01_wait/01_util/main.go)
