@@ -4,7 +4,7 @@
 
 ## [第一章 k8s架构及基本概念](01_kube_structure_n_basic_idea.md)
 
-## [第二章 Pod基本单元](02_pod.md)
+## [第二章 Pod基本单元及相关使用](02_pod.md)
 
 ## [第三章 应用编排基本概念](03_resource_object.md)
 
