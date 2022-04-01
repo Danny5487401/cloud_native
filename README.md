@@ -28,6 +28,8 @@
 
 ## [第十三章 kubelet](13_kubelet.md)
 
+## [第十四章 informer机制](14_informer.md)
+
 ## 源码篇
 - [1 wait工具包](01_k8s_util/01_wait/wait_util.md)
   - [wait.Until使用](01_k8s_util/01_wait/01_util/main.go)
