@@ -1,4 +1,9 @@
 # K8s资源对象
+k8s中大部分概念，如Node，Pod，Service都可以看做一种资源对象
+
+- 资源的描述：yaml文件或json文件
+- 资源的操作：对象可以通过kubectl（或者api）执行增、删、改、查
+- 资源的存储：信息在etcd中持久化
 ```yaml
 Spec: 期望的状态
 Status: 观测到的状态
@@ -7,9 +12,12 @@ Metadata:
     Annotations
     OwnerReference
 ```
+k8s通过对比资源的“实际状态”和etcd中的“期望状态”，实现自动化控制
+
 ## Labels
 ![](img/.03_resource_object_images/label.png)
-selector
+
+selector  
 ![](img/.03_resource_object_images/selector.png)
 ![](img/.03_resource_object_images/other_selector.png)
 

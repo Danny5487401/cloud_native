@@ -1,22 +1,31 @@
 # Container Runtime Interface (CRI)
+
 ![](img/.11_cri_images/cri.png)
 ![](img/.11_cri_images/cri_interface.png)
+
 跟容器最相关的一个 Manager 是 Generic Runtime Manager，就是一个通用的运行时管理器。
 我们可以看到目前 dockershim 还是存在于 Kubelet 的代码中的，它是当前性能最稳定的一个容器运行时的实现。
-remote 指的就是 CRI 接口。CRI 接口主要包含两个部分
-* 一个是 CRI Server，即通用的比如说创建、删除容器这样的接口；
-* 另外一个是流式数据的接口 Streaming Server，比如 exec、port-forward 这些流式数据的接口
 
-## 通过 CRI 操作容器的生命周期
+remote 指的就是 CRI 接口。
+一般来说CRI接口可以分为两组：
+![](img/.11_cri_images/cri_class.png)
+* 一组是ImageService，主要是容器镜像相关的操作，比如拉取镜像、删除镜像等。
+
+* 另一组是RuntimeService，主要是跟容器相关的操作，比如创建、启动、删除Container、Exec等。
+
+## 1. 通过 CRI 操作容器的生命周期
 ![](img/.11_cri_images/cri_manage_period.png)
+
 流程
 1. 首先调用 RunPodSandbox 接口来创建一个 Pod 容器，Pod 容器是用来持有容器的相关资源的，比如说网络空间、PID空间、进程空间等资源；
 2. 然后调用 CreatContainer 接口在 Pod 容器的空间创建业务容器；
 3. 再调用 StartContainer 接口启动容器，相对应的销毁容器的接口为 StopContainer 与 RemoveContaine
 
-## CRI streaming 接口
+## 2. CRI streaming 接口
 举例流式接口 exec：
+
 ![](img/.11_cri_images/exec_command.png)
+
 它可以用来在容器内部执行一个命令，又或者说可以 attach 到容器的 IO 流中做各种交互式的命令。
 它的特别之处在于，一个是节省资源，另一个是连接的可靠性
 
@@ -43,7 +52,9 @@ Containerd 是一个工业级标准的容器运行时（Container Runtime Interf
 * 管理容器网络接口及网络
 
 ### Containerd结构
+
 ![](img/.11_cri_images/structure_containerd.png)
+
 这里的 Meta services、Runtime service 与 Storage service 都是 containerd 提供的接口。
 它们是通用的容器相关的接口，包括镜像管理、容器运行时管理等。CRI 在这之上包装了一个 gRPC 的服务。
 右侧就是具体的容器的实现，比如说，创建容器时就要创建具体的 runtime 和它的 shim，它们和 Container 一起组成了一个 Pod Sandbox。
