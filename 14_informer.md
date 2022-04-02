@@ -232,7 +232,7 @@ const (
   Added DeltaType = "Added" // 增加
   Updated DeltaType = "Updated" // 更新
   Deleted DeltaType = "Deleted" // 删除
-  Sync DeltaType = "Sync" // 同步
+  Sync DeltaType = "Sync" // 同步，只在resync中用到
 )
 ```
 Delta 是 DeltaFIFO 存储的类型，它记录了对象发生了什么变化以及变化后对象的状态。如果变更是删除，它会记录对象删除之前的最终状态。
