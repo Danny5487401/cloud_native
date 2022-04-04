@@ -14,18 +14,14 @@ Informer 是 client-go 中的核心工具包，已经被 kubernetes 中众多组
 ## Informer 的主要功能：
 
 - 同步数据到本地缓存
-
 - 根据对应的事件类型，触发事先注册好的 ResourceEventHandle
 
 
 ## Informer 需要满足哪些要求？
 
 - 消息可靠性
-
 - 消息实时性
-
 - 消息顺序性
-
 - 高性能
 
 ## Informer运行原理
@@ -33,54 +29,6 @@ Informer 是 client-go 中的核心工具包，已经被 kubernetes 中众多组
 各个组件包括：
 
 - Reflector：用于监控（watch）指定的资源，当监控的资源发生变化时，触发相应的变更事件,例如Add事件、Update事件和Delete事件。并将资源对象存放到本地缓存DeltaFIFO中
-```go
-type Reflector struct {
-	// 名称. By default it will be a file:line if possible.
-	name string
-
-	// The name of the type we expect to place in the store. The name
-	// will be the stringification of expectedGVK if provided, and the
-	// stringification of expectedType otherwise. It is for display
-	// only, and should not be used for parsing or comparison.
-	//  期待的事件类型名称，用于判断和监控到的事件是否一致
-	expectedTypeName string
-	// An example object of the type we expect to place in the store.
-	// Only the type needs to be right, except that when that is
-	// `unstructured.Unstructured` the object's `"apiVersion"` and
-	// `"kind"` must also be right.
-	// 期待事件类型，用于判断和监控到的事件是否一致
-	expectedType reflect.Type
-	// The GVK of the object we expect to place in the store if unstructured.
-	expectedGVK *schema.GroupVersionKind
-	// /deltalFIFO队列还是Indexer
-	store Store
-	// 封装list 和 watch接口的实例
-	listerWatcher ListerWatcher
-
-	// 退避管理器
-	backoffManager wait.BackoffManager
-
-	// 重新同步的间隔
-	resyncPeriod time.Duration
-	//  标记是否开启重新同步
-	ShouldResync func() bool
-	// clock allows tests to manipulate time
-	clock clock.Clock
-	// list的时候是否需要分页
-	paginatedResult bool
-	// 上一次同步的资源版本
-	lastSyncResourceVersion string
-	// 上一次同步资源不可用状态
-	isLastSyncResourceVersionUnavailable bool
-	// 上一次同步资源版本的读写锁
-	lastSyncResourceVersionMutex sync.RWMutex
-	// 页大小
-	WatchListPageSize int64
-	//  watch接口的错误处理
-	watchErrorHandler WatchErrorHandler
-}
-
-```
 - DeltaFIFO：对资源对象的的操作类型进行队列的基本操作
   - FIFO：先进先出队列，提供资源对象的增删改查等操作
   - Delta：资源对象存储，可以保存资源对象的操作类型。如：添加操作类型、更新操作类型、删除操作类型、同步操作类型
@@ -136,7 +84,8 @@ List所做的，就是向API Server发送一个http短链接请求，罗列所�
 
 ### Resync
 
-Resync 机制会将 Indexer 的本地缓存重新同步到 DeltaFIFO 队列中。一般我们会设置一个时间周期，让 Indexer 周期性地将缓存同步到队列中。直接 list/watch API Server 就已经能拿到集群中资源对象变化的 event 了
+Resync 机制会将 Indexer 的本地缓存重新同步到 DeltaFIFO 队列中。一般我们会设置一个时间周期，让 Indexer 周期性地将缓存同步到队列中。
+直接 list/watch API Server 就已经能拿到集群中资源对象变化的 event 了
 
 ## 源码
 client-go 中提供了几种不同的 Informer：
@@ -253,6 +202,336 @@ type Watcher interface {
 	Watch(options metav1.ListOptions) (watch.Interface, error)
 }
 
+
+```
+## Reflector 映射/对称
+将api-server中对象数据获取到并实时的更新进本地，使得本地数据和etcd数据的完全一样，我觉得本地对象数据可以称为k8s资源数据的一份快照。
+reflector实际的作用是监控指定资源的Kubernetes资源，当监控的资源发生变化时触发相应的变更事件，例如Added（资源添加）事件、Updated（资源更新）事件、Deleted（资源删除）事件，并将其资源对象存放到本地缓存DeltaFIFO中。
+```go
+type Reflector struct {
+	// 名称. By default it will be a file:line if possible.
+	name string
+
+	// The name of the type we expect to place in the store. The name
+	// will be the stringification of expectedGVK if provided, and the
+	// stringification of expectedType otherwise. It is for display
+	// only, and should not be used for parsing or comparison.
+	//  期待的事件类型名称，用于判断和监控到的事件是否一致
+	expectedTypeName string
+	// An example object of the type we expect to place in the store.
+	// Only the type needs to be right, except that when that is
+	// `unstructured.Unstructured` the object's `"apiVersion"` and
+	// `"kind"` must also be right.
+	// 期待事件类型，用于判断和监控到的事件是否一致
+	expectedType reflect.Type
+	// The GVK of the object we expect to place in the store if unstructured.
+	expectedGVK *schema.GroupVersionKind
+	// /deltalFIFO队列还是Indexer
+	store Store
+	// 封装list 和 watch接口的实例
+	listerWatcher ListerWatcher
+
+	// 退避管理器
+	backoffManager wait.BackoffManager
+
+	// 重新同步的间隔
+	resyncPeriod time.Duration
+	//  标记是否开启重新同步
+	ShouldResync func() bool
+	// clock allows tests to manipulate time
+	clock clock.Clock
+	// list的时候是否需要分页
+	paginatedResult bool
+	// 上一次同步的资源版本
+	lastSyncResourceVersion string
+	// 上一次同步资源不可用状态
+	isLastSyncResourceVersionUnavailable bool
+	// 上一次同步资源版本的读写锁
+	lastSyncResourceVersionMutex sync.RWMutex
+	// 页大小
+	WatchListPageSize int64
+	//  watch接口的错误处理
+	watchErrorHandler WatchErrorHandler
+}
+
+```
+## reflector的初始化
+有三种方式:NewReflector,NewNamedReflector和NewNamespaceKeyedIndexerAndReflector
+```go
+// 传入listwatcher对象，期待类型，deltafifo，重新同步周期
+func NewReflector(lw ListerWatcher, expectedType interface{}, store Store, resyncPeriod time.Duration) *Reflector {
+    // 调用的下面的新建方法
+	return NewNamedReflector(naming.GetNameFromCallsite(internalPackages...), lw, expectedType, store, resyncPeriod)
+}
+
+// 与上一个初始化的区别在于可以摄入Name
+func NewNamedReflector(name string, lw ListerWatcher, expectedType interface{}, store Store, resyncPeriod time.Duration) *Reflector {
+	realClock := &clock.RealClock{}
+	r := &Reflector{
+		name:          name, // 设置名字
+		listerWatcher: lw, // listWatcher
+		store:         store, // 本地存储
+		backoffManager:    wait.NewExponentialBackoffManager(800*time.Millisecond, 30*time.Second, 2*time.Minute, 2.0, 1.0, realClock), // 退避管理器
+		resyncPeriod:      resyncPeriod, // 重新同步周期
+		clock:             realClock, // 时钟
+		watchErrorHandler: WatchErrorHandler(DefaultWatchErrorHandler), // 错误处理器
+	}
+	r.setExpectedType(expectedType) // 设置期待类型
+	return r
+}
+
+// 新建Indexer和reflector。
+func NewNamespaceKeyedIndexerAndReflector(lw ListerWatcher, expectedType interface{}, resyncPeriod time.Duration) (indexer Indexer, reflector *Reflector) {
+    // index指定KeyFunc
+	indexer = NewIndexer(MetaNamespaceKeyFunc, Indexers{NamespaceIndex: MetaNamespaceIndexFunc})
+	reflector = NewReflector(lw, expectedType, indexer, resyncPeriod) // 调用第一个函数
+	return indexer, reflector
+}
+
+```
+
+核心方法：ListAndWatch方法,主要分为list、定时同步和watch三个部分；
+![](.14_informer_images/list_n_watch.png)
+- List部分逻辑：设置分页参数；执行list方法；将list结果同步进DeltaFIFO队列中；
+
+- 定时同步：定时同步以协程的方式运行，使用定时器实现定期同步；
+
+- Watch部分逻辑：在for循环里；执行watch函数获取resultchan；监听resultchan中数据并处理
+```go
+func (r *Reflector) ListAndWatch(stopCh <-chan struct{}) error {
+	klog.V(3).Infof("Listing and watching %v from %s", r.expectedTypeName, r.name)
+	var resourceVersion string
+
+	options := metav1.ListOptions{ResourceVersion: r.relistResourceVersion()}// list接口的参数，设置lastSyncResourceVersion上一同步版本
+
+	if err := func() error {// 匿名函数
+		initTrace := trace.New("Reflector ListAndWatch", trace.Field{"name", r.name})
+		defer initTrace.LogIfLong(10 * time.Second)
+		var list runtime.Object
+		var paginatedResult bool
+		var err error
+		listCh := make(chan struct{}, 1) // list通到
+		panicCh := make(chan interface{}, 1) // panic错误通道
+		go func() { // 以协程方式运行
+			defer func() {
+				if r := recover(); r != nil {
+					panicCh <- r
+				}
+			}()
+			// 新建pager，放入list方法作为处理函数
+			pager := pager.New(pager.SimplePageFunc(func(opts metav1.ListOptions) (runtime.Object, error) {
+				return r.listerWatcher.List(opts) // 该方法返回list结果
+			}))
+			switch {
+			case r.WatchListPageSize != 0:// 设置分页大小
+				pager.PageSize = r.WatchListPageSize
+			case r.paginatedResult:
+			case options.ResourceVersion != "" && options.ResourceVersion != "0": // 资源版本已经有了
+				pager.PageSize = 0
+			}
+
+			list, paginatedResult, err = pager.List(context.Background(), options) // list的结果放在list变量中
+			if isExpiredError(err) || isTooLargeResourceVersionError(err) {
+				r.setIsLastSyncResourceVersionUnavailable(true)
+				list, paginatedResult, err = pager.List(context.Background(), metav1.ListOptions{ResourceVersion: r.relistResourceVersion()}) // 尝试重新获取List结果
+			}
+			close(listCh) // 关闭通道
+		}()
+		// 检查三项类似检查开关的配置，都没问题才继续
+		select {
+		case <-stopCh: // 是否被停止
+			return nil
+		case r := <-panicCh: // 是否发生无法弥补的错误
+			panic(r)
+		case <-listCh:// 收到list通道的关闭信息，说明list的记过已经有了，就在list变量中
+		}
+		if err != nil {
+			return fmt.Errorf("failed to list %v: %v", r.expectedTypeName, err)
+		}
+		if options.ResourceVersion == "0" && paginatedResult {
+			r.paginatedResult = true
+		}
+
+		r.setIsLastSyncResourceVersionUnavailable(false) // list was successful
+		initTrace.Step("Objects listed")
+		listMetaInterface, err := meta.ListAccessor(list) // 解析List
+		if err != nil {
+			return fmt.Errorf("unable to understand list result %#v: %v", list, err)
+		}
+		resourceVersion = listMetaInterface.GetResourceVersion()// 获取资源版本
+		initTrace.Step("Resource version extracted")
+		items, err := meta.ExtractList(list)// 从list对象中获取对象数组
+		if err != nil {
+			return fmt.Errorf("unable to understand list result %#v (%v)", list, err)
+		}
+		initTrace.Step("Objects extracted")
+		// 将数据塞入deltaFIFO中
+		if err := r.syncWith(items, resourceVersion); err != nil { // 这边将list的结果items的数据放入detalFIFO中
+			return fmt.Errorf("unable to sync list result: %v", err)
+		}
+		initTrace.Step("SyncWith done")
+		r.setLastSyncResourceVersion(resourceVersion)
+		initTrace.Step("Resource version updated")
+		return nil
+	}(); err != nil {
+		return err
+	}
+
+	resyncerrc := make(chan error, 1) // 重新同步错误通道
+	cancelCh := make(chan struct{}) // 取消通道
+	defer close(cancelCh)
+	go func() { // 协程，一直再跑
+		resyncCh, cleanup := r.resyncChan() // 返回重新同步的定时通道，里面有计时器， cleanup是定时器关闭函数
+		defer func() {
+			cleanup() // Call the last one written into cleanup
+		}()
+		for {
+			select {
+			case <-resyncCh: // 定时器 阻塞式， 定时时间到，就跳出阻塞
+			case <-stopCh: // 是否被停止
+				return
+			case <-cancelCh: // 是否被取消
+				return
+			}
+			// 下面是定时重新同步流程
+			if r.ShouldResync == nil || r.ShouldResync() { // 判断是否应该同步
+				klog.V(4).Infof("%s: forcing resync", r.name)
+				// 开始同步，将indexer的数据和deltafifo进行同步
+				if err := r.store.Resync(); err != nil { // 同步出错
+					resyncerrc <- err
+					return // 退出
+				}
+			}
+			cleanup() // 当前定时器停止
+			resyncCh, cleanup = r.resyncChan() // 重新启用定时器定时 触发 设置
+		}
+	}()
+
+	// 开始watch 循环
+	for {
+		// give the stopCh a chance to stop the loop, even in case of continue statements further down on errors
+		select {
+		case <-stopCh:
+			return nil
+		default:
+		}
+
+		timeoutSeconds := int64(minWatchTimeout.Seconds() * (rand.Float64() + 1.0)) // 超时时间设定，避免夯住
+		options = metav1.ListOptions{ // watch接口的参数
+			ResourceVersion: resourceVersion,
+			TimeoutSeconds: &timeoutSeconds,
+			AllowWatchBookmarks: true,
+		}
+		start := r.clock.Now()
+		w, err := r.listerWatcher.Watch(options) // 执行watch，返回结果中有resultChan，就是w
+		if err != nil {
+			if utilnet.IsConnectionRefused(err) { // 拒绝连接的话，需要重试
+				time.Sleep(time.Second)
+				continue
+			}
+			return err
+		}
+		// 调用watch长连接，从通道中获取值，要是通道关闭就退出， watch的处理函数
+		if err := r.watchHandler(start, w, &resourceVersion, resyncerrc, stopCh); err != nil {
+			if err != errorStopRequested {
+				switch {
+				case isExpiredError(err): // 超时错误
+					klog.V(4).Infof("%s: watch of %v closed with: %v", r.name, r.expectedTypeName, err)
+				default:
+					klog.Warningf("%s: watch of %v ended with: %v", r.name, r.expectedTypeName, err)
+				}
+			}
+			return nil
+		}
+	}
+}
+
+```
+
+syncWith:将从apiserver list的资源对象结果同步进DeltaFIFO队列中，调用队列的Replace方法实现
+```go
+func (r *Reflector) syncWith(items []runtime.Object, resourceVersion string) error {
+	found := make([]interface{}, 0, len(items))
+	for _, item := range items {
+		found = append(found, item)
+	}
+	return r.store.Replace(found, resourceVersion)
+}
+
+```
+watch的处理：接收watch的接口作为参数，watch接口对外方法是Stop和Resultchan,前者关闭结果通道，后者获取通道。
+```go
+func (r *Reflector) watchHandler(start time.Time, w watch.Interface, resourceVersion *string, errc chan error, stopCh <-chan struct{}) error {
+	eventCount := 0
+	defer w.Stop() // 关闭watch通道
+
+loop:
+	for {
+		select {
+		case <-stopCh:
+			return errorStopRequested // 收到停止通道的
+		case err := <-errc: // 错误通道
+			return err
+		case event, ok := <-w.ResultChan(): // 从resultChan通道中获取事件
+			if !ok { // 通道被关闭
+				break loop // 跳出循环
+			}
+			if event.Type == watch.Error { // 事件类型是ERROR
+				return apierrors.FromObject(event.Object)
+			}
+			if r.expectedType != nil { // 查看reflector是设置了期望获取的资源类型
+				// 这是在判断期待的类型和监听到的事件类型是否一致
+				if e, a := r.expectedType, reflect.TypeOf(event.Object); e != a {
+					utilruntime.HandleError(fmt.Errorf("%s: expected type %v, but watch event object had type %v", r.name, e, a))
+					continue
+				}
+			}
+			if r.expectedGVK != nil {
+				// GVK是否一致
+				if e, a := *r.expectedGVK, event.Object.GetObjectKind().GroupVersionKind(); e != a {
+					utilruntime.HandleError(fmt.Errorf("%s: expected gvk %v, but watch event object had gvk %v", r.name, e, a))
+					continue
+				}
+			}
+			meta, err := meta.Accessor(event.Object)
+			if err != nil {
+				utilruntime.HandleError(fmt.Errorf("%s: unable to understand watch event %#v", r.name, event))
+				continue
+			}
+			newResourceVersion := meta.GetResourceVersion()
+			switch event.Type { // 根据事件类型，对delta队列进行增删改操作
+			case watch.Added: // 创建事件
+				err := r.store.Add(event.Object) // 将该事件放入deltalFIFO
+				if err != nil {
+					utilruntime.HandleError(fmt.Errorf("%s: unable to add watch event object (%#v) to store: %v", r.name, event.Object, err))
+				}
+			case watch.Modified:
+				err := r.store.Update(event.Object) // 将该事件放入deltalFIFO
+				if err != nil {
+					utilruntime.HandleError(fmt.Errorf("%s: unable to update watch event object (%#v) to store: %v", r.name, event.Object, err))
+				}
+			case watch.Deleted:
+				err := r.store.Delete(event.Object) // 将该事件放入deltalFIFO
+				if err != nil {
+					utilruntime.HandleError(fmt.Errorf("%s: unable to delete watch event object (%#v) from store: %v", r.name, event.Object, err))
+				}
+			case watch.Bookmark: // 意思是”表示监听已在此处同步，只需更新
+			default:
+				utilruntime.HandleError(fmt.Errorf("%s: unable to understand watch event %#v", r.name, event))
+			}
+			*resourceVersion = newResourceVersion
+			r.setLastSyncResourceVersion(newResourceVersion)
+			eventCount++
+		}
+	}
+
+	watchDuration := r.clock.Since(start)
+	if watchDuration < 1*time.Second && eventCount == 0 {
+		return fmt.Errorf("very short watch: %s: Unexpected watch close - watch lasted less than a second and no items received", r.name)
+	}
+	klog.V(4).Infof("%s: Watch close - %v total %v items received", r.name, r.expectedTypeName, eventCount)
+	return nil
+}
 
 ```
 
