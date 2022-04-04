@@ -32,10 +32,58 @@ Informer 是 client-go 中的核心工具包，已经被 kubernetes 中众多组
 ![](.14_informer_images/informer_process1.png)
 各个组件包括：
 
-- Reflector：用于监控（watch）指定的资源，当监控的资源发生变化时，触发相应的变更事件。并将资源对象存放到本地缓存DeltaFIFO中
+- Reflector：用于监控（watch）指定的资源，当监控的资源发生变化时，触发相应的变更事件,例如Add事件、Update事件和Delete事件。并将资源对象存放到本地缓存DeltaFIFO中
+```go
+type Reflector struct {
+	// 名称. By default it will be a file:line if possible.
+	name string
+
+	// The name of the type we expect to place in the store. The name
+	// will be the stringification of expectedGVK if provided, and the
+	// stringification of expectedType otherwise. It is for display
+	// only, and should not be used for parsing or comparison.
+	//  期待的事件类型名称，用于判断和监控到的事件是否一致
+	expectedTypeName string
+	// An example object of the type we expect to place in the store.
+	// Only the type needs to be right, except that when that is
+	// `unstructured.Unstructured` the object's `"apiVersion"` and
+	// `"kind"` must also be right.
+	// 期待事件类型，用于判断和监控到的事件是否一致
+	expectedType reflect.Type
+	// The GVK of the object we expect to place in the store if unstructured.
+	expectedGVK *schema.GroupVersionKind
+	// /deltalFIFO队列还是Indexer
+	store Store
+	// 封装list 和 watch接口的实例
+	listerWatcher ListerWatcher
+
+	// 退避管理器
+	backoffManager wait.BackoffManager
+
+	// 重新同步的间隔
+	resyncPeriod time.Duration
+	//  标记是否开启重新同步
+	ShouldResync func() bool
+	// clock allows tests to manipulate time
+	clock clock.Clock
+	// list的时候是否需要分页
+	paginatedResult bool
+	// 上一次同步的资源版本
+	lastSyncResourceVersion string
+	// 上一次同步资源不可用状态
+	isLastSyncResourceVersionUnavailable bool
+	// 上一次同步资源版本的读写锁
+	lastSyncResourceVersionMutex sync.RWMutex
+	// 页大小
+	WatchListPageSize int64
+	//  watch接口的错误处理
+	watchErrorHandler WatchErrorHandler
+}
+
+```
 - DeltaFIFO：对资源对象的的操作类型进行队列的基本操作
   - FIFO：先进先出队列，提供资源对象的增删改查等操作
-  - Dealta：资源对象存储，可以保存资源对象的操作类型。如：添加操作类型、更新操作类型、删除操作类型、同步操作类型
+  - Delta：资源对象存储，可以保存资源对象的操作类型。如：添加操作类型、更新操作类型、删除操作类型、同步操作类型
 - Indexer：存储资源对象，并自带索引功能的本地存储。
   - Reflect从DeltaFIFO中将消费出来的资源对象存储至Indexer
   - Indexer中的数据与Etcd完全一致，client-go可以从本地读取，减轻etcd和api-server的压力
@@ -214,7 +262,288 @@ DeltaFIFO 是一个生产者-消费者的队列，生产者是 Reflector，消�
 从架构图上可以看出 DeltaFIFO 的数据来源为 Reflector，通过 Pop 操作消费数据，
 消费的数据一方面存储到 Indexer 中，另一方面可以通过 Informer 的 handler 进行处理，Informer 的 handler 处理的数据需要与存储在 Indexer 中的数据匹配。
 
+设计FIFO队列:首先有2个Interface接口叫Store和Queue，Queue中包含了Store，而DeltaFIFO和FIFO都是queue接口的实现
+```go
+// Store接口
+type Store interface {
+	Add(obj interface{}) error
+	Update(obj interface{}) error
+	Delete(obj interface{}) error
+	List() []interface{}
+	ListKeys() []string
+	Get(obj interface{}) (item interface{}, exists bool, err error)
+	GetByKey(key string) (item interface{}, exists bool, err error)
+	Replace([]interface{}, string) error // 用于在List-watch机制中，从api-server那边list完后，要将对象数据放入DeltaFIFO队列
+	Resync() error // 用于定时同步，以免数据不一致
+}
+
+//Queue接口
+type Queue interface {
+	Store
+	Pop(PopProcessFunc) (interface{}, error)
+	AddIfNotPresent(interface{}) error
+	HasSynced() bool
+	Close()
+}
+```
+
+结构体FIFO实现
+```go
+type FIFO struct { // store 接口的实现
+	lock sync.RWMutex // 读写锁 针对整个对象
+	cond sync.Cond // 条件变量
+	items map[string]interface{} // 存储key到元素对象的Map 
+	queue []string // 队列索引，是个数组 保证有序
+	// 如果已经填充了Replace（）插入的第一批项目，或者首先调用了Delete / Add / Update，则populated为true。
+	populated bool
+	// 是第一次调用Replace（）插入的项目数
+	initialPopulationCount int
+	keyFunc KeyFunc //keyFunc是个对 对象的hash函数，获取对象Id
+	closed bool // 队列是否关闭
+}
+```
+初始化
+```go
+func NewFIFO(keyFunc KeyFunc) *FIFO { // 新建FIFO队列时，只需传入keyFunc就行了，keyFunc就是对象的Hash函数，计算对象唯一的对象键用的
+	f := &FIFO{
+		items:   map[string]interface{}{},
+		queue:   []string{},
+		keyFunc: keyFunc,
+	}
+	f.cond.L = &f.lock
+	return f
+}
+
+```
+数据操作
+```go
+// 增加
+func (f *FIFO) Add(obj interface{}) error {
+	id, err := f.keyFunc(obj) // 拿到对象ID
+	if err != nil {
+		return KeyError{obj, err}
+	}
+	f.lock.Lock() // 加锁
+	defer f.lock.Unlock()
+	f.populated = true // 设置标志位
+	if _, exists := f.items[id]; !exists { // 判断是否已存在
+		f.queue = append(f.queue, id) // 不存在，就放入queue数组的最后
+	}
+	f.items[id] = obj // 放入Map.，万一是重复的就是直接替换了
+	f.cond.Broadcast() // 广播元素入队了，等在在pop操作的协程可以取元素了
+	return nil
+}
+
+// 更新
+func (f *FIFO) Update(obj interface{}) error {
+  return f.Add(obj)
+}
+
+// 删除
+func (f *FIFO) Delete(obj interface{}) error {
+	id, err := f.keyFunc(obj)// 获取对象的Key
+	if err != nil {
+		return KeyError{obj, err}
+	}
+	f.lock.Lock() // 加锁
+	defer f.lock.Unlock()
+	f.populated = true
+	delete(f.items, id) // 直接从map中删除元素，那数组中的索引怎么办，pop取元素的时候有额外处理
+	return err
+}
+
+// 获取对象
+func (f *FIFO) Get(obj interface{}) (item interface{}, exists bool, err error) {
+	key, err := f.keyFunc(obj) // 获取对象Key
+	if err != nil {
+		return nil, false, KeyError{obj, err}
+	}
+	return f.GetByKey(key)// 通过Key检查对象存不存在队列
+}
+func (f *FIFO) GetByKey(key string) (item interface{}, exists bool, err error) {
+	f.lock.RLock()
+	defer f.lock.RUnlock()
+	item, exists = f.items[key] // 从items中拿数据
+	return item, exists, nil
+}
+
+```
+Pop元素
+```go
+func (f *FIFO) Pop(process PopProcessFunc) (interface{}, error) {
+	f.lock.Lock()
+	defer f.lock.Unlock()
+	for { // 一个循环，只在取到元素或者队列关闭时退出
+		for len(f.queue) == 0 {// 队列为空时，就一直等待
+			if f.closed { // 队列关闭，就退出循环
+				return nil, ErrFIFOClosed
+			}
+
+			f.cond.Wait() // 否则一直等待，直到广播通知队列有元素了；阻塞
+		}
+		id := f.queue[0] // 拿出队列首位
+		f.queue = f.queue[1:] // 队首元素出队后修正有序数组
+		if f.initialPopulationCount > 0 {
+			f.initialPopulationCount-- // 队列元素总数计数
+		}
+		item, ok := f.items[id]
+		if !ok {// 有可能已经被删除了，请见delete 函数，之前被删除的，就不管了
+			continue
+		}
+		delete(f.items, id) // 从Map中删除
+		err := process(item) // 用传进来处理函数process来处理出队的元素，要是处理失败，就再塞回队列
+		if e, ok := err.(ErrRequeue); ok {
+			f.addIfNotPresent(id, item)
+			err = e.Err
+		}
+		return item, err
+	}
+}
+
+```
+
 需要注意的是，Pop 的单位是一个 Deltas，而不是 Delta。
+
+
+替换队列元素Replace :传入参数是list和资源版本
+```go
+func (f *FIFO) Replace(list []interface{}, resourceVersion string) error {
+	items := make(map[string]interface{}, len(list)) // 初始化一个map充当之后的队列
+	for _, item := range list { // 遍历list
+		key, err := f.keyFunc(item) // 获取对象的Key
+		if err != nil {
+			return KeyError{item, err}
+		}
+		items[key] = item // 放入items中
+	}
+
+	f.lock.Lock() // 获取锁
+	defer f.lock.Unlock()
+
+	if !f.populated { // 未进行replace/add/update等操作
+		f.populated = true
+		f.initialPopulationCount = len(items)
+	}
+
+	f.items = items // 替换队列的所有元素
+	f.queue = f.queue[:0] // 删除队列的之前的排序
+	for id := range items {
+		f.queue = append(f.queue, id) // 重新录入排序
+	}
+	if len(f.queue) > 0 {// 排序数组有数据
+		f.cond.Broadcast()// 广播
+	}
+	return nil
+}
+
+```
+重新同步Resync:f.items中的Key可能和f.queue中所包含的Key不一致，所以需要重新同步，让两者在key上保持一致。网上的说法是保证不丢事件、数据同步并能及时响应事件
+```go
+func (f *FIFO) Resync() error {
+	f.lock.Lock() // 获取锁
+	defer f.lock.Unlock()
+
+	inQueue := sets.NewString() // 初始化是个Map map[string]Empty
+	for _, id := range f.queue { // 遍历索引数组
+		inQueue.Insert(id) // inQueue复制f.queue
+	}
+	for id := range f.items { // 遍历队列元素
+		if !inQueue.Has(id) { // items map中的可以在queue数组中不存在，就添加进去。
+			f.queue = append(f.queue, id) // 补足f.queue缺失的Id
+		}
+	}
+	if len(f.queue) > 0 {
+		f.cond.Broadcast() // 广播
+	}
+	return nil
+}
+
+```
+
+### DeltaFIFO
+FIFO的意思是先入先出，而Delta的意思是增量。合起来，DeltaFIFO可意为增量先入先出队列，就是该队列存储的数据是增量数据
+```go
+type DeltaFIFO struct {
+	lock sync.RWMutex // 读写锁，方便读操作的数据读取，锁粒度更细
+	cond sync.Cond // 条件变量，用于通知和阻塞
+	items map[string]Deltas //objectkey映射对象的增量数组
+	queue []string // 保证有序，里面会放入ObjectKey.从队列取数据时先从这个数组中拿key，再去items中拿对象
+	populated bool // 标记队列是否add/update/delete/replace过了。用处不明
+	initialPopulationCount int // 第一次replace的元素数量，用处不明
+	keyFunc KeyFunc // 相当于Hash函数，从一个object中计算出唯一的key
+	knownObjects KeyListerGetter // knownObjects是新建队列时传进来的，并在delete, replace,resync中被使用。是Indexer，是本地存储，就是list-watch后的对象数据要放入DeltaFIFO队列中，reflector会将数据从队列中取出并放入本地存储Indexer中。之后要是用户想获取哪个对象，就直接从本地存储Indexer中获取就行了，不用专门去请求api-server了
+	closed bool // 标记该队列是否关闭
+	emitDeltaTypeReplaced bool // Replace() 是否调用过的标记
+}
+
+```
+初始化
+```go
+// 需要传入类似哈希函数的KeyFunc和KeyListerGetter，KeyListerGetter是个Indexer本地存储。后面的文章会讲
+func NewDeltaFIFO(keyFunc KeyFunc, knownObjects KeyListerGetter) *DeltaFIFO {
+	return NewDeltaFIFOWithOptions(DeltaFIFOOptions{ // 调用了下面这个函数
+		KeyFunction:  keyFunc,
+		KnownObjects: knownObjects,
+	})
+}
+
+func NewDeltaFIFOWithOptions(opts DeltaFIFOOptions) *DeltaFIFO {
+	if opts.KeyFunction == nil {
+		opts.KeyFunction = MetaNamespaceKeyFunc
+	}
+    // 开始封装DeltaFIFO
+	f := &DeltaFIFO{
+		items:        map[string]Deltas{},
+		queue:        []string{},
+		keyFunc:      opts.KeyFunction,
+		knownObjects: opts.KnownObjects,
+
+		emitDeltaTypeReplaced: opts.EmitDeltaTypeReplaced,
+	}
+	f.cond.L = &f.lock // 设置条件变量
+	return f
+}
+
+```
+
+增加
+```go
+func (f *DeltaFIFO) Add(obj interface{}) error {
+	f.lock.Lock() // 获取写锁
+	defer f.lock.Unlock() // 释放写锁
+	f.populated = true // 设置标记位
+	return f.queueActionLocked(Added, obj)
+}
+func (f *DeltaFIFO) queueActionLocked(actionType DeltaType, obj interface{}) error {
+	id, err := f.KeyOf(obj) // 获取对象的唯一Key
+	if err != nil {
+		return KeyError{obj, err}
+	}
+
+	newDeltas := append(f.items[id], Delta{actionType, obj}) // 将新的对象增量操作放入Items中对象的增量数组中 
+	newDeltas = dedupDeltas(newDeltas) // 返回修正后的增量数组，数组中的最后两个增量操作可能时一样的，这边需要删除重复的一个，一般重复的操作都是删除操作
+
+	if len(newDeltas) > 0 {
+		if _, exists := f.items[id]; !exists {
+			f.queue = append(f.queue, id) // 入队
+		}
+		f.items[id] = newDeltas // 放好map
+		f.cond.Broadcast() // 广播通知，可能有协程在等待队列的元素，所以这边需要广播通知
+	} else { // 一般不会发生这种情况
+		delete(f.items, id) // 删除该Key
+	}
+	return nil
+}
+
+// 更新
+func (f *DeltaFIFO) Update(obj interface{}) error {
+	f.lock.Lock() // 上写锁
+	defer f.lock.Unlock() // 解锁
+	f.populated = true
+	return f.queueActionLocked(Updated, obj)
+}
+
+```
 
 ### Delta
 ```go
@@ -225,7 +554,7 @@ type Delta struct {
 }
 ```
 ```go
-// DeltaType 是变化类型 (添加、删除等)
+// DeltaType 是增量类型 (添加、删除等)
 type DeltaType string
 
 const (
@@ -236,6 +565,8 @@ const (
 )
 ```
 Delta 是 DeltaFIFO 存储的类型，它记录了对象发生了什么变化以及变化后对象的状态。如果变更是删除，它会记录对象删除之前的最终状态。
+
+
 
 ### Deltas
 ```go
@@ -279,6 +610,40 @@ type ResourceEventHandler interface {
 ```
 当事件到来时，Informer根据事件的类型（添加/更新/删除资源对象）进行判断，将事件分发给绑定的EventHandler，
 即分别调用对应的handle方法（OnAdd/OnUpdate/OnDelete），最后EventHandler将事件发送给Workqueue。
+
+### reflector的初始化
+```go
+// 传入listwatcher对象，期待类型，deltafifo，重新同步周期
+func NewReflector(lw ListerWatcher, expectedType interface{}, store Store, resyncPeriod time.Duration) *Reflector {
+    // 调用的下面的新建方法
+	return NewNamedReflector(naming.GetNameFromCallsite(internalPackages...), lw, expectedType, store, resyncPeriod)
+}
+
+// 与上一个初始化的区别在于可以摄入Name
+func NewNamedReflector(name string, lw ListerWatcher, expectedType interface{}, store Store, resyncPeriod time.Duration) *Reflector {
+	realClock := &clock.RealClock{}
+	r := &Reflector{
+		name:          name, // 设置名字
+		listerWatcher: lw, // listWatcher
+		store:         store, // 本地存储
+		backoffManager:    wait.NewExponentialBackoffManager(800*time.Millisecond, 30*time.Second, 2*time.Minute, 2.0, 1.0, realClock), // 退避管理器
+		resyncPeriod:      resyncPeriod, // 重新同步周期
+		clock:             realClock, // 时钟
+		watchErrorHandler: WatchErrorHandler(DefaultWatchErrorHandler), // 错误处理器
+	}
+	r.setExpectedType(expectedType) // 设置期待类型
+	return r
+}
+
+// 新建Indexer和reflector。
+func NewNamespaceKeyedIndexerAndReflector(lw ListerWatcher, expectedType interface{}, resyncPeriod time.Duration) (indexer Indexer, reflector *Reflector) {
+    // index指定KeyFunc
+	indexer = NewIndexer(MetaNamespaceKeyFunc, Indexers{NamespaceIndex: MetaNamespaceIndexFunc})
+	reflector = NewReflector(lw, expectedType, indexer, resyncPeriod) // 调用第一个函数
+	return indexer, reflector
+}
+
+```
 
 
 ### Indexer
