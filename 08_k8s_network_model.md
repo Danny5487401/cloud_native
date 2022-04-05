@@ -1,5 +1,5 @@
 # k8s基本网络模型
-
+![](img/.08_k8s_network_model_images/k8s_network_model2.png)
 分类：根据是否寄生在 Host 网络之上可以把容器网络方案大体分为 Underlay/Overlay 两大派别
     
 * Underlay 的标准是它与 Host 网络是同层的，从外在可见的一个特征就是它是不是使用了 Host 网络同样的网段、输入输出基础设备、容器的 IP 地址是不是需要与 Host 网络取得协同（来自同一个中心分配或统一划分）。这就是 Underlay；
@@ -55,11 +55,11 @@ docker官方并没有提供多主机的容器通信方案，单机网络的模�
 ![](img/.08_k8s_network_model_images/iplink.png)
 放梯子到各自家里
 ![](img/.08_k8s_network_model_images/iplink2.png)
-固定梯子
+固定梯子  
 ![](img/.08_k8s_network_model_images/fix_ladder.png)
-启动设备
+启动设备   
 ![](img/.08_k8s_network_model_images/up_link.png)
-开始拍手
+开始拍手    
 ![](img/.08_k8s_network_model_images/link_communication.png)
 
 方式二：桥
@@ -80,6 +80,18 @@ docker官方并没有提供多主机的容器通信方案，单机网络的模�
 同理去panjinlian家配置
 ![](img/.08_k8s_network_model_images/pjl2wp_ladder.png)
 ![](img/.08_k8s_network_model_images/pjl2wp_link_up.png)
+
+方式三：ipvlan(ip不同，mac相同)-->没有经过数据解封装
+![](img/.08_k8s_network_model_images/ipvlan.png)
+- 查看mac地址，其实net1和net2的mac地址一样的。
+- 子接口172.12.1.5和子接口172.12.1.6通的
+- 子接口172.12.1.5和父接口172.12.1.30不通的
+![](img/.08_k8s_network_model_images/child_n_parent_info.png)
+- 子接口172.12.1.5和网关172.12.1.2通的
+- 子接口172.12.1.5和电信114.114.114.114不通的
+![](img/.08_k8s_network_model_images/without_route_114.png)
+![](img/.08_k8s_network_model_images/add_route_114.png)
+
 
 
 ### Pod 与 Netns 的关系
