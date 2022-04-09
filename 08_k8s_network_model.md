@@ -219,12 +219,7 @@ docker官方并没有提供多主机的容器通信方案，单机网络的模�
 docker端口映射到宿主机会引入端口管理的复杂性
 docker最终被访问的ip和端口，与提供的不一致，引起配置的复杂性
 
-## 分类
-根据是否寄生在 Host 网络之上可以把容器网络方案大体分为 Underlay/Overlay 两大派别
 
-* Underlay 的标准是它与 Host 网络是同层的，从外在可见的一个特征就是它是不是使用了 Host 网络同样的网段、输入输出基础设备、容器的 IP 地址是不是需要与 Host 网络取得协同（来自同一个中心分配或统一划分）。这就是 Underlay；
-
-* Overlay 不一样的地方就在于它并不需要从 Host 网络的 IPM 的管理的组件去申请IP，一般来说，它只需要跟 Host 网络不冲突，这个 IP 可以自由分配的。
 
 ## k8s网络模型
 ![](img/.08_k8s_network_model_images/k8s_network_model_info.png)
