@@ -97,38 +97,50 @@ docker官方并没有提供多主机的容器通信方案，单机网络的模�
 ![](img/.08_k8s_network_model_images/netns_vs_docker_n_k8s.png)
 
 2. 两个netns交流
-方式一：veth
+方式一：veth   
 ![](img/.08_k8s_network_model_images/two_netns.png)
 ![](img/.08_k8s_network_model_images/netns_two.png)
-开始搭建梯子🪜，一边一半
+
+开始搭建梯子🪜，一边一半  
 ![](img/.08_k8s_network_model_images/ladder.png)
-构造梯子veth
+
+构造梯子veth  
 ![](img/.08_k8s_network_model_images/iplink.png)
-放梯子到各自家里
+
+放梯子到各自家里  
 ![](img/.08_k8s_network_model_images/iplink2.png)
-固定梯子  
+
+固定梯子    
 ![](img/.08_k8s_network_model_images/fix_ladder.png)
-启动设备   
+
+启动设备     
 ![](img/.08_k8s_network_model_images/up_link.png)
-开始拍手    
+
+开始拍手     
 ![](img/.08_k8s_network_model_images/link_communication.png)
 
 方式二：桥
 ![](img/.08_k8s_network_model_images/bridge_comm.png)
-建立桥
+
+建立桥  
 ![](img/.08_k8s_network_model_images/add_bridge.png)
-建立梯子到王婆
+
+建立梯子到王婆  
 ![](img/.08_k8s_network_model_images/ladder_bridge.png)
-放梯子到各自家里:注意王婆是master,不是单独的namespace 
+
+放梯子到各自家里:注意王婆是master,不是单独的namespace   
 ![](img/.08_k8s_network_model_images/put_ladder_home.png)
-查看master王婆的信息
+
+查看master王婆的信息  
 ![](img/.08_k8s_network_model_images/master_info.png)
-固定西门庆家的梯子就行
+
+固定西门庆家的梯子就行  
 ![](img/.08_k8s_network_model_images/fix_ladder_xmq.png)
-激活设备(包括王婆的设备ip link set wangpo up)
+
+激活设备(包括王婆的设备ip link set wangpo up)   
 ![](img/.08_k8s_network_model_images/set_link_up1.png)
 
-同理去panjinlian家配置
+同理去panjinlian家配置  
 ![](img/.08_k8s_network_model_images/pjl2wp_ladder.png)
 ![](img/.08_k8s_network_model_images/pjl2wp_link_up.png)
 
@@ -137,9 +149,11 @@ docker官方并没有提供多主机的容器通信方案，单机网络的模�
 - 查看mac地址，其实net1和net2的mac地址一样的。
 - 子接口172.12.1.5和子接口172.12.1.6通的
 - 子接口172.12.1.5和父接口172.12.1.30不通的
+
 ![](img/.08_k8s_network_model_images/child_n_parent_info.png)
 - 子接口172.12.1.5和网关172.12.1.2通的
 - 子接口172.12.1.5和电信114.114.114.114不通的
+
 ![](img/.08_k8s_network_model_images/without_route_114.png)
 ![](img/.08_k8s_network_model_images/add_route_114.png)
 
