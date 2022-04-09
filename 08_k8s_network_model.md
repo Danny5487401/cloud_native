@@ -1,11 +1,53 @@
 # k8s基本网络模型
-
 ![](img/.08_k8s_network_model_images/k8s_network_model2.png)
 分类：根据是否寄生在 Host 网络之上可以把容器网络方案大体分为 Underlay/Overlay 两大派别
     
-* Underlay 的标准是它与 Host 网络是同层的，从外在可见的一个特征就是它是不是使用了 Host 网络同样的网段、输入输出基础设备、容器的 IP 地址是不是需要与 Host 网络取得协同（来自同一个中心分配或统一划分）。这就是 Underlay；
+* Underlay 的标准是它与 Host 网络是同层的，从外在可见的一个特征就是它是不是使用了 Host 网络同样的网段、输入输出基础设备、容器的 IP 地址是不是需要与 Host 网络取得协同（来自同一个中心分配或统一划分）。
 
 * Overlay 不一样的地方就在于它并不需要从 Host 网络的 IPM 的管理的组件去申请IP，一般来说，它只需要跟 Host 网络不冲突，这个 IP 可以自由分配的。
+
+## underlay(对网络比如有bgp能力)
+### 1. 大二层网络（node和pod在同一个网段）
+![](.08_k8s_network_model_images/big_2_network.png)
+- 主要依据：交换机arp广播获取mac地址
+- 背景：pod的Ip在物理世界对于交换机是不认识的，pod1(192.168.1.100)不知道pod2的Ip(192.168.1.101)
+- 流程：
+    1. 需要配置把pod1网关Ip指向node1(192.168.1.200),通过虚拟网线veth连接虚拟网桥bridge流向node1,
+    2. node1的netfilter会因为同网段会进行处理发向交换机,arp给pod2,但是在物理世界不知道pod2虚拟Ip。
+    3. 需要软件定义交换机SDN（Software Defined Network）伪造ARP应答:192.168.1.201的mac地址是Node2，这样可以把消息从node1发给node2。
+    4. node2的netfilter进入内核，然后通过软件本地路由表，192.168.1.201/32使用veth pair进入po2，
+    
+- 特点：pod2创建，要让pod1知道，所以bgp要进行下发,即帮你在多个node之间同步路由表,所以node上要有bgp agent。
+
+### 2. 大三层网络（node和pod在不同一个网段）
+![](.08_k8s_network_model_images/big_3_network.png)
+![](.08_k8s_network_model_images/big_3_network2.png)
+- 应用：calico的bgp模式：Border Gateway Protocol
+- 流程：
+    1. 目标地址172.168.1.x设置网关是node1:192.168.1.100,流量走向node1
+    2. 三层路由表：bgp设置172.168.1.101/32发往网关node2:192.168.1.101,从eth0网口送出
+    3. arp广播192.168.1.101,node2进行arp回答mac地址，交换机没有进行sdn这种行为。
+    4. 过本机路由表192.168.1.101/32发往虚拟网桥bridge172.168.1.x。
+    
+### 扩展：中间不是交换机，是路由器(跨网段,可以跨vpc)
+![](.08_k8s_network_model_images/big_3_network3.png)
+
+## overlay(隧道模式)
+![](.08_k8s_network_model_images/overlay_process1.png)
+- 优点：对物理网络没有要求
+- 缺点：
+    - 封装解包，计算量上升，延迟。
+    - 隧道使payload增加，在mtu固定1500时，增加头部，对应payload值会减少
+    
+- 过程：
+    1. node1路由规则：172.168.1.201/32发往tun0设备，写real ip是192.168.1.101;然后封包src变成192.168.1.100，des变成192.168.1.101，
+    payload是src：172.168.1.200,dst:172.168.1.201,data不变
+    2. 经过交换机或则路由器，node2上的eth0进行解包。
+    3. 经过netfilter进行forward,本地路由表直接通过veth pair发给对应应用,同网段可以没有bridge。
+
+
+
+
 
 
 ## docker的网络方案
@@ -22,7 +64,6 @@ docker官方并没有提供多主机的容器通信方案，单机网络的模�
 - 同一机器内的容器之间可以直接通讯，但是不同机器之间的容器无法通讯
 - 为了跨节点通讯，必须在主机的地址上分配端口，通过端口路由或代理到容器
 - 分配和管理容器特别困难，特别是水平扩展时
-
 
 ## Netns(network namespace)
 需要了解的内容
@@ -107,7 +148,6 @@ docker官方并没有提供多主机的容器通信方案，单机网络的模�
 ### Pod 与 Netns 的关系
 ![](img/.08_k8s_network_model_images/relation_between_pod_and_netns.png)
 
-
 ## 网络设备
 ![](img/.08_k8s_network_model_images/iso_protocol.png)
 1. hub 集线器
@@ -150,7 +190,6 @@ docker官方并没有提供多主机的容器通信方案，单机网络的模�
 ![](img/.08_k8s_network_model_images/static_nat.png)
 ![](img/.08_k8s_network_model_images/pool_nat.png)
 ![](img/.08_k8s_network_model_images/napt.png)
-
 
 ## k8s网络模型的原则
 - 每个pod都拥有唯一个独立的ip地址，称IP-Per-Pod模型
@@ -233,7 +272,7 @@ Flanneld创建一个vxlan设备，从apiserver获取网络元数据，并监视p
 kubelet调用Containered CRI插件以创建容器，而Containered CRI插件调用CNI插件为容器配置网络。
 网络提供商CNI插件调用其他基本CNI插件来配置网络。
 
-## Network Policy
+#### Network Policy
 定义：提供了基于策略的网络控制，用于隔离应用并减少攻击面。他使用标签选择器模拟传统的分段网络，并通过策略控制他们之间的流量和外部的流量。
 注意：在使用network policy之前
     
@@ -270,3 +309,5 @@ Flannel为每个主机提供独立的子网，整个集群的网络信息存储�
 2. hostgw是最简单的backend:
 它的原理非常简单，直接添加路由，将目的主机当做网关，直接路由原始封包。
 例如，我们从etcd中监听到一个EventAdded事件subnet为10.1.15.0/24被分配给主机Public IP 192.168.0.100，hostgw要做的工作就是在本主机上添加一条目的地址为10.1.15.0/24，网关地址为192.168.0.100，输出设备为上文中选择的集群间交互的网卡即可。对于EventRemoved事件，只需删除对应的路由
+
+
