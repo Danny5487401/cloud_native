@@ -71,8 +71,8 @@ docker官方并没有提供多主机的容器通信方案，单机网络的模�
 
 ### 定义
 ![](img/.08_k8s_network_model_images/netns.png)
-![](img/.08_k8s_network_model_images/netns_definition.png)
-网络接口，iptables,路由表
+![](img/.08_k8s_network_model_images/netns_definition.png)   
+网络 由网络接口,iptables,路由表 构成
 
 1. 网卡
 ![](img/.08_k8s_network_model_images/network_card.png)
