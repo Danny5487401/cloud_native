@@ -164,23 +164,26 @@ docker官方并没有提供多主机的容器通信方案，单机网络的模�
 
 ## 网络设备
 ![](img/.08_k8s_network_model_images/iso_protocol.png)
+
 1. hub 集线器
 ![](img/.08_k8s_network_model_images/hub.png)
-特点
+
+特点  
 ![](img/.08_k8s_network_model_images/hub_info.png)
 ![](img/.08_k8s_network_model_images/hub_info2.png)
 ![](img/.08_k8s_network_model_images/hub_info3.png)
 
 
-2. bridge 网桥
+2. bridge 网桥  
 ![](img/.08_k8s_network_model_images/bridge_device.png)
 ![](img/.08_k8s_network_model_images/bridge_device_info.png)
 ![](img/.08_k8s_network_model_images/bridge_device_mechanism.png)
 注意是第二层：mac地址
 
 
-3. switch 交换机
+3. switch 交换机  
 ![](img/.08_k8s_network_model_images/switch_device.png)
+
 这里：可以指二层，有些到三层。
 ![](img/.08_k8s_network_model_images/switch_info1.png)
 ![](img/.08_k8s_network_model_images/switch_info2.png)
@@ -194,12 +197,13 @@ docker官方并没有提供多主机的容器通信方案，单机网络的模�
 ![](img/.08_k8s_network_model_images/dhcp_process1.png)
 
 5. NAT Device
+
 路由器
 ![](img/.08_k8s_network_model_images/route_device.png)
 ![](img/.08_k8s_network_model_images/route_device_info.png)
 ![](img/.08_k8s_network_model_images/nat_translate.png)
 
-类型:最常用napt   
+类型:最常用napt     
 ![](img/.08_k8s_network_model_images/net_class.png)
 ![](img/.08_k8s_network_model_images/static_nat.png)
 ![](img/.08_k8s_network_model_images/pool_nat.png)
