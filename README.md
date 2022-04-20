@@ -24,7 +24,7 @@
 
 ## [第十一章 容器运行时接口Container runtime interface](11_cri.md)
 
-## [第十二章 hpa-Pod自动弹性伸缩](12_hpa.md)
+## [第十二章 scaler自动弹性伸缩](12_scaler.md)
 
 ## [第十三章 kubelet](13_kubelet.md)
 
