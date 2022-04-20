@@ -15,9 +15,7 @@
 
 
 ## 解决
-// /Users/python/Desktop/kubernetes/pkg/controller/podautoscaler/horizontal.go
-```go
-```
+
 1. 限制伸缩的值在最大最小范围之内。（避免超过资源限制）
 
 2. 限制一次伸缩的pod数量和每分钟伸缩的pod数量。（钝化伸缩动作，避免反复横跳）
@@ -206,10 +204,10 @@ CA与云提供商接口以请求更多节点或释放空闲节点。它适用于
 ### CA架构
 CA由以下几个模块组成：
 
-autoscaler：核心模块，负责整体扩缩容功能
-Estimator：负责评估计算扩容节点
-Simulator：负责模拟调度，计算缩容节点
-CA Cloud-Provider：与云交互进行节点的增删操作。
+- autoscaler：核心模块，负责整体扩缩容功能
+- Estimator：负责评估计算扩容节点
+- Simulator：负责模拟调度，计算缩容节点
+- CA Cloud-Provider：与云交互进行节点的增删操作。
 
 ### 什么样的节点不会被CA删除
 - 节点上有pod被PodDisruptionBudget控制器限制。
@@ -223,5 +221,13 @@ CA Cloud-Provider：与云交互进行节点的增删操作。
 HPA（Horizontal Pod Autoscaling）是k8s中pod的水平自动扩展，HPA的操作对象是RC、RS或Deployment对应的Pod，根据观察到的CPU等实际使用量与用户的期望值进行比对，做出是否需要增减实例数量的决策。
 当CPU负载增加，HPA扩容pod，如果此pod因为资源不足无法被调度，则此时CA出马扩容节点。
 当CPU负载减小，HPA减少pod，CA发现有节点资源利用率低甚至已经是空时，CA就会删除此节点
+
+## 源码分析：待补充
+// /Users/python/Desktop/kubernetes/pkg/controller/podautoscaler/horizontal.go
+```go
+```
+
+## 参考链接：
+1. 容器定时伸缩（CronHPA）：https://help.aliyun.com/document_detail/151557.html
 
 
