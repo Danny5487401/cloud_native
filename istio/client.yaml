@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: client
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: client
+  template:
+    metadata:
+      labels:
+        app: client
+    spec:
+      containers:
+        - name: busybox
+          image: busybox
+          imagePullPolicy: IfNotPresent
+# 注意不是bin/bash
+          command: [ "bin/sh", "-c", "sleep 3600" ]

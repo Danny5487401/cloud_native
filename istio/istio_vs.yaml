@@ -1,0 +1,23 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: web-svc-vs
+spec:
+  hosts:
+# virtual service 绑定在这个 web-svc 上面
+# - 使用短域名方式web-svc
+# - 使用全域名方式web-svc.danny-xia.svc.cluster.local
+  - web-svc
+  http:
+  - route:
+    - destination:
+        # route 部分的 destination 字段指定了符合此条件的流量的实际目标地址。
+        # 与虚拟服务的 hosts 不同，destination 的 host 必须是存在于 Istio 服务注册中心的实际目标地址，否则 Envoy 不知道该将请求发送到哪里
+        # 这里是k8s的service服务名
+        host: tomcat-svc
+      # 使用匹配条件您可以按百分比”权重“分发请求。这在 A/B 测试和金丝雀发布中非常有用：
+      weight: 20
+    - destination:
+        host: httpd-svc
+      weight: 80
+
