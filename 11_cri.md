@@ -1,15 +1,42 @@
-# Container Runtime Interface (CRI)
+# Container Runtime Interface 容器运行时接口(CRI)
+本质上就是 Kubernetes 定义的一组与容器运行时进行交互的接口，所以只要实现了这套接口的容器运行时都可以对接到 Kubernetes 平台上来。
 
+不过 Kubernetes 推出 CRI 这套标准的时候还没有现在的统治地位，所以有一些容器运行时可能不会自身就去实现 CRI 接口，于是就有了 shim（垫片）， 
+一个 shim 的职责就是作为适配器将各种容器运行时本身的接口适配到 Kubernetes 的 CRI 接口上，其中 dockershim 就是 Kubernetes 对接 Docker 到 CRI 接口上的一个垫片实现。
+
+## 背景
+在 Kubernetes 早期的时候，当时 Docker 实在是太火了，Kubernetes 当然会先选择支持 Docker，而且是通过硬编码的方式直接调用 Docker API，
+后面随着 Docker 的不断发展以及 Google 的主导，出现了更多容器运行时，
+Kubernetes 为了支持更多更精简的容器运行时，Google 就和红帽主导推出了 CRI 标准，用于将 Kubernetes 平台和特定的容器运行时（当然主要是为了干掉 Docker）解耦
+
+
+## CRI 接口分组
 ![](img/.11_cri_images/cri.png)
-![](img/.11_cri_images/cri_interface.png)
 
 跟容器最相关的一个 Manager 是 Generic Runtime Manager，就是一个通用的运行时管理器。
-我们可以看到目前 dockershim 还是存在于 Kubelet 的代码中的，它是当前性能最稳定的一个容器运行时的实现。
-remote 指的就是 CRI 接口。CRI 接口主要包含两个部分
-* 一个是 CRI Server，即通用的比如说创建、删除容器这样的接口；
-* 另外一个是流式数据的接口 Streaming Server，比如 exec、port-forward 这些流式数据的接口
 
-## 通过 CRI 操作容器的生命周期
+remote 指的就是 CRI 接口。
+
+![](img/.11_cri_images/kubelet_cri_communication.png)
+Kubelet 通过 gRPC 框架与容器运行时或 shim 进行通信，其中 kubelet 作为客户端，CRI shim（也可能是容器运行时本身）作为服务器。
+
+
+CRI 定义的 API(https://github.com/kubernetes/kubernetes/blob/release-1.5/pkg/kubelet/api/v1alpha1/runtime/api.proto) 主要包括两个 gRPC 服务，ImageService 和 RuntimeService
+![](img/.11_cri_images/cri_class.png)
+* 一组是ImageService，主要是容器镜像相关的操作，比如拉取镜像、删除镜像等。
+
+* 另一组是RuntimeService，主要是跟容器相关的操作，比如创建、启动、删除Container、Exec等。
+
+![](img/.11_cri_images/cri_interface.png)
+
+不过这里同样也有一个例外，那就是 Docker，由于 Docker 当时的江湖地位很高，Kubernetes 是直接内置了 dockershim 在 kubelet 中的，所以如果你使用的是 Docker 这种容器运行时的话是不需要单独去安装配置适配器之类的，当然这个举动似乎也麻痹了 Docker 公司。
+不过Kubernetes 社区在2020年7月份 的 1.20 版本就移除 dockershim 方案。
+![](img/.11_cri_images/docker_shim_oci.png)
+
+现在如果我们使用的是 Docker 的话，当我们在 Kubernetes 中创建一个 Pod 的时候，首先就是 kubelet 通过 CRI 接口调用 dockershim，请求创建一个容器，kubelet 可以视作一个简单的 CRI Client, 而 dockershim 就是接收请求的 Server，不过他们都是在 kubelet 内置的。
+
+dockershim 收到请求后, 转化成 Docker Daemon 能识别的请求, 发到 Docker Daemon 上请求创建一个容器，请求到了 Docker Daemon 后续就是 Docker 创建容器的流程了，去调用 containerd，然后创建 containerd-shim 进程，通过该进程去调用 runc 去真正创建容器
+### 1. 通过 CRI 操作容器的生命周期
 ![](img/.11_cri_images/cri_manage_period.png)
 
 流程
@@ -17,7 +44,7 @@ remote 指的就是 CRI 接口。CRI 接口主要包含两个部分
 2. 然后调用 CreatContainer 接口在 Pod 容器的空间创建业务容器；
 3. 再调用 StartContainer 接口启动容器，相对应的销毁容器的接口为 StopContainer 与 RemoveContaine
 
-## CRI streaming 接口
+### 2. CRI streaming 接口
 举例流式接口 exec：
 
 ![](img/.11_cri_images/exec_command.png)
@@ -50,6 +77,7 @@ Containerd 是一个工业级标准的容器运行时（Container Runtime Interf
 ### Containerd结构
 
 ![](img/.11_cri_images/structure_containerd.png)
+![](img/.11_cri_images/containerd_structure1.png)
 
 这里的 Meta services、Runtime service 与 Storage service 都是 containerd 提供的接口。
 它们是通用的容器相关的接口，包括镜像管理、容器运行时管理等。CRI 在这之上包装了一个 gRPC 的服务。
