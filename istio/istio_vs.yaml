@@ -5,9 +5,10 @@ metadata:
 spec:
   hosts:
 # virtual service 绑定在这个 web-svc 上面
-# - 使用短域名方式web-svc
+# - 使用短域名方式web-svc，因为属于同一个namespace,其实ip也是可以的
 # - 使用全域名方式web-svc.danny-xia.svc.cluster.local
   - web-svc
+  # 这里写的是http规则，还可以其他规则
   http:
   - route:
     - destination:
