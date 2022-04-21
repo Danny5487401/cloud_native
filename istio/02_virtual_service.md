@@ -1,14 +1,14 @@
 # 流量管理
-流量管理的本质就是采用合适的策略控制流量的*方向*和*多少*。
+流量管理的本质就是采用合适的策略控制流量的 *方向* 和 *多少*。
 
 ## 流量管理model---经典管理模型 vs  istio模型
-方式一：传统
+1. 方式一：传统   
 ![](.02_virtual_service_images/trafic_model1.png)
 
-方式二：增加个反向代理
+2. 方式二：增加个反向代理
 ![](.02_virtual_service_images/trafic_model2.png)
 
-方式三：istio网格-->微服务交流变成代理的交流
+3. 方式三：istio网格-->微服务交流变成代理的交流
 ![](.02_virtual_service_images/trafic_model3.png)
 ![](.02_virtual_service_images/trafic_model4.png)
 istio流量管理指数据面的流量，不是控制面的流量。
@@ -18,7 +18,7 @@ istio流量管理指数据面的流量，不是控制面的流量。
 - virtual service虚拟服务：流量路由
 - Destination rules目标规则
 - gateways网关：管理入站和出站流量，可以让您指定要进入或离开网格的流量
-- service entries服务入口：配置服务入口允许您管理运行在网格外的服务的流量
+- service entries服务入口：配置服务入口允许您管理运行在网格外的服务的流量,比如baidu.com
 - sidecars
 
 ## 案例
@@ -110,7 +110,7 @@ ratelimit-config                       1      187d
 
 ```
 
-开始注入
+开始注入前的配置准备
 ```shell
 (⎈ |teleport.gllue.com-test:danny-xia)➜  istio git:(feature/istio) ✗ kubectl -n istio-system get configmap istio-sidecar-injector-1-10-2 -o=jsonpath='{.data.config}' > inject-config.yaml
 (⎈ |teleport.gllue.com-test:danny-xia)➜  istio git:(feature/istio) ✗ kubectl -n istio-system get configmap istio-sidecar-injector-1-10-2 -o=jsonpath='{.data.values}' > inject-values.yaml
@@ -165,7 +165,6 @@ hello httpd
 ![](.02_virtual_service_images/istio_essence_of_envoy_n_vs.png)
 nginx + nginx config vs envoy  + virtual service 
 
-
 ## virtual service 语法
 - hosts-->在k8s中是可寻址的目标，除了service,还可以是Ingress
 ![](.02_virtual_service_images/vs_host1.png)
@@ -182,3 +181,12 @@ nginx + nginx config vs envoy  + virtual service
 
 
 
+
+
+## 操作gateway
+1. 获取所有namespace 的gateway
+```shell
+(⎈ |teleport.gllue.com-test:danny-xia)➜  istio git:(feature/istio) kubectl get gw -A                             
+NAMESPACE      NAME                 AGE
+istio-system   danny-gw             674d
+```
