@@ -24,5 +24,18 @@
 
 ## [第十一章 容器运行时接口Container runtime interface](11_cri.md)
 
-## [第十二章 hpa-Pod自动弹性伸缩](12_hpa.md)
+## [第十二章 scaler自动弹性伸缩](12_scaler.md)
 
+## [第十三章 kubelet](13_kubelet.md)
+
+## [第十四章 informer机制](14_informer.md)
+
+## 源码篇
+- [1 wait工具包](01_k8s_util/01_wait/wait_util.md)
+  - [wait.Until使用](01_k8s_util/01_wait/01_util/main.go)
+  - [wait.Group{}](01_k8s_util/01_wait/02_waitGroup/main.go)
+- 2 sets工具包
+  - [判断两个map的key是否重合](01_k8s_util/02_sets/main.go)
+- [3 k8s使用的web框架：go-restful 源码分析](02_k8s_restful/go-restful.md)
+- [4 client-go中rest模块源码分析](01_k8s_util/03_restclient/rest.md)
+  - [4.1 使用restclient与k8s交互](01_k8s_util/03_restclient/main.go)
