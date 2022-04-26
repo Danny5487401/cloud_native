@@ -75,8 +75,6 @@ LeastRequestedPriority：选出资源消耗最小的节点
 CalcuateNodeLabelPriority：通过调用用户注册的策略计算
 BalancedResourceAllocation：选出各项资源使用率最均衡的节点
 
-
-
 ## 2. Node节点的组件
 - kubelet:
   - 负责容器生命周期管理，比如：创建、删除
@@ -84,9 +82,14 @@ BalancedResourceAllocation：选出各项资源使用率最均衡的节点
 
 - kube-proxy
   - 负责为Service提供负载均衡、服务发现
-- Container Runtime
+- Container Runtime容器运行时
   - 容器运行环境
   - 默认是Docker，同时还支持其他容器引擎
+  
+
+## 3. 插件（Addons）
+插件使用 Kubernetes 资源（DaemonSet、 Deployment等）实现集群功能。 因为这些插件提供集群级别的功能，插件中命名空间域的资源属于 kube-system 命名空间
+
 
 ## Pod
 ![](img/.01_basis_idea/pod.png)
