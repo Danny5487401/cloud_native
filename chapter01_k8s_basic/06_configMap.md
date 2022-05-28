@@ -10,16 +10,16 @@
 又或者确认一下网络是不是联通的？那么这些其实就是一些前置的校验。
     
 ## Pod的配置管理
-![](img/.06_configMap_images/pod_config_management.png)
+![](../img/.06_configMap_images/pod_config_management.png)
 
 ## ConfigMap
-![](img/.06_configMap_images/configMap.png)
+![](../img/.06_configMap_images/configMap.png)
 主要是管理一些可变配置信息，比如说我们应用的一些配置文件，或者说它里面的一些环境变量，或者一些命令行参数。
 
 好处在于它可以让一些可变配置和容器镜像进行解耦，这样也保证了容器的可移植性。
 
 ### configMap使用
-![](img/.06_configMap_images/configMap_used_in_pod.png)
+![](../img/.06_configMap_images/configMap_used_in_pod.png)
     
     *第一种是环境变量。环境变量的话通过 valueFrom，然后 ConfigMapKeyRef 这个字段，下面的 name 是指定 ConfigMap 名，key 是 ConfigMap.data 里面的 key。
     这样的话，在 busybox 容器启动后容器中执行 env 将看到一个 SPECIAL_LEVEL_KEY 环境变量；
@@ -44,7 +44,7 @@
     比如说通过用命令行 kubectl 来创建的 pod，肯定是可以使用 ConfigMap 的，但其他方式创建的 pod，比如说 kubelet 通过 manifest 创建的 static pod，它是不能使用 ConfigMap 的
 
 ## Secret
-![](img/.06_configMap_images/secret.png)
+![](../img/.06_configMap_images/secret.png)
 Secret 是一个主要用来存储密码 token 等一些敏感信息的资源对象。其中，敏感信息是采用 base-64 编码保存起来的.
 Secret 类型种类比较多，下面列了常用的四种类型：
 
@@ -54,7 +54,7 @@ Secret 类型种类比较多，下面列了常用的四种类型：
     第四种是 bootstrap.token，是用于节点接入集群校验用的 Secret
 
 ### 创建
-![](img/.06_configMap_images/secret_making.png)
+![](../img/.06_configMap_images/secret_making.png)
 有两种创建方式：
 
 系统创建：比如 K8s 为每一个 namespace 的默认用户（default ServiceAccount）创建 Secret；
@@ -66,10 +66,10 @@ Secret 类型种类比较多，下面列了常用的四种类型：
 另外一个我们指定键值对，我们 type 没有指定，默认是 Opaque。键值对是 key:value 的形式，其中对 value 内容进行 base64 加密。创建 Secret 就是这么一个情况。
 
 ### secret使用
-![](img/.06_configMap_images/secret_application.png)
+![](../img/.06_configMap_images/secret_application.png)
 它主要是被 pod 来使用，一般是通过 volume 形式挂载到容器里指定的目录，然后容器里的业务进程再到目录下读取 Secret 来进行使用。另外在需要访问私有镜像仓库时，也是通过引用 Secret 来实现。
 #### 使用私有镜像
-![](img/.06_configMap_images/private_image.png)
+![](../img/.06_configMap_images/private_image.png)
 
 注意⚠️
 
@@ -85,17 +85,17 @@ Secret 类型种类比较多，下面列了常用的四种类型：
 
 ## ServiceAccount
 ServiceAccount 首先是用于解决 pod 在集群里面的身份认证问题，身份认证信息是存在于 Secret 里面。
-![](img/.06_configMap_images/service_account.png)
+![](../img/.06_configMap_images/service_account.png)
 
     先看一下上面的左侧截图，可以看到最下面的红框里，有一个 Secret 字段，它指定 ServiceAccount 用哪一个 Secret，这个是 K8s 自动为 ServiceAccount 加上的。
     然后再来看一下上图中的右侧截图，它对应的 Secret 的 data 里有两块数据，一个是 ca.crt，一个是 token。ca.crt 用于对服务端的校验，token 用于 Pod 的身份认证，它们都是用 base64 编码过的。
     然后可以看到 metadata 即元信息里，其实是有关联 ServiceAccount 信息的（这个 secret 被哪个 ServiceAccount 使用）。最后我们注意一下 type，这个就是 service-account-token 这种类型
 实现原理
-![](img/.06_configMap_images/service_account_principle.png)
+![](../img/.06_configMap_images/service_account_principle.png)
 
 
 ## 资源配置管理
-![](img/.06_configMap_images/resource_management.png)
+![](../img/.06_configMap_images/resource_management.png)
 Pod 服务质量 (QoS) 配置
     
     根据 CPU 对容器内存资源的需求，我们对 pod 的服务质量进行一个分类，分别是 Guaranteed、Burstable 和 BestEffort。
@@ -106,7 +106,7 @@ Pod 服务质量 (QoS) 配置
 
 ## SecurityContext
 
-![](img/.06_configMap_images/security_context.png)
+![](../img/.06_configMap_images/security_context.png)
 SecurityContext 主要是用于限制容器的一个行为，它能保证系统和其他容器的安全。
 这一块的能力不是 Kubernetes 或者容器 runtime 本身的能力，而是 Kubernetes 和 runtime 通过用户的配置，最后下传到内核里，
 再通过内核的机制让 SecurityContext 来生效。所以这里讲的内容，会比较简单或者说比较抽象一点。
@@ -132,7 +132,7 @@ SecurityContext 主要分为三个级别：
 
 
 ## initContainer
-![](img/.06_configMap_images/initContainer.png)
+![](../img/.06_configMap_images/initContainer.png)
 首先介绍 InitContainer 和普通 container 的区别，有以下三点内容：
 
     * InitContainer 首先会比普通 container 先启动，并且直到所有的 InitContainer 执行成功后，普通 container 才会被启动；

@@ -3,13 +3,13 @@
 一个Kubernetes的Service是一种抽象，它定义了一组Pods的逻辑集合和一个用于访问它们的策略 - 有的时候被称之为微服务
 
 ## Service：Kubernetes 中的服务返现与负载均衡
-![](img/.09_service_images/service.png)
+![](../img/.09_service_images/service.png)
 K8s 对接了另外一组 pod，即可以通过 K8s Service 的方式去负载均衡到一组 pod 上面去，这样相当于解决了前面所说的复发性问题，
 或者提供了统一的访问入口去做服务发现，然后又可以给外部网络访问，解决不同的 pod 之间的访问，提供统一的访问地址
 
 
 ## 使用yaml格式
-![](img/.09_service_images/service_yaml.png)
+![](../img/.09_service_images/service_yaml.png)
 
 声明了一个名叫 my-service 的一个 K8s Service，它有一个 app:my-service 的 label，它选择了 app:MyApp 这样一个 label 的 pod 作为它的后端
 
@@ -17,7 +17,7 @@ K8s 对接了另外一组 pod，即可以通过 K8s Service 的方式去负载�
 就是只要访问到这个 service 80 端口的都会负载均衡到后端 app：MyApp 这种 label 的 pod 的 9376 端口
 
 创建后查看service
-![](img/.09_service_images/describe_svc.png)
+![](../img/.09_service_images/describe_svc.png)
 
 这个 IP 地址就是 service 的 IP 地址，这个 IP 地址在集群里面可以被其它 pod 所访问，相当于通过这个 IP 地址提供了统一的一个 pod 的访问入口，以及服务发现
 
@@ -26,27 +26,27 @@ Endpoints 的属性，就是我们通过 Endpoints 可以看到：通过前面�
 ## 集群内访问 Service
 三种方式
 
-![](img/.09_service_images/pod_visit_service_ip.png)
+![](../img/.09_service_images/pod_visit_service_ip.png)
 
 1. 首先我们可以通过 service 的虚拟 IP 去访问，比如说刚创建的 my-service 这个服务，通过 kubectl get svc 或者 kubectl discribe service 都可以看到它的虚拟 IP 地址是 10.1.13.211，端口是 80，
 然后就可以通过这个虚拟 IP 及端口在 pod 里面直接访问到这个 service 的地址。
      
 
-![](img/.09_service_images/pod_visit_service_name.png)
+![](../img/.09_service_images/pod_visit_service_name.png)
 2. 第二种方式直接访问服务名，依靠 DNS 解析，就是同一个 namespace 里 pod 可以直接通过 service 的名字去访问到刚才所声明的这个 service。
     不同的 namespace 里面，我们可以通过 service 名字加“.”，然后加 service 所在的哪个 namespace 去访问这个 service，
     例如我们直接用 curl 去访问，就是 my-service:80 就可以访问到这个 service。
      
 
-![](img/.09_service_images/pod_env.png)
-![](img/.09_service_images/pod_visit_service_by_env.png)
+![](../img/.09_service_images/pod_env.png)
+![](../img/.09_service_images/pod_visit_service_by_env.png)
 3. 第三种是通过环境变量访问，在同一个 namespace 里的 pod 启动时，K8s 会把 service 的一些 IP 地址、端口，以及一些简单的配置，
 通过环境变量的方式放到 K8s 的 pod 里面。在 K8s pod 的容器启动之后，通过读取系统的环境变量比读取到 namespace 里面其他 service 配置的一个地址，
 或者是它的端口号等等。比如在集群的某一个 pod 里面，可以直接通过 curl $ 取到一个环境变量的值，比如取到 MY_SERVICE_SERVICE_HOST 就是它的一个 IP 地址，
 MY_SERVICE 就是刚才我们声明的 MY_SERVICE，SERVICE_PORT 就是它的端口号，这样也可以请求到集群里面的 MY_SERVICE 这个 service
     
 ### Headless Service
-![](img/.09_service_images/headless_svc.png)  
+![](../img/.09_service_images/headless_svc.png)  
 
 service 有一个特别的形态就是 Headless Service。service 创建的时候可以指定 clusterIP:None，告诉 K8s 说我不需要 clusterIP（就是刚才所说的集群里面的一个虚拟 IP），
 然后 K8s 就不会分配给这个 service 一个虚拟 IP 地址，它没有虚拟 IP 地址怎么做到负载均衡以及统一的访问入口呢？
@@ -61,7 +61,7 @@ service 有一个特别的形态就是 Headless Service。service 创建的时�
 ## 向集群外暴露 Service
 方式：一个是 NodePort，一个是 LoadBalancer
 
-![](img/.09_service_images/service_node_port.png)
+![](../img/.09_service_images/service_node_port.png)
 ```yaml
 apiVersion: v1
 kind: Service
@@ -77,13 +77,13 @@ spec:
     run: pod-python
   type: NodePort
 ```
-![](img/.09_service_images/service_node_port2.png)
+![](../img/.09_service_images/service_node_port2.png)
 1. NodePort 的方式就是在集群的 node 上面（即集群的节点的宿主机上面）去暴露节点上的一个端口，这样相当于在节点的一个端口上面访问到之后就会再去做一层转发，
     转发到虚拟的 IP 地址上面，就是刚刚宿主机上面 service 虚拟 IP 地址。此时我们可以通过http://4.4.4.1:30080或http://4.4.4.2:30080 对pod-python访问。该端口有一定的范围，比如默认Kubernetes 控制平面将在--service-node-port-range标志指定的范围内分配端口（默认值：30000-32767）。
   
 
 
-![](img/.09_service_images/load_balancer.png)
+![](../img/.09_service_images/load_balancer.png)
 
 2. LoadBalancer 类型就是在 NodePort 上面又做了一层转换，刚才所说的 NodePort 其实是集群里面每个节点上面一个端口，LoadBalancer 是在所有的节点前又挂一个负载均衡。
     比如在阿里云上挂一个 SLB，这个负载均衡会提供一个统一的入口，并把所有它接触到的流量负载均衡到每一个集群节点的 node pod 上面去。然后 node pod 再转化成 ClusterIP，去访问到实际的 pod 上面。
@@ -103,10 +103,10 @@ spec:
     run: pod-python
   type: LoadBalancer
 ```    
-![](img/.09_service_images/external_ip.png)
+![](../img/.09_service_images/external_ip.png)
     
 ##  架构设计
-![](img/.09_service_images/structure.png)
+![](../img/.09_service_images/structure.png)
 
 k8s 分为 master 节点和 worker 节点：
      

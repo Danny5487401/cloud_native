@@ -1,5 +1,5 @@
 # Kubernetes架构
-![](img/.01_basis_idea/kube_structure.png)
+![](../img/.01_basis_idea/kube_structure.png)
 ![](.01_kube_structure_n_basic_idea_images/kube_structure1.png)
 
 数据流转图
@@ -89,7 +89,7 @@ BalancedResourceAllocation：选出各项资源使用率最均衡的节点
   - 默认是Docker，同时还支持其他容器引擎
 
 ## Pod
-![](img/.01_basis_idea/pod.png)
+![](../img/.01_basis_idea/pod.png)
 - Pod是k8s中最重要最基本的资源
 - pod是在容器之外又封装的一层概念
 - pod是容器调度的基本单元（不是docker容器）
@@ -97,10 +97,10 @@ BalancedResourceAllocation：选出各项资源使用率最均衡的节点
 - 每个pod有唯一的ip，pod内的容器可通过localhost通讯
 
 ## Volume
-![](img/.01_basis_idea/volume.png)
+![](../img/.01_basis_idea/volume.png)
 
 ## deployment
-![](img/.01_basis_idea/deployment.png)
+![](../img/.01_basis_idea/deployment.png)
 - 实现Pod自动编排：创建、删除、扩容、缩容
 - 通过replicas控制pod数量，template控制要创建的pod的模板
 ```yaml
@@ -124,7 +124,7 @@ spec:
 ```
 
 ## service
-![](img/.01_basis_idea/service.png)
+![](../img/.01_basis_idea/service.png)
 - k8s里最核心的资源之一，类似微服务架构中的“微服务”
 - 前端应用通过入口地址访问服务，服务通过label对接到后端的pod，即使pod的ip变了
 - kube-proxy负责把service请求转发到后端，并做负载均衡
@@ -147,10 +147,10 @@ spec:
 ```
 
 ## namespace
-![](img/.01_basis_idea/namespace.png)
+![](../img/.01_basis_idea/namespace.png)
 
 ## API/label
-![](img/.01_basis_idea/selector_label.png)
+![](../img/.01_basis_idea/selector_label.png)
 
 
 ## Ingress
