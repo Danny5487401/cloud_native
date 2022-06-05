@@ -30,5 +30,8 @@
 - 4.2 sets工具包
   - [判断两个map的key是否重合](chapter04_k8s_pkg/02_sets/main.go)
 - [4.3 client-go中rest模块源码分析](chapter04_k8s_pkg/03_restclient/rest.md)
-  - [4.1 使用restclient与k8s交互](chapter04_k8s_pkg/03_restclient/main.go)
+  - [4.3.1 使用restclient与k8s交互](chapter04_k8s_pkg/03_restclient/main.go)
 - [4.4 k8s使用的web框架：go-restful 源码分析](chapter04_k8s_pkg/04_k8s_restful/go-restful.md)
+- 4.5 k8s API 的源码实现
+  - [4.5.1 使用unstructured解析自定义数据](chapter04_k8s_pkg/05_k8s.io_api/01_unstrutured/main.go)
+

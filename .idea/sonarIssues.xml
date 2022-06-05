@@ -148,6 +148,11 @@
             <set />
           </value>
         </entry>
+        <entry key="$PROJECT_DIR$/chapter01_k8s_basic/04_deployment.md">
+          <value>
+            <set />
+          </value>
+        </entry>
         <entry key="$PROJECT_DIR$/chapter01_k8s_basic/06_configMap.md">
           <value>
             <set />
@@ -179,6 +184,16 @@
           </value>
         </entry>
         <entry key="$PROJECT_DIR$/chapter03_helm/helm.md">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/chapter04_k8s_pkg/03_restclient/main.go">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/chapter04_k8s_pkg/k8s_lib.md">
           <value>
             <set />
           </value>
