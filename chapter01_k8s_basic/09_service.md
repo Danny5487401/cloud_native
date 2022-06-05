@@ -3,7 +3,8 @@
 一个Kubernetes的Service是一种抽象，它定义了一组Pods的逻辑集合和一个用于访问它们的策略 - 有的时候被称之为微服务
 
 ## Service：Kubernetes 中的服务返现与负载均衡
-![](../img/.09_service_images/service.png)
+![](../img/.09_service_images/service.png) 
+
 K8s 对接了另外一组 pod，即可以通过 K8s Service 的方式去负载均衡到一组 pod 上面去，这样相当于解决了前面所说的复发性问题，
 或者提供了统一的访问入口去做服务发现，然后又可以给外部网络访问，解决不同的 pod 之间的访问，提供统一的访问地址
 

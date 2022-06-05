@@ -1,13 +1,14 @@
 # kubernetes_learning(K8S及生态学习)
 
 ![](img/.01_basis_idea/k8s_roadMap.png)
+
 ## [第一章 k8s基础]
 - [1.1  k8s架构及基本概念](chapter01_k8s_basic/01_kube_structure_n_basic_idea.md)
 - [1.2  Pod基本单元及相关使用](chapter01_k8s_basic/02_pod.md)
 - [1.3  应用编排基本概念](chapter01_k8s_basic/03_resource_object.md)
 - [1.4  应用编排deployment](chapter01_k8s_basic/04_deployment.md)
 - [1.5  应用编排Job&CronJobs和DaemonSet](chapter01_k8s_basic/05_Job_n_daemonSet.md)
-- [1.6  ConfigMap](chapter01_k8s_basic/06_configMap.md)
+- [1.6  配置管理之ConfigMap,敏感信息secret,身份认证ServiceAccount,资源配置管理,安全管理SecurityContext,前置校验initContainer](chapter01_k8s_basic/06_configMap.md)
 - [1.7  应用存储和数据卷](chapter01_k8s_basic/07_volume.md)
 - [1.8  k8s网络](chapter01_k8s_basic/08_k8s_network_model.md)
 - [1.9  Service](chapter01_k8s_basic/09_service.md)

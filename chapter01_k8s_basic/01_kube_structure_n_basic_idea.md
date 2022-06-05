@@ -1,8 +1,10 @@
 # Kubernetes架构
 ![](../img/.01_basis_idea/kube_structure.png)
+
 ![](.01_kube_structure_n_basic_idea_images/kube_structure1.png)
 
 数据流转图
+
 ![](.01_kube_structure_n_basic_idea_images/data_transfer_structure.png)
 
 ## 1. Master节点的组件

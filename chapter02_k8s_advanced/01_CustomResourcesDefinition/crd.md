@@ -82,3 +82,14 @@ Controller 其实是 Kubernetes 提供的一种可插拔式的方法来扩展或
 以 Deployment 为例，它就是通过 kube-controller-manager 来部署的。
 比如说声明一个 Deployment 有 replicas、有 2 个 Pod，那么 kube-controller-manager 在观察 etcd 时接收到了该请求之后，就会去创建两个对应的 Pod 的副本，
 并且它会去实时地观察着这些 Pod 的状态，如果这些 Pod 发生变化了、回滚了、失败了、重启了等等，它都会去做一些对应的操作。
+
+#### 流程
+![](.crd_images/controller_process.png)
+
+首先，通过 kube-apiserver 来推送事件，比如 Added, Updated, Deleted；然后进入到 Controller 的 ListAndWatch() 循环中；
+ListAndWatch 中有一个先入先出的队列，在操作的时候就将其 Pop() 出来；然后去找对应的 Handler。Handler 会将其交给对应的函数（比如 Add(), Update(), Delete()）。
+
+一个函数一般会有多个 Worker。多个 Worker 的意思是说比如同时有好几个对象进来，那么这个 Controller 可能会同时启动五个、十个这样的 Worker 来并行地执行，每个 Worker 可以处理不同的对象实例
+
+工作完成之后，即把对应的对象创建出来之后，就把这个 key 丢掉，代表已经处理完成。如果处理过程中有什么问题，就直接报错，打出一个事件来，再把这个 key 重新放回到队列中，下一个 Worker 就可以接收过来继续进行相同的处理。
+

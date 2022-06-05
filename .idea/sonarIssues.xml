@@ -143,6 +143,21 @@
             <set />
           </value>
         </entry>
+        <entry key="$PROJECT_DIR$/chapter01_k8s_basic/01_kube_structure_n_basic_idea.md">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/chapter01_k8s_basic/06_configMap.md">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/chapter01_k8s_basic/07_volume.md">
+          <value>
+            <set />
+          </value>
+        </entry>
         <entry key="$PROJECT_DIR$/chapter01_k8s_basic/08_k8s_network_model.md">
           <value>
             <set />
