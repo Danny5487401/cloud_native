@@ -153,6 +153,11 @@
             <set />
           </value>
         </entry>
+        <entry key="$PROJECT_DIR$/chapter02_k8s_advanced/01_CustomResourcesDefinition/crd.md">
+          <value>
+            <set />
+          </value>
+        </entry>
         <entry key="$PROJECT_DIR$/chapter02_k8s_source_code/01_CustomResourcesDefinition/crd.md">
           <value>
             <set />
