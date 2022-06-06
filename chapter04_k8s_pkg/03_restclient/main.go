@@ -48,7 +48,7 @@ func main() {
 
 	fmt.Println("Get Pods in cluster.")
 
-	// 获取pod列表。这里只会从namespace为"kube-system"中获取指定的资源(pods)
+	// 获取pod列表。这里只会从namespace为"danny-xia"中获取指定的资源(pods)
 	result := &corev1.PodList{}
 	if err := restClient.
 		Get().

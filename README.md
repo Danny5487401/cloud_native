@@ -19,7 +19,7 @@
 - [1.14 informer机制](chapter01_k8s_basic/14_informer.md)
 
 ## [第二章 k8s高级篇]
-- 2.1 CRD自定义资源
+- [2.1 CRD自定义资源](chapter02_k8s_advanced/01_CustomResourcesDefinition/crd.md)
 
 ## [第三章 k8s资源管理helm](chapter03_helm/helm.md)
 
