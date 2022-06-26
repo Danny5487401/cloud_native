@@ -1,0 +1,464 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="issues">
+    <option name="index">
+      <map>
+        <entry key="$PROJECT_DIR$/../go_advanced_code/chapter02_goroutine/02_runtime/07prometheus/k8s_deploy/opeartor/alert-manager-config.yaml">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../go_advanced_code/chapter02_goroutine/02_runtime/07prometheus/k8s_deploy/opeartor/alert-manager-instance.yaml">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../go_advanced_code/chapter02_goroutine/02_runtime/07prometheus/k8s_deploy/opeartor/alert-manager.yaml">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../go_advanced_code/chapter02_goroutine/02_runtime/07prometheus/k8s_deploy/opeartor/alert_rules.yaml">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../go_advanced_code/chapter02_goroutine/02_runtime/07prometheus/k8s_deploy/opeartor/alertmanager-danny-alert-instance.yaml">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../go_advanced_code/chapter02_goroutine/02_runtime/07prometheus/k8s_deploy/opeartor/deployment-app.yaml">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../go_advanced_code/chapter02_goroutine/02_runtime/07prometheus/k8s_deploy/opeartor/prometheus-instance.yaml">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../go_advanced_code/chapter02_goroutine/02_runtime/07prometheus/k8s_deploy/opeartor/rbac.yaml">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../go_advanced_code/chapter02_goroutine/02_runtime/07prometheus/k8s_deploy/opeartor/serviceMonitor.yaml">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../go_advanced_code/chapter02_goroutine/02_runtime/07prometheus/k8s_deploy/prometheus-deployment.yml">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../go_advanced_code/chapter02_goroutine/02_runtime/07prometheus/operator.md">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../go_package_example/10_distributed_tracing/02_openTelemetry/svc2/main.go">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../go_package_example/36_buf/gitlabCI.md">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../go_package_example/37_CI/01_runner/dockerfile">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../go_package_example/37_CI/gitlabCI.md">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../go_package_example/README.md">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../go_test/20_dingdingtalk/main.go">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../go_test/21_asynq/asynq.md">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../go_test/21_asynq/main.go">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../go_test/25_yapi/mongo.yaml">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../go_test/25_yapi/yapi.yaml">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/.gitignore">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/03_argo/04_argo_events/gitlab/gitlab_event_source.yaml">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/03_argo/04_argo_events/gitlab/gitlab_sensor.yaml">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/03_client_go/main.go">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/05_k8s.io_api/01_unstrutured/main.go">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/05_k8s.io_api/api.md">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/README.md">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/chapter01_k8s_basic/01_kube_structure_n_basic_idea.md">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/chapter01_k8s_basic/04_deployment.md">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/chapter01_k8s_basic/06_configMap.md">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/chapter01_k8s_basic/07_volume.md">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/chapter01_k8s_basic/08_k8s_network_model.md">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/chapter01_k8s_basic/09_service.md">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/chapter02_k8s_advanced/01_CustomResourcesDefinition/crd.md">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/chapter02_k8s_source_code/01_CustomResourcesDefinition/crd.md">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/chapter03_helm/helm.md">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/chapter04_k8s_pkg/03_restclient/main.go">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/chapter04_k8s_pkg/05_k8s.io_api/01_unstrutured/main.go">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/chapter04_k8s_pkg/05_k8s.io_api/api.md">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/chapter04_k8s_pkg/k8s_lib.md">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/go.mod">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/go.sum">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../ticket_system/.gitignore">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../ticket_system/.gitlab-ci.yml">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../ticket_system/Makefile">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../ticket_system/common/result/httpResult.go">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../ticket_system/common/result/responseBean.go">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../ticket_system/common/romeAuth/romeAuth.go">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../ticket_system/common/xerr/errCode.go">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../ticket_system/common/xerr/errors.go">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../ticket_system/deploy/dev/configmap/ticket_system_cm.yaml">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../ticket_system/deploy/test/configmap/ticket_system_cm.yaml">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../ticket_system/deploy/test/rollout/ticket_system_rollout.yaml">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../ticket_system/deploy/test/secret/docker-registry-secret.yaml">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../ticket_system/deploy/test/service/dingtalk-interactive-robot.yaml">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../ticket_system/deploy/test/virtualservice/ticket-robot.yaml">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../ticket_system/go.mod">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../ticket_system/k8s_yamls/test/configmap/ticket-system-cm.yaml">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../ticket_system/k8s_yamls/test/configmap/ticket-system-schedule-cm.yaml">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../ticket_system/k8s_yamls/test/rollout/ticket-system-rollout.yaml">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../ticket_system/k8s_yamls/test/rollout/ticket-system-schedule-rollout.yaml">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../ticket_system/k8s_yamls/test/virtualservice/ticket-robot.yaml">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../ticket_system/service/mqueue/Dockerfile">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../ticket_system/service/mqueue/cmd/job/etc/mqueue.yaml">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../ticket_system/service/mqueue/cmd/job/internal/config/config.go">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../ticket_system/service/mqueue/cmd/job/internal/logic/routes.go">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../ticket_system/service/mqueue/cmd/job/internal/logic/settleRecord.go">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../ticket_system/service/mqueue/cmd/job/internal/svc/asynqServer.go">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../ticket_system/service/mqueue/cmd/job/mqueue.go">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../ticket_system/service/ticketRobot/Dockerfile">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../ticket_system/service/ticketRobot/api/desc/robot/robot.api">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../ticket_system/service/ticketRobot/api/desc/robotCenter.api">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../ticket_system/service/ticketRobot/api/etc/ticketrobot.yaml">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../ticket_system/service/ticketRobot/api/internal/config/config.go">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../ticket_system/service/ticketRobot/api/internal/handler/casAttachHandler.go">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../ticket_system/service/ticketRobot/api/internal/handler/routes.go">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../ticket_system/service/ticketRobot/api/internal/handler/ticketRobot/closeTicketHandler.go">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../ticket_system/service/ticketRobot/api/internal/handler/ticketRobot/concludeTicketInfoHandler.go">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../ticket_system/service/ticketRobot/api/internal/handler/ticketRobot/getTicketCategoryHandler.go">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../ticket_system/service/ticketRobot/api/internal/handler/ticketRobot/getTicketInfoHandler.go">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../ticket_system/service/ticketRobot/api/internal/handler/ticketRobot/updateTicketHandler.go">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../ticket_system/service/ticketRobot/api/internal/logic/ticketRobot/closeTicketLogic.go">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../ticket_system/service/ticketRobot/api/internal/logic/ticketRobot/concludeTicketInfoLogic.go">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../ticket_system/service/ticketRobot/api/internal/logic/ticketRobot/dealrobotmsglogic.go">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../ticket_system/service/ticketRobot/api/internal/logic/ticketRobot/getTicketCategoryLogic.go">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../ticket_system/service/ticketRobot/api/internal/logic/ticketRobot/getTicketInfoLogic.go">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../ticket_system/service/ticketRobot/api/internal/logic/ticketRobot/verifyTicketLogic.go">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../ticket_system/service/ticketRobot/api/internal/types/types.go">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../ticket_system/service/ticketRobot/api/model/ticketmodel.go">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../ticket_system/sonar-project.properties">
+          <value>
+            <set />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+</project>
