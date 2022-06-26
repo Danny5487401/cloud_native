@@ -1,5 +1,5 @@
 # k8s基本网络模型
-![](img/.08_k8s_network_model_images/k8s_network_model2.png)
+![](../img/.08_k8s_network_model_images/k8s_network_model2.png)
 分类：根据是否寄生在 Host 网络之上可以把容器网络方案大体分为 Underlay/Overlay 两大派别
     
 * Underlay 的标准是它与 Host 网络是同层的，从外在可见的一个特征就是它是不是使用了 Host 网络同样的网段、输入输出基础设备、容器的 IP 地址是不是需要与 Host 网络取得协同（来自同一个中心分配或统一划分）。
@@ -52,7 +52,7 @@
 
 ## docker的网络方案
 docker官方并没有提供多主机的容器通信方案，单机网络的模式主要有host，container，bridge，none。
-![](img/.08_k8s_network_model_images/docker_network.png)
+![](../img/.08_k8s_network_model_images/docker_network.png)
 
 - none
 - host，与宿主机共享，占用宿主机资源
@@ -67,147 +67,147 @@ docker官方并没有提供多主机的容器通信方案，单机网络的模�
 
 ## Netns(network namespace)
 需要了解的内容
-![](img/.08_k8s_network_model_images/netns_menu.png)
+![](../img/.08_k8s_network_model_images/netns_menu.png)
 
 ### 定义
-![](img/.08_k8s_network_model_images/netns.png)
-![](img/.08_k8s_network_model_images/netns_definition.png)   
+![](../img/.08_k8s_network_model_images/netns.png)
+![](../img/.08_k8s_network_model_images/netns_definition.png)   
 网络 由网络接口,iptables,路由表 构成
 
 1. 网卡
-![](img/.08_k8s_network_model_images/network_card.png)
+![](../img/.08_k8s_network_model_images/network_card.png)
 
 2. iptables
-![](img/.08_k8s_network_model_images/iptables.png)
+![](../img/.08_k8s_network_model_images/iptables.png)
 
 3. 路由表
-![](img/.08_k8s_network_model_images/route_info.png)
+![](../img/.08_k8s_network_model_images/route_info.png)
 
 ### 使用
-![](img/.08_k8s_network_model_images/trace_route.png)
+![](../img/.08_k8s_network_model_images/trace_route.png)
 
 1. 自己创建netns
-![](img/.08_k8s_network_model_images/add_netns.png)
-![](img/.08_k8s_network_model_images/netns_operator.png)
-![](img/.08_k8s_network_model_images/netns_operator2.png)
-![](img/.08_k8s_network_model_images/netns_operator3.png)
-![](img/.08_k8s_network_model_images/netns_operator4.png)
+![](../img/.08_k8s_network_model_images/add_netns.png)
+![](../img/.08_k8s_network_model_images/netns_operator.png)
+![](../img/.08_k8s_network_model_images/netns_operator2.png)
+![](../img/.08_k8s_network_model_images/netns_operator3.png)
+![](../img/.08_k8s_network_model_images/netns_operator4.png)
 
 与docker,k8s对比
-![](img/.08_k8s_network_model_images/netns_vs_docker_n_k8s.png)
+![](../img/.08_k8s_network_model_images/netns_vs_docker_n_k8s.png)
 
 2. 两个netns交流
 方式一：veth   
-![](img/.08_k8s_network_model_images/two_netns.png)
-![](img/.08_k8s_network_model_images/netns_two.png)
+![](../img/.08_k8s_network_model_images/two_netns.png)
+![](../img/.08_k8s_network_model_images/netns_two.png)
 
 开始搭建梯子🪜，一边一半  
-![](img/.08_k8s_network_model_images/ladder.png)
+![](../img/.08_k8s_network_model_images/ladder.png)
 
 构造梯子veth  
-![](img/.08_k8s_network_model_images/iplink.png)
+![](../img/.08_k8s_network_model_images/iplink.png)
 
 放梯子到各自家里  
-![](img/.08_k8s_network_model_images/iplink2.png)
+![](../img/.08_k8s_network_model_images/iplink2.png)
 
 固定梯子    
-![](img/.08_k8s_network_model_images/fix_ladder.png)
+![](../img/.08_k8s_network_model_images/fix_ladder.png)
 
 启动设备     
-![](img/.08_k8s_network_model_images/up_link.png)
+![](../img/.08_k8s_network_model_images/up_link.png)
 
 开始拍手     
-![](img/.08_k8s_network_model_images/link_communication.png)
+![](../img/.08_k8s_network_model_images/link_communication.png)
 
 方式二：桥
-![](img/.08_k8s_network_model_images/bridge_comm.png)
+![](../img/.08_k8s_network_model_images/bridge_comm.png)
 
 建立桥  
-![](img/.08_k8s_network_model_images/add_bridge.png)
+![](../img/.08_k8s_network_model_images/add_bridge.png)
 
 建立梯子到王婆  
-![](img/.08_k8s_network_model_images/ladder_bridge.png)
+![](../img/.08_k8s_network_model_images/ladder_bridge.png)
 
 放梯子到各自家里:注意王婆是master,不是单独的namespace   
-![](img/.08_k8s_network_model_images/put_ladder_home.png)
+![](../img/.08_k8s_network_model_images/put_ladder_home.png)
 
 查看master王婆的信息  
-![](img/.08_k8s_network_model_images/master_info.png)
+![](../img/.08_k8s_network_model_images/master_info.png)
 
 固定西门庆家的梯子就行  
-![](img/.08_k8s_network_model_images/fix_ladder_xmq.png)
+![](../img/.08_k8s_network_model_images/fix_ladder_xmq.png)
 
 激活设备(包括王婆的设备ip link set wangpo up)   
-![](img/.08_k8s_network_model_images/set_link_up1.png)
+![](../img/.08_k8s_network_model_images/set_link_up1.png)
 
 同理去panjinlian家配置  
-![](img/.08_k8s_network_model_images/pjl2wp_ladder.png)
-![](img/.08_k8s_network_model_images/pjl2wp_link_up.png)
+![](../img/.08_k8s_network_model_images/pjl2wp_ladder.png)
+![](../img/.08_k8s_network_model_images/pjl2wp_link_up.png)
 
 方式三：ipvlan(ip不同，mac相同)-->没有经过数据解封装
-![](img/.08_k8s_network_model_images/ipvlan.png)
+![](../img/.08_k8s_network_model_images/ipvlan.png)
 - 查看mac地址，其实net1和net2的mac地址一样的。
 - 子接口172.12.1.5和子接口172.12.1.6通的
 - 子接口172.12.1.5和父接口172.12.1.30不通的
 
-![](img/.08_k8s_network_model_images/child_n_parent_info.png)
+![](../img/.08_k8s_network_model_images/child_n_parent_info.png)
 - 子接口172.12.1.5和网关172.12.1.2通的
 - 子接口172.12.1.5和电信114.114.114.114不通的
 
-![](img/.08_k8s_network_model_images/without_route_114.png)
-![](img/.08_k8s_network_model_images/add_route_114.png)
+![](../img/.08_k8s_network_model_images/without_route_114.png)
+![](../img/.08_k8s_network_model_images/add_route_114.png)
 
 
 
 ### Pod 与 Netns 的关系
-![](img/.08_k8s_network_model_images/relation_between_pod_and_netns.png)
+![](../img/.08_k8s_network_model_images/relation_between_pod_and_netns.png)
 
 ## 网络设备
-![](img/.08_k8s_network_model_images/iso_protocol.png)
+![](../img/.08_k8s_network_model_images/iso_protocol.png)
 
 1. hub 集线器
-![](img/.08_k8s_network_model_images/hub.png)
+![](../img/.08_k8s_network_model_images/hub.png)
 
 特点  
-![](img/.08_k8s_network_model_images/hub_info.png)
-![](img/.08_k8s_network_model_images/hub_info2.png)
-![](img/.08_k8s_network_model_images/hub_info3.png)
+![](../img/.08_k8s_network_model_images/hub_info.png)
+![](../img/.08_k8s_network_model_images/hub_info2.png)
+![](../img/.08_k8s_network_model_images/hub_info3.png)
 
 
 2. bridge 网桥  
-![](img/.08_k8s_network_model_images/bridge_device.png)
-![](img/.08_k8s_network_model_images/bridge_device_info.png)
-![](img/.08_k8s_network_model_images/bridge_device_mechanism.png)
+![](../img/.08_k8s_network_model_images/bridge_device.png)
+![](../img/.08_k8s_network_model_images/bridge_device_info.png)
+![](../img/.08_k8s_network_model_images/bridge_device_mechanism.png)
 注意是第二层：mac地址
 
 
 3. switch 交换机  
-![](img/.08_k8s_network_model_images/switch_device.png)
+![](../img/.08_k8s_network_model_images/switch_device.png)
 
 这里：可以指二层，有些到三层。
-![](img/.08_k8s_network_model_images/switch_info1.png)
-![](img/.08_k8s_network_model_images/switch_info2.png)
+![](../img/.08_k8s_network_model_images/switch_info1.png)
+![](../img/.08_k8s_network_model_images/switch_info2.png)
 
 与网桥对比
-![](img/.08_k8s_network_model_images/bridge_vs_switch.png)
+![](../img/.08_k8s_network_model_images/bridge_vs_switch.png)
 
 
 4. DHCP(动态主机配置协议) Server
-![](img/.08_k8s_network_model_images/dhcp_process.png)
-![](img/.08_k8s_network_model_images/dhcp_process1.png)
+![](../img/.08_k8s_network_model_images/dhcp_process.png)
+![](../img/.08_k8s_network_model_images/dhcp_process1.png)
 
 5. NAT Device
 
 路由器
-![](img/.08_k8s_network_model_images/route_device.png)
-![](img/.08_k8s_network_model_images/route_device_info.png)
-![](img/.08_k8s_network_model_images/nat_translate.png)
+![](../img/.08_k8s_network_model_images/route_device.png)
+![](../img/.08_k8s_network_model_images/route_device_info.png)
+![](../img/.08_k8s_network_model_images/nat_translate.png)
 
 类型:最常用napt     
-![](img/.08_k8s_network_model_images/net_class.png)
-![](img/.08_k8s_network_model_images/static_nat.png)
-![](img/.08_k8s_network_model_images/pool_nat.png)
-![](img/.08_k8s_network_model_images/napt.png)
+![](../img/.08_k8s_network_model_images/net_class.png)
+![](../img/.08_k8s_network_model_images/static_nat.png)
+![](../img/.08_k8s_network_model_images/pool_nat.png)
+![](../img/.08_k8s_network_model_images/napt.png)
 
 ## k8s网络模型的原则
 - 每个pod都拥有唯一个独立的ip地址，称IP-Per-Pod模型
@@ -222,7 +222,7 @@ docker最终被访问的ip和端口，与提供的不一致，引起配置的复
 
 
 ## k8s网络模型
-![](img/.08_k8s_network_model_images/k8s_network_model_info.png)
+![](../img/.08_k8s_network_model_images/k8s_network_model_info.png)
 
 ### 1. 容器与容器的通讯
 - 同一个容器的pod直接共享同一个linux协议栈
@@ -244,10 +244,10 @@ docker最终被访问的ip和端口，与提供的不一致，引起配置的复
 
 ### IASS主流网络方案
 我们可以把云计算理解成一栋大楼，而这栋楼又可以分为顶楼、中间、低层三大块。那么我们就可以把Iass(基础设施)、Pass(平台)、Sass(软件)理解成这栋楼的三部分
-![](img/.08_k8s_network_model_images/container_network.png)
+![](../img/.08_k8s_network_model_images/container_network.png)
 
 ### Flannel
-![](img/.08_k8s_network_model_images/flannel.png)
+![](../img/.08_k8s_network_model_images/flannel.png)
 
 #### 实现的功能
 协助k8s给每个Node上的docker容器分配互不冲突的ip地址
@@ -262,7 +262,7 @@ docker最终被访问的ip和端口，与提供的不一致，引起配置的复
 它的 backend 其实是独立的，也就是说这个包如何离开 Host，是采用哪种封装方式，还是不需要封装，都是可选择的
 
 三种主要的 backend：
-![](img/.08_k8s_network_model_images/flannel_backend.png)
+![](../img/.08_k8s_network_model_images/flannel_backend.png)
 * 一种是用户态的 udp，这种是最早期的实现；
 * 然后是内核的 Vxlan，这两种都算是 overlay 的方案。Vxlan 的性能会比较好一点，但是它对内核的版本是有要求的，需要内核支持 Vxlan 的特性功能；
 * 如果你的集群规模不够大，又处于同一个二层域，也可以选择采用 host-gw 的方式。这种方式的 backend 基本上是由一段广播路由规则来启动的，性能比较高
@@ -280,7 +280,7 @@ install-cni容器在每个节点上创建CNI配置文件-/etc/cni/net.d/10-flann
 Flanneld创建一个vxlan设备，从apiserver获取网络元数据，并监视pod上的更新。
 创建Pod时，它将为整个集群中的所有Pod分配路由，这些路由允许Pod通过其IP地址相互连接。
 
-![](img/.08_k8s_network_model_images/cri_n_cni.png)
+![](../img/.08_k8s_network_model_images/cri_n_cni.png)
 
 kubelet调用Containered CRI插件以创建容器，而Containered CRI插件调用CNI插件为容器配置网络。
 网络提供商CNI插件调用其他基本CNI插件来配置网络。
@@ -293,12 +293,12 @@ kubelet调用Containered CRI插件以创建容器，而Containered CRI插件调�
 * 网络插件需要支持networkpolicy
 
 Configuration
-![](img/.08_k8s_network_model_images/configuration.png)
+![](../img/.08_k8s_network_model_images/configuration.png)
 
 
 #### 实现原理
 Flannel为每个主机提供独立的子网，整个集群的网络信息存储在etcd上。对于跨主机的转发，目标容器的IP地址，需要从etcd获取。
-![](img/.08_k8s_network_model_images/flannel_process.png)
+![](../img/.08_k8s_network_model_images/flannel_process.png)
 - Flannel创建名为flannel0的网桥
 - flannel0网桥一端连接docker0网桥，另一端连接flanneld进程
 - flanneld进程一端连接etcd，利用etcd管理分配的ip地址资源，同时监控pod地址，建立pod节点路由表
@@ -317,7 +317,7 @@ Flannel为每个主机提供独立的子网，整个集群的网络信息存储�
 - Docker0确定目标容器并发送包到目标容器。
 
 1. 在常用的vxlan模式中，涉及到上面步骤提到的封包和拆包，这也是Flannel网络传输效率相对低的原因。
-![](img/.08_k8s_network_model_images/vxlan_info.png)
+![](../img/.08_k8s_network_model_images/vxlan_info.png)
 
 2. hostgw是最简单的backend:
 它的原理非常简单，直接添加路由，将目的主机当做网关，直接路由原始封包。

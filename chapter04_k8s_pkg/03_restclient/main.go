@@ -3,7 +3,10 @@ package main
 
 import (
 	"context"
+	"flag"
 	"fmt"
+	"os"
+	"path/filepath"
 
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -17,9 +20,16 @@ import (
 
 func main() {
 	fmt.Println("Prepare config object.")
+	var kubeconfig *string
+	if home := homeDir(); home != "" {
+		kubeconfig = flag.String("kubeconfig", filepath.Join(home, ".kube", "config"), "(optional) absolute path to the kubeconfig file")
+	} else {
+		kubeconfig = flag.String("kubeconfig", "", "absolute path to the kubeconfig file")
+	}
+	flag.Parse()
 
 	// 加载k8s配置文件，生成Config对象
-	config, err := clientcmd.BuildConfigFromFlags("", "/root/.kube/config")
+	config, err := clientcmd.BuildConfigFromFlags("", *kubeconfig)
 	if err != nil {
 		panic(err)
 	}
@@ -38,11 +48,11 @@ func main() {
 
 	fmt.Println("Get Pods in cluster.")
 
-	// 获取pod列表。这里只会从namespace为"kube-system"中获取指定的资源(pods)
+	// 获取pod列表。这里只会从namespace为"danny-xia"中获取指定的资源(pods)
 	result := &corev1.PodList{}
 	if err := restClient.
 		Get().
-		Namespace("kube-system").
+		Namespace("danny-xia").
 		Resource("pods").
 		VersionedParams(&metav1.ListOptions{Limit: 500}, scheme.ParameterCodec).
 		Do(context.TODO()).
@@ -56,4 +66,11 @@ func main() {
 	for _, d := range result.Items {
 		fmt.Printf("NAMESPACE: %v NAME: %v \t STATUS: %v \n", d.Namespace, d.Name, d.Status.Phase)
 	}
+}
+
+func homeDir() string {
+	if h := os.Getenv("HOME"); h != "" {
+		return h
+	}
+	return os.Getenv("USERPROFILE") // windows
 }

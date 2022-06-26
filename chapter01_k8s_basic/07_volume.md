@@ -1,6 +1,5 @@
-# 数据卷
+# 数据卷Volumes
 
-## Volumes   
 ### 背景
 
 场景一：如果 pod 中的某一个容器在运行时异常退出，被 kubelet 重新拉起之后，如何保证之前容器产生的重要数据没有丢失？
@@ -16,7 +15,7 @@
 * Projected Volumes：它其实是将一些配置信息，如 secret/configmap 用卷的形式挂载在容器中，让容器中的程序可以通过POSIX接口来访问配置数据；
 
 #### Persistent Volumes（PV）
-![](img/.07_volume_images/PV.png)
+![](../img/.07_volume_images/PV.png)
 
 既然已经有了 Pod Volumes，为什么又要引入 PV 呢？我们知道 pod 中声明的 volume 生命周期与 pod 是相同的，以下有几种常见的场景：
 
@@ -34,7 +33,7 @@
 这样，当把 pod 删除之后，它使用的PV仍然存在，还可以被新建的 pod 复用。
 
 #### Persistent Volume Claim(PVC)
-![](img/.07_volume_images/PVC.png)
+![](../img/.07_volume_images/PVC.png)
 
 通过 PVC 和 PV 的概念，将用户需求和实现细节解耦开，用户只用通过 PVC 声明自己的存储需求。
 PV是有集群管理员和存储相关团队来统一运维和管控，这样的话，就简化了用户使用存储的方式。可以看到，PV 和 PVC 的设计其实有点像面向对象的接口与实现的关系。
@@ -46,7 +45,7 @@ PV是有集群管理员和存储相关团队来统一运维和管控，这样的
 实际上，我们项目当中，研发人员和集群的管理人员是分开的，研发人员只管使用，但是并不关心底层到底用的是什么存储技术，所以研发人员只要声明一个PVC，表示我需要多大的一个存储，以及读写类型就可以了。
 
 ###### 静态产生方式 - 静态 Provisioning
-![](img/.07_volume_images/static_volume_provisioning.png)
+![](../img/.07_volume_images/static_volume_provisioning.png)
 
 静态 Provisioning：由集群管理员事先去规划这个集群中的用户会怎样使用存储，它会先预分配一些存储，也就是预先创建一些 PV；
 然后用户在提交自己的存储需求（也就是 PVC）的时候，K8s 内部相关组件会帮助它把 PVC 和 PV 做绑定；
@@ -56,7 +55,7 @@ PV是有集群管理员和存储相关团队来统一运维和管控，这样的
 举一个最简单的例子：如果用户需要的是 20G，然而集群管理员在分配的时候可能有 80G 、100G 的，但没有 20G 的，这样就很难满足用户的真实需求，也会造成资源浪费。
 
 ###### 动态 Dynamic Provisioning
-![](img/.07_volume_images/dynamic_volume_provision.png)
+![](../img/.07_volume_images/dynamic_volume_provision.png)
 
 动态供给是什么意思呢？就是说现在集群管理员不预分配 PV，他写了一个模板文件，这个模板文件是用来表示创建某一类型存储（块存储，文件存储等）所需的一些参数，
 这些参数是用户不关心的，给存储本身实现有关的参数。用户只需要提交自身的存储需求，也就是PVC文件，并在 PVC 中指定使用的存储模板（StorageClass）。
@@ -66,7 +65,7 @@ K8s 集群中的管控组件，会结合 PVC 和 StorageClass 的信息动态，
 #### 使用
 
 ##### Pod Volumes 的使用
-![](img/.07_volume_images/pod_volume.png)
+![](../img/.07_volume_images/pod_volume.png)
 
 如上图左侧所示，我们可以在 pod yaml 文件中的 Volumes 字段中，声明我们卷的名字以及卷的类型。
 声明的两个卷，一个是用的是 emptyDir，另外一个用的是 hostPath，这两种都是本地卷。在容器中应该怎么去使用这个卷呢？
@@ -83,7 +82,7 @@ K8s 集群中的管控组件，会结合 PVC 和 StorageClass 的信息动态，
 另外emptyDir、hostPath 都是本地存储，它们之间有什么细微的差别呢？emptyDir 其实是在 pod 创建的过程中会临时创建的一个目录，这个目录随着 pod 删除也会被删除，里面的数据会被清空掉；
 hostPath 顾名思义，其实就是宿主机上的一个路径，在 pod 删除之后，这个目录还是存在的，它的数据也不会被丢失。这就是它们两者之间一个细微的差别。
 ##### 静态PV使用
-![](img/.07_volume_images/PV_creation.png)
+![](../img/.07_volume_images/PV_creation.png)
 
 静态 PV 的话，首先是由管理员来创建的，管理员我们这里以 NAS，就是阿里云文件存储为例。我需要先在阿里云的文件存储控制台上去创建 NAS 存储
 ，然后把 NAS 存储的相关信息要填到 PV 对象中，这个 PV 对象预创建出来后，用户可以通过 PVC 来声明自己的存储需求，
@@ -93,7 +92,7 @@ hostPath 顾名思义，其实就是宿主机上的一个路径，在 pod 删除
 
 然后有个 ReclaimPolicy，ReclaimPolicy 的意思就是：这块存储在被使用后，等它的使用方 pod 以及 PVC 被删除之后，这个 PV 是应该被删掉还是被保留呢？其实就是PV的回收策略。
 
-![](img/.07_volume_images/PVC_n_pod_creation.png)
+![](../img/.07_volume_images/PVC_n_pod_creation.png)
 
 PVC 对象里面，只需要指定存储需求，不用关心存储本身的具体实现细节。存储需求包括哪些呢？首先是需要的大小，也就是 resources.requests.storage；然后是它的访问方式，即需要这个存储的访问方式
 
@@ -103,7 +102,7 @@ PVC 对象里面，只需要指定存储需求，不用关心存储本身的具�
 
 ##### 动态PV使用
 ###### 管理员使用   
-![](img/.07_volume_images/dynamic_PV.png)
+![](../img/.07_volume_images/dynamic_PV.png)
 
 这个模板文件叫 StorageClass，在StorageClass里面，我们需要填的重要信息：第一个是 provisioner，provisioner 是什么？
 它其实就是说我当时创建 PV 和对应的存储的时候，应该用哪个存储插件来去创建。
@@ -114,7 +113,7 @@ ReclaimPolicy跟我们刚才讲解的 PV 里的意思是一样的，就是说动
 我们这个地方写的是 delete，意思就是说当使用方 pod 和 PVC 被删除之后，这个 PV 也会被删除掉。
 
 ###### 用户使用
-![](img/.07_volume_images/pvc_storage_class.png)
+![](../img/.07_volume_images/pvc_storage_class.png)
 
 PVC 的文件里存储的大小、访问模式是不变的。现在需要新加一个字段，叫 StorageClassName，它的意思是指定动态创建PV的模板文件的名字，这里StorageClassName填的就是上面声明的csi-disk。
     
@@ -145,7 +144,7 @@ PVC 的文件里存储的大小、访问模式是不变的。现在需要新加�
 
 PV状态流转
 
-![](img/.07_volume_images/pv_state.png)
+![](../img/.07_volume_images/pv_state.png)
 
     available 状态意思就是可以使用的状态，用户在提交 PVC 之后，被 K8s 相关组件做完 bound（即：找到相应的 PV），这个时候 PV 和 PVC 就结合到一起了，此时两者都处在 bound 状态。
     当用户在使用完 PVC，将其删除后，这个 PV 就处在 released 状态，之后它应该被删除还是被保留呢？这个就会依赖我们刚才说的 ReclaimPolicy。
@@ -164,9 +163,9 @@ PV状态流转
     
     静态 Provisioning 主要用的是阿里云的 NAS 文件存储；动态 Provisioning 主要用了阿里云的云盘。它们需要相应存储插件，
     插件我已经提前部署在我的 K8s 集群中了(csi-nasplugin*是为了在k8s中使用阿里云NAS所需的插件，csi-disk*是为了在k8s中使用阿里云云盘所需要的插件)
-![](img/.07_volume_images/nas_pv.png)
-![](img/.07_volume_images/nas_pvc.png)
-![](img/.07_volume_images/nas_pod.png)    
+![](../img/.07_volume_images/nas_pv.png)
+![](../img/.07_volume_images/nas_pvc.png)
+![](../img/.07_volume_images/nas_pod.png)    
 
 - volumeAttributes是我在阿里云nas控制台预先创建的 NAS 文件系统的相关信息，我们主要需要关心的有 capacity 为5Gi; 
 - accessModes 为多node读写访问; 
@@ -181,23 +180,23 @@ pod yaml 里面声明了刚才我们创建出来的 PVC 对象，然后把它挂
 
 2. 动态 Provisioning 
 
-![](img/.07_volume_images/storageclass_disk.yaml.png)
+![](../img/.07_volume_images/storageclass_disk.yaml.png)
 
     parameters部分是创建存储所需要的一些参数，但是用户不需要关心这些信息；
     然后是 reclaimPolicy，也就是说通过这个 storageclass 创建出来的 PV 在给绑定到一起的 PVC 删除之后，它是要保留还是要删除。
-![](img/.07_volume_images/disk_pvc.yaml.png)
+![](../img/.07_volume_images/disk_pvc.yaml.png)
 
     现在这个集群中是没有 PV 的，我们动态提交一个 PVC 文件，先看一下它的 PVC 文件。
     它的 accessModes-ReadWriteOnce (因为阿里云云盘其实只能是单 node 读写的，所以我们声明这样的方式），它的存储大小需求是 30G，
     它的 storageClassName 是 csi-disk，就是我们刚才创建的 storageclass，也就是说它指定要通过这个模板去生成 PV
-![](img/.07_volume_images/pod_pv_demo.yaml.png)
+![](../img/.07_volume_images/pod_pv_demo.yaml.png)
     
     pod yaml 很简单，也是通过 PVC 声明，表明使用这个 PVC。然后是挂载点
     
 ### 架构设计
 csi 的全称是 container storage interface
 
-![](img/.07_volume_images/structure_csi.png)
+![](../img/.07_volume_images/structure_csi.png)
     
 用户在提交 PVC的yaml文件 的时候，首先会在集群中生成一个 PVC 对象，然后 PVC 对象会被 csi-provisioner controller watch到，
 csi-provisioner 会结合 PVC 对象以及 PVC 对象中声明的 storageClass，通过 GRPC 调用 csi-controller-server，
@@ -207,7 +206,7 @@ csi-provisioner 会结合 PVC 对象以及 PVC 对象中声明的 storageClass�
 然后 kubelet 开始  create && start pod 中的所有 container。
 
 #### PV、PVC 以及通过 csi 使用存储流程
-![](img/.07_volume_images/pv_pvc_use_csi.png)
+![](../img/.07_volume_images/pv_pvc_use_csi.png)
 
 主要分为三个阶段：
 
