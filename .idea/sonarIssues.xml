@@ -3,6 +3,11 @@
   <component name="issues">
     <option name="index">
       <map>
+        <entry key="$PROJECT_DIR$/../gllue_pkg/zapwriterforgozero/go.mod">
+          <value>
+            <set />
+          </value>
+        </entry>
         <entry key="$PROJECT_DIR$/../go_advanced_code/chapter02_goroutine/02_runtime/07prometheus/k8s_deploy/opeartor/alert-manager-config.yaml">
           <value>
             <set />
@@ -293,6 +298,11 @@
             <set />
           </value>
         </entry>
+        <entry key="$PROJECT_DIR$/../ticket_system/k8s_yamls/overlays/test/ticket-vs.yaml">
+          <value>
+            <set />
+          </value>
+        </entry>
         <entry key="$PROJECT_DIR$/../ticket_system/k8s_yamls/test/configmap/ticket-system-cm.yaml">
           <value>
             <set />
@@ -439,6 +449,11 @@
           </value>
         </entry>
         <entry key="$PROJECT_DIR$/../ticket_system/service/ticketRobot/api/internal/logic/ticketRobot/verifyTicketLogic.go">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../ticket_system/service/ticketRobot/api/internal/logic/ticketSystem/updateTicketLogic_test.go">
           <value>
             <set />
           </value>
