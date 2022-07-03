@@ -1,11 +1,10 @@
 package main
 
-
 import (
 	"context"
 	"flag"
 	"fmt"
-	"os"
+	"k8s.io/client-go/util/homedir"
 	"path/filepath"
 
 	corev1 "k8s.io/api/core/v1"
@@ -21,7 +20,7 @@ import (
 func main() {
 	fmt.Println("Prepare config object.")
 	var kubeconfig *string
-	if home := homeDir(); home != "" {
+	if home := homedir.HomeDir(); home != "" {
 		kubeconfig = flag.String("kubeconfig", filepath.Join(home, ".kube", "config"), "(optional) absolute path to the kubeconfig file")
 	} else {
 		kubeconfig = flag.String("kubeconfig", "", "absolute path to the kubeconfig file")
@@ -34,8 +33,11 @@ func main() {
 		panic(err)
 	}
 
+	// 参考path : /api/v1/namespaces/{namespace}/pods
 	config.APIPath = "api"
+	//  pod的group是空字符串
 	config.GroupVersion = &corev1.SchemeGroupVersion
+	// 设置编解码工具
 	config.NegotiatedSerializer = scheme.Codecs
 
 	fmt.Println("Init RESTClient.")
@@ -68,9 +70,3 @@ func main() {
 	}
 }
 
-func homeDir() string {
-	if h := os.Getenv("HOME"); h != "" {
-		return h
-	}
-	return os.Getenv("USERPROFILE") // windows
-}

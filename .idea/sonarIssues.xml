@@ -83,6 +83,11 @@
             <set />
           </value>
         </entry>
+        <entry key="$PROJECT_DIR$/../go_test/15_test/a.md">
+          <value>
+            <set />
+          </value>
+        </entry>
         <entry key="$PROJECT_DIR$/../go_test/20_dingdingtalk/main.go">
           <value>
             <set />
@@ -188,7 +193,32 @@
             <set />
           </value>
         </entry>
+        <entry key="$PROJECT_DIR$/chapter04_k8s_pkg/03_client_go/01_restclient/main.go">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/chapter04_k8s_pkg/03_client_go/02_client_set/main.go">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/chapter04_k8s_pkg/03_client_go/03_dynamic_client/dynamic_client.go">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/chapter04_k8s_pkg/03_client_go/rest.md">
+          <value>
+            <set />
+          </value>
+        </entry>
         <entry key="$PROJECT_DIR$/chapter04_k8s_pkg/03_restclient/main.go">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/chapter04_k8s_pkg/03_restclient/rest.md">
           <value>
             <set />
           </value>
@@ -199,6 +229,11 @@
           </value>
         </entry>
         <entry key="$PROJECT_DIR$/chapter04_k8s_pkg/05_k8s.io_api/api.md">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/chapter04_k8s_pkg/06_discovery_client/discovery.go">
           <value>
             <set />
           </value>
@@ -289,6 +324,41 @@
           </value>
         </entry>
         <entry key="$PROJECT_DIR$/../ticket_system/go.mod">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../ticket_system/k8s_yamls/base/schedule/asynq-ui-rollout.yaml">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../ticket_system/k8s_yamls/overlays/prod/ticketrobot.yaml">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../ticket_system/k8s_yamls/overlays/test/asynq-ui-vs.yaml">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../ticket_system/k8s_yamls/overlays/test/kustomization.yaml">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../ticket_system/k8s_yamls/overlays/test/schedule-config.yaml">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../ticket_system/k8s_yamls/overlays/test/schedule_secret.yaml">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../ticket_system/k8s_yamls/overlays/test/ticketrobot.yaml">
           <value>
             <set />
           </value>

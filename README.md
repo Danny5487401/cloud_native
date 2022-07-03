@@ -29,9 +29,13 @@
   - [wait.Group{}](chapter04_k8s_pkg/01_wait/02_waitGroup/main.go)
 - 4.2 sets工具包
   - [判断两个map的key是否重合](chapter04_k8s_pkg/02_sets/main.go)
-- [4.3 client-go中rest模块源码分析](chapter04_k8s_pkg/03_restclient/rest.md)
-  - [4.3.1 使用restclient与k8s交互](chapter04_k8s_pkg/03_restclient/main.go)
+- [4.3 client-go中rest模块源码分析](chapter04_k8s_pkg/03_client_go/rest.md)
+  - [4.3.1 基础的客户端 Restclient 获取 pod 信息](chapter04_k8s_pkg/03_client_go/01_RESTClient/main.go)
+  - [4.3.2 按照Group和Version分类再封装的 Clientset 操作资源](chapter04_k8s_pkg/03_client_go/02_Clientset/main.go)
+  - [4.3.3 dynamicClient 操作非结构化数据](chapter04_k8s_pkg/03_client_go/03_dynamic_client/dynamic_client.go)
+  - [4.3.4 DiscoveryClient 获取资源Group、Version、Resource](chapter04_k8s_pkg/03_client_go/04_discovery_client/discovery.go)
 - [4.4 k8s使用的web框架：go-restful 源码分析](chapter04_k8s_pkg/04_k8s_restful/go-restful.md)
 - 4.5 k8s API 的源码实现
   - [4.5.1 使用unstructured解析自定义数据](chapter04_k8s_pkg/05_k8s.io_api/01_unstrutured/main.go)
+- 
 

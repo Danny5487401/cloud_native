@@ -1,7 +1,7 @@
-# k8s.io/client-go中rest模块源码分析
+# k8s.io/client-go 中rest模块源码分析
 client-go的客户端对象有4个
-- RESTClient： 是对HTTP Request进行了封装，实现了RESTful风格的API。其他客户端都是在RESTClient基础上的实现。可与用于k8s内置资源和CRD资源
-- ClientSet:是对k8s内置资源对象的客户端的集合，默认情况下，不能操作CRD资源，但是通过client-gen代码生成的话，也是可以操作CRD资源的。
+- RESTClient：是对 HTTP Request 进行了封装，实现了 RESTful 风格的API。其他客户端都是在RESTClient基础上的实现。可与用于k8s内置资源和CRD资源
+- ClientSet: 是对k8s内置资源对象的客户端的集合，默认情况下，不能操作CRD资源，但是通过client-gen代码生成的话，也是可以操作CRD资源的。
 - DynamicClient:不仅能对K8S内置资源进行处理，还可以对CRD资源进行处理，不需要client-gen生成代码即可实现。
 - DiscoveryClient：用于发现kube-apiserver所支持的资源组、资源版本、资源信息（即Group、Version、Resources）
 
