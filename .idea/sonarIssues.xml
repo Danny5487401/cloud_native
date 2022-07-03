@@ -193,7 +193,17 @@
             <set />
           </value>
         </entry>
+        <entry key="$PROJECT_DIR$/chapter04_k8s_pkg/03_client_go/01_RESTClient/main.go">
+          <value>
+            <set />
+          </value>
+        </entry>
         <entry key="$PROJECT_DIR$/chapter04_k8s_pkg/03_client_go/01_restclient/main.go">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/chapter04_k8s_pkg/03_client_go/02_Clientset/main.go">
           <value>
             <set />
           </value>
