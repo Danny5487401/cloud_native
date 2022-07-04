@@ -37,5 +37,10 @@
 - [4.4 k8s使用的web框架：go-restful 源码分析](chapter04_k8s_pkg/04_k8s_restful/go-restful.md)
 - 4.5 k8s API 的源码实现
   - [4.5.1 使用unstructured解析自定义数据](chapter04_k8s_pkg/05_k8s.io_api/01_unstrutured/main.go)
-- 
 
+
+
+
+## 参考资料
+1. [官方网址](https://kubernetes.io/docs/tasks/extend-kubernetes/custom-resources/custom-resource-definitions/#create-a-customresourcedefinition)
+2. [腾讯程序员欣宸博客](https://xinchen.blog.csdn.net/?type=blog)
