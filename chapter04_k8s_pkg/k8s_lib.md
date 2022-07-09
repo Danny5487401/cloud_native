@@ -1,5 +1,19 @@
 # k8s库
 
+## 基本概念
+
+### GroupVersionResource (GVR)
+
+resource是API group和version的一部分, 统称为GroupVersionResource (or GVR) , GVR唯一的定义了一个HTTP路径, 例如 默认名称空间的路径是/apis/batch/v1/namespaces/default/jobs.
+
+### GroupVersionKind (GVK)
+
+每个kind都存在于一个api group和version中 , 并通过GroupVersionKind (GVK) 来标识
+
+GVR和GVK是相关联的 , GVK通过GVR标识的HTTP路径来提供服务, 将GVK映射到GVR的过程就叫做REST mapping.
+
+
+
 ## k8s中Apimachinery、Api、Client-go库之间的关系
 ![](.k8s_lib_images/api_client_go_relation.png)
 使用 k8s 相关 sdk 做二次开发时，经常用到 apimachinery、api、client-go 这三个库，总结他们之间的依赖关系如下：

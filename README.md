@@ -23,7 +23,7 @@
 
 ## [第三章 k8s资源管理helm](chapter03_helm/helm.md)
 
-## [第四章 k8s工具包]
+## [第四章 k8s 工具包](chapter04_k8s_pkg/k8s_lib.md)
 - [4.1 wait工具包](chapter04_k8s_pkg/01_wait/wait_util.md)
   - [wait.Until使用](chapter04_k8s_pkg/01_wait/01_util/main.go)
   - [wait.Group{}](chapter04_k8s_pkg/01_wait/02_waitGroup/main.go)

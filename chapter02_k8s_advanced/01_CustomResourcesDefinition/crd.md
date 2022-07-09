@@ -1,10 +1,31 @@
-# CustomResourcesDefinition(crd )
+# CustomResourcesDefinition(crd)
 
 CRD 功能是在 Kubernetes 1.7 版本被引入的，用户可以根据自己的需求添加自定义的 Kubernetes 对象资源。
 值得注意的是，这里用户自己添加的 Kubernetes 对象资源都是 native 的、都是一等公民，和 Kubernetes 中自带的、原生的那些 Pod、Deployment 是同样的对象资源。
 在 Kubernetes 的 API Server 看来，它们都是存在于 etcd 中的一等资源
 
 同时，自定义资源和原生内置的资源一样，都可以用 kubectl  来去创建、查看，也享有 RBAC、安全功能。用户可以开发自定义控制器来感知或者操作自定义资源的变化
+
+
+## 代码生成器
+
+其中有4个标准的代码生成器
+
+- deepcopy-gen
+
+生成func (t *T) DeepCopy() *T 和func (t *T) DeepCopyInto(*T)方法
+
+- client-gen
+
+创建类型化客户端集合(typed client sets)
+
+- informer-gen
+
+为CR创建一个informer , 当CR有变化的时候, 这个informer可以基于事件接口获取到信息变更
+
+- lister-gen
+
+为CR创建一个listers , 就是为GET and LIST请求提供read-only caching layer
 
 ## 案例
 ### 1. 定义资源
@@ -60,6 +81,8 @@ spec:
     - scope 字段表明该 CRD 是否被命名空间管理。比如 ClusterRoleBinding 就是 Cluster 级别的。再比如 Pod、Deployment 可以被创建到不同的命名空间里，那么它们的 scope 就是 Namespaced 的。这里的 CRD 就是 Namespaced 的
 - subresources: 
     - status状态实际上是一个自定义资源的子资源，它的好处在于，对该字段的更新并不会触发 Deployment 或 Pod 的重新部署。
+  
+
 ### 2. 使用实例
 ```yaml
 apiVersion: samplecontroller.k8s.io/v1alpha1

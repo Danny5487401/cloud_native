@@ -275,8 +275,8 @@ func (obj *ListMeta) GetListMeta() ListInterface { return obj }
 ### runtime.Object
 schema.ObjectKind 是所有 API 资源类型的抽象，metav1.Object 是所有 API 单体资源对象属性的抽象
 
-
-那么同时实现这两个接口的类型对象不就可以访问任何 API 对象的公共属性了吗？是的，对于每一个特定的类型，如 Pod、Deployment 等，它们确实可以获取当前 API 对象的公共属性。有没有一种所有特定类型的统一父类，同时拥有 schema.ObjecKind 和 metav1.Object 两个接口，这样就可以表示任何特定类型的对象
+那么同时实现这两个接口的类型对象不就可以访问任何 API 对象的公共属性了吗？
+是的，对于每一个特定的类型，如 Pod、Deployment 等，它们确实可以获取当前 API 对象的公共属性。有没有一种所有特定类型的统一父类，同时拥有 schema.ObjecKind 和 metav1.Object 两个接口，这样就可以表示任何特定类型的对象
 ```go
 // /Users/python/go/pkg/mod/k8s.io/apimachinery@v0.24.0/pkg/runtime/interfaces.go
 type Object interface {

@@ -3,6 +3,21 @@
   <component name="issues">
     <option name="index">
       <map>
+        <entry key="$PROJECT_DIR$/../gllue_pkg/go-base-image/.gitlab-ci.yml">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../gllue_pkg/go-base-image/Dockerfile">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../gllue_pkg/go-base-image/README.md">
+          <value>
+            <set />
+          </value>
+        </entry>
         <entry key="$PROJECT_DIR$/../go_advanced_code/chapter02_goroutine/02_runtime/07prometheus/k8s_deploy/opeartor/alert-manager-config.yaml">
           <value>
             <set />
@@ -183,6 +198,26 @@
             <set />
           </value>
         </entry>
+        <entry key="$PROJECT_DIR$/chapter02_k8s_advanced/01_CustomResourcesDefinition/pkg/apis/bolingcavalry/register.go">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/chapter02_k8s_advanced/01_CustomResourcesDefinition/pkg/apis/bolingcavalry/v1/doc.go">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/chapter02_k8s_advanced/01_CustomResourcesDefinition/pkg/apis/bolingcavalry/v1/register.go">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/chapter02_k8s_advanced/01_CustomResourcesDefinition/pkg/apis/bolingcavalry/v1/types.go">
+          <value>
+            <set />
+          </value>
+        </entry>
         <entry key="$PROJECT_DIR$/chapter02_k8s_source_code/01_CustomResourcesDefinition/crd.md">
           <value>
             <set />
@@ -339,6 +374,11 @@
           </value>
         </entry>
         <entry key="$PROJECT_DIR$/../ticket_system/k8s_yamls/base/schedule/asynq-ui-rollout.yaml">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../ticket_system/k8s_yamls/base/ticket-robot/kustomization.yaml">
           <value>
             <set />
           </value>
@@ -523,12 +563,22 @@
             <set />
           </value>
         </entry>
+        <entry key="$PROJECT_DIR$/../ticket_system/service/ticketRobot/api/internal/logic/ticketSystem/getPersonalHistoryTicketLogic.go">
+          <value>
+            <set />
+          </value>
+        </entry>
         <entry key="$PROJECT_DIR$/../ticket_system/service/ticketRobot/api/internal/types/types.go">
           <value>
             <set />
           </value>
         </entry>
         <entry key="$PROJECT_DIR$/../ticket_system/service/ticketRobot/api/model/ticketmodel.go">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../ticket_system/service/ticketRobot/api/model/ticketmodel_test.go">
           <value>
             <set />
           </value>
