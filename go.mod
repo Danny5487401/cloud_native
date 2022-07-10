@@ -1,4 +1,4 @@
-module kubernetes_learning
+module cloud_native
 
 go 1.17
 

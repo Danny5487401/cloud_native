@@ -1,5 +1,5 @@
 {
-  "name": "kubernetes_learning",
+  "name": "cloud_native",
   "version": "1.0.0",
   "description": "k8s learning notes from ali",
   "main": "index.js",
@@ -8,14 +8,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Danny5487401/kubernetes_learning.git"
+    "url": "git+https://github.com/Danny5487401/cloud_native.git"
   },
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/Danny5487401/kubernetes_learning/issues"
+    "url": "https://github.com/Danny5487401/cloud_native/issues"
   },
-  "homepage": "https://github.com/Danny5487401/kubernetes_learning#readme",
+  "homepage": "https://github.com/Danny5487401/cloud_native#readme",
   "devDependencies": {
     "cz-conventional-changelog": "^3.3.0"
   },
