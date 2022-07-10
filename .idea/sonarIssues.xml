@@ -3,6 +3,11 @@
   <component name="issues">
     <option name="index">
       <map>
+        <entry key="$PROJECT_DIR$/../cloud_native/go.mod">
+          <value>
+            <set />
+          </value>
+        </entry>
         <entry key="$PROJECT_DIR$/../go_advanced_code/chapter02_goroutine/02_runtime/07prometheus/k8s_deploy/opeartor/alert-manager-config.yaml">
           <value>
             <set />
