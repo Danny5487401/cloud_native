@@ -12,9 +12,9 @@
 *.out
 
 # Dependency directories (remove the comment below to include it)
-# vendor/
+ vendor/
 
 #不需要js
 node_modules
 # 不需要idea
-.idea
+.idea/
