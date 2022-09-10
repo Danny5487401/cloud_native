@@ -1,4 +1,4 @@
-module kubernetes_learning
+module github.com/Danny5487401/kubernetes_learning
 
 go 1.17
 

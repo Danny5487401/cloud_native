@@ -8,7 +8,7 @@
 
 ## underlay(对网络比如有bgp能力)
 ### 1. 大二层网络（node和pod在同一个网段）
-![](.08_k8s_network_model_images/big_2_network.png)
+![](assets/.08_k8s_network_model_images/big_2_network.png)
 - 主要依据：交换机arp广播获取mac地址
 - 背景：pod的Ip在物理世界对于交换机是不认识的，pod1(192.168.1.100)不知道pod2的Ip(192.168.1.101)
 - 流程：
@@ -20,8 +20,8 @@
 - 特点：pod2创建，要让pod1知道，所以bgp要进行下发,即帮你在多个node之间同步路由表,所以node上要有bgp agent。
 
 ### 2. 大三层网络（node和pod在不同一个网段）
-![](.08_k8s_network_model_images/big_3_network.png)
-![](.08_k8s_network_model_images/big_3_network2.png)
+![](assets/.08_k8s_network_model_images/big_3_network.png)
+![](assets/.08_k8s_network_model_images/big_3_network2.png)
 - 应用：calico的bgp模式：Border Gateway Protocol
 - 流程：
     1. 目标地址172.168.1.x设置网关是node1:192.168.1.100,流量走向node1
@@ -30,10 +30,10 @@
     4. 过本机路由表192.168.1.101/32发往虚拟网桥bridge172.168.1.x。
     
 ### 扩展：中间不是交换机，是路由器(跨网段,可以跨vpc)
-![](.08_k8s_network_model_images/big_3_network3.png)
+![](assets/.08_k8s_network_model_images/big_3_network3.png)
 
 ## overlay(隧道模式)
-![](.08_k8s_network_model_images/overlay_process1.png)
+![](assets/.08_k8s_network_model_images/overlay_process1.png)
 - 优点：对物理网络没有要求
 - 缺点：
     - 封装解包，计算量上升，延迟。

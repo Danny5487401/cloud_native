@@ -1,5 +1,5 @@
 # autoscaler
-![](.12_scaler_images/autoscaler_situation.png)
+![](assets/.12_scaler_images/autoscaler_situation.png)
 应用部署在集群中，应用的负载本身是会随着时间动态发生变化的，为了更好的平衡资源使用率以及性能，kubernetes引入了autoscaler.
 
 弹性伸缩就是要解决当实际负载增大，而集群资源容量没来得及反应的问题。
@@ -43,7 +43,7 @@ Kubernetes的autoscaler分成两个层次:
 ## pod级别
 
 ### 1. HPA（Horizontal Pod Autoscaler）Pod自动弹性伸缩
-![](.12_scaler_images/hpa_process.png)
+![](assets/.12_scaler_images/hpa_process.png)
 
 K8S通过对Pod中运行的容器各项指标（CPU占用、内存占用、网络请求量）的检测，实现对Pod实例个数的动态新增和减少。
 
@@ -120,7 +120,7 @@ spec:
 - external： 非k8s内置对象的自定义指标（需自己实现适配器）
 
 #### HPA获取自定义指标（Custom Metrics）的底层实现（基于Prometheus）
-![](.12_hpa_images/hpa_prometheus.png)
+![](assets/.12_hpa_images/hpa_prometheus.png)
 
 Kubernetes是借助Agrregator APIServer扩展机制来实现Custom Metrics。Custom Metrics APIServer是一个提供查询Metrics指标的API服务（Prometheus的一个适配器），
 这个服务启动后，kubernetes会暴露一个叫custom.metrics.k8s.io的API，当请求这个URL时，请求通过Custom Metics APIServer去Prometheus里面去查询对应的指标，然后将查询结果按照特定格式返回。
@@ -193,8 +193,8 @@ kubectl autoscale rs foo --min=2 --max=5 --cpu-percent=80
 Vertical Pods Autoscaler（VPA）为现有pod分配更多（或更少）的CPU或内存。它可以适用于有状态和无状态的pod，但它主要是为有状态服务而构建的。
 
 ## Cluster Autoscaler: Node级别自动扩/缩容
-![](.12_scaler_images/cluster_autoscaler.png)
-![](.12_scaler_images/cluster_autoscaler2.png) 
+![](assets/.12_scaler_images/cluster_autoscaler.png)
+![](assets/.12_scaler_images/cluster_autoscaler2.png) 
 
 - 扩容 : Cluster Autoscaler（CA）根据pending状态的pod来扩展您的群集节点。它会定期检查是否有pending状态的pod，如果需要更多资源并且扩展后的群集仍在用户提供的约束范围内，则会增加群集的大小。
 CA与云提供商接口以请求更多节点或释放空闲节点。它适用于GCP，AWS和Azure

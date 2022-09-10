@@ -1,5 +1,5 @@
 # Informer机制
-![](.14_informer_images/informer_chain.png)
+![](assets/.14_informer_images/informer_chain.png)
 参考高清图：https://www.processon.com/view/link/5f55f3f3e401fd60bde48d31
 
 
@@ -25,7 +25,7 @@ Informer 是 client-go 中的核心工具包，已经被 kubernetes 中众多组
 - 高性能
 
 ## Informer运行原理
-![](.14_informer_images/informer_process1.png)
+![](assets/.14_informer_images/informer_process1.png)
 各个组件包括：
 
 - Reflector：用于监控（watch）指定的资源，当监控的资源发生变化时，触发相应的变更事件,例如Add事件、Update事件和Delete事件。并将资源对象存放到本地缓存DeltaFIFO中
@@ -37,7 +37,7 @@ Informer 是 client-go 中的核心工具包，已经被 kubernetes 中众多组
   - Indexer中的数据与Etcd完全一致，client-go可以从本地读取，减轻etcd和api-server的压力
 
 ## Informer的工作流程
-![](.14_informer_images/informer_process2.png)
+![](assets/.14_informer_images/informer_process2.png)
 黄色的部分是controller相关的框架，包括workqueue。蓝色部分是client-go的相关内容，包括informer, reflector(其实就是informer的封装), indexer。
 
 1. Informer 首先会 list/watch apiserver，Informer 所使用的 Reflector 包负责与 apiserver 建立连接，Reflector 使用 ListAndWatch 的方法，
@@ -60,7 +60,7 @@ Informer 是 client-go 中的核心工具包，已经被 kubernetes 中众多组
 
 
 ### List & Watch
-![](.14_informer_images/list_n_watch.png)
+![](assets/.14_informer_images/list_n_watch.png)
 
 List所做的，就是向API Server发送一个http短链接请求，罗列所有目标资源的对象。而Watch所做的是实际的“监听”工作，通过http长链接的方式，其与API Server能够建立一个持久的监听关系，当目标资源发生了变化时，API Server会返回一个对应的事件，从而完成一次成功的监听，之后的事情便交给后面的handler来做。
 
@@ -291,7 +291,7 @@ func NewNamespaceKeyedIndexerAndReflector(lw ListerWatcher, expectedType interfa
 ```
 
 核心方法：ListAndWatch方法,主要分为list、定时同步和watch三个部分；
-![](.14_informer_images/list_n_watch.png)
+![](assets/.14_informer_images/list_n_watch.png)
 - List部分逻辑：设置分页参数；执行list方法；将list结果同步进DeltaFIFO队列中；
 
 - 定时同步：定时同步以协程的方式运行，使用定时器实现定期同步；
@@ -536,7 +536,7 @@ loop:
 ```
 
 ### DeltaFIFO
-![](.14_informer_images/deltaFiFO_info.png)
+![](assets/.14_informer_images/deltaFiFO_info.png)
 DeltaFIFO 是一个生产者-消费者的队列，生产者是 Reflector，消费者是 Pop 函数，
 从架构图上可以看出 DeltaFIFO 的数据来源为 Reflector，通过 Pop 操作消费数据，
 消费的数据一方面存储到 Indexer 中，另一方面可以通过 Informer 的 handler 进行处理，Informer 的 handler 处理的数据需要与存储在 Indexer 中的数据匹配。
@@ -926,7 +926,7 @@ func NewNamespaceKeyedIndexerAndReflector(lw ListerWatcher, expectedType interfa
 
 
 ### Indexer
-![](.14_informer_images/indexer_info.png)
+![](assets/.14_informer_images/indexer_info.png)
 Indexer在Store基础上扩展了索引能力，就好比给数据库添加的索引，以便查询更快，那么肯定需要有个结构来保存索引。
 典型的索引用例是基于对象标签创建索引。 Indexer可以根据多个索引函数维护索引。Indexer使用线程安全的数据存储来存储对象及其键。 
 在Store中定义了一个名为MetaNamespaceKeyFunc 的默认函数，该函数生成对象的键作为该对象的<namespace> / <name>组合

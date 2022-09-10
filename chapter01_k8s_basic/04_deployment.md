@@ -138,7 +138,7 @@ for {
 
 ### ReplicaSet 控制器
 ![](../img/.04_deployment_images/replicaset_controller.png)
-![](.04_deployment_images/replicaset_controller2.png)
+![](assets/.04_deployment_images/replicaset_controller2.png)
 
 replicaset controller是kube-controller-manager组件中众多控制器中的一个，是 replicaset 资源对象的控制器，其通过对replicaset、pod 2种资源的监听，
 当这2种资源发生变化时会触发 replicaset controller 对相应的replicaset对象进行调谐操作，从而完成replicaset期望副本数的调谐，当实际pod的数量未达到预期时创建pod，当实际pod的数量超过预期时删除pod。

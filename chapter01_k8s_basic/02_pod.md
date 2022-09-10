@@ -61,7 +61,7 @@ i表示（1Mi=1024x1024）, M表示（1M=1000x1000）（其它单位类推， �
 
 
 ## Pod中的网络资源
-![](.02_pod_images/pod_infra.png)
+![](assets/.02_pod_images/pod_infra.png)
 Pod是一个逻辑概念，是一组共享了某些资源的容器。Pod 里的所有容器，共享的是同一个 Network Namespace，并且可以声明共享同一个 Volume。
 
 在 Kubernetes 项目里有一个中间容器，这个容器叫作 Infra 容器。Infra 容器永远都是第一个被创建的容器，而其他用户定义的容器，则通过 Join Network Namespace 的方式，与 Infra 容器关联在一起。

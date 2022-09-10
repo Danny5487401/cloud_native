@@ -8,7 +8,7 @@
 
 
 ## kubelet组件模块
-![](.13_kubelet_images/kubelet_module.png)
+![](assets/.13_kubelet_images/kubelet_module.png)
 - Pleg(Pod Lifecycle Event Generator) 是kubelet 的核心模块，PLEG周期性调用container runtime获取本节点containers/sandboxes的信息(像docker ps)，并与自身维护的pods cache信息进行对比，生成对应的 PodLifecycleEvent并发送到plegCh中，在kubelet syncLoop中对plegCh进行消费处理，最终达到用户的期望状态
 - podManager提供存储、访问Pod信息的接口，维护static pod和mirror pod的映射关系
 - containerManager 管理容器的各种资源，比如 CGroups、QoS、cpuset、device 等
@@ -19,7 +19,7 @@
 - volumeManager 管理容器的存储卷，比如格式化资盘、挂载到 Node 本地、最后再将挂载路径传给容器
 
 ## 深入kubelet工作原理
-![](.13_kubelet_images/kubelet_process.png)
+![](assets/.13_kubelet_images/kubelet_process.png)
 
 由图我们可以看到kubelet 的工作核心，就是一个控制循环，即：SyncLoop。驱动整个控制循环的事件有：pod更新事件、pod生命周期变化、kubelet本身设置的执行周期、定时清理事件等。
 
@@ -28,5 +28,5 @@
 kubelet 调用下层容器运行时的执行过程，并不会直接调用 Docker 的 API，而是通过一组叫作 CRI（Container Runtime Interface，容器运行时接口）的 gRPC 接口来间接执行的。
 
 ## 源码run
-![](.13_kubelet_images/kubelet_run.png)
+![](assets/.13_kubelet_images/kubelet_run.png)
 

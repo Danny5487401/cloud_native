@@ -1,11 +1,11 @@
 # Kubernetes架构
 ![](../img/.01_basis_idea/kube_structure.png)
 
-![](.01_kube_structure_n_basic_idea_images/kube_structure1.png)
+![](assets/.01_kube_structure_n_basic_idea_images/kube_structure1.png)
 
 数据流转图
 
-![](.01_kube_structure_n_basic_idea_images/data_transfer_structure.png)
+![](assets/.01_kube_structure_n_basic_idea_images/data_transfer_structure.png)
 
 ## 1. Master节点的组件
 - apiServer : 提供资源操作的唯一入口，提供api注册、发现、认证、访问控制等功能
@@ -19,7 +19,7 @@
   - 一个key-value数据库
   - 保存整个机器的状态
 - controller-manager: 
-![](.01_kube_structure_n_basic_idea_images/controller_manager.png)
+![](assets/.01_kube_structure_n_basic_idea_images/controller_manager.png)
   - 负责维护机器状态，比如：自动扩容、故障检查、滚动更新
   - 实现集群自动化的关键组件
 - scheduler

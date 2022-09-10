@@ -20,6 +20,7 @@
 
 ## [第二章 k8s高级篇]
 - [2.1 CRD自定义资源](chapter02_k8s_advanced/01_CustomResourcesDefinition/crd.md)
+- 2.2 operator
 
 ## [第三章 k8s资源管理helm](chapter03_helm/helm.md)
 
@@ -37,5 +38,7 @@
 - [4.4 k8s使用的web框架：go-restful 源码分析](chapter04_k8s_pkg/04_k8s_restful/go-restful.md)
 - 4.5 k8s API 的源码实现
   - [4.5.1 使用unstructured解析自定义数据](chapter04_k8s_pkg/05_k8s.io_api/01_unstrutured/main.go)
-- 
+
+
+
 
