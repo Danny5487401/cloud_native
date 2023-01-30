@@ -98,13 +98,14 @@ docker官方并没有提供多主机的容器通信方案，单机网络的模�
 
 2. 两个netns交流
 方式一：veth   
+
 ![](../img/.08_k8s_network_model_images/two_netns.png)
 ![](../img/.08_k8s_network_model_images/netns_two.png)
 
-开始搭建梯子🪜，一边一半  
+开始搭建梯子🪜，一边一半    
 ![](../img/.08_k8s_network_model_images/ladder.png)
 
-构造梯子veth  
+构造梯子veth    
 ![](../img/.08_k8s_network_model_images/iplink.png)
 
 放梯子到各自家里  
@@ -145,6 +146,7 @@ docker官方并没有提供多主机的容器通信方案，单机网络的模�
 ![](../img/.08_k8s_network_model_images/pjl2wp_link_up.png)
 
 方式三：ipvlan(ip不同，mac相同)-->没有经过数据解封装
+
 ![](../img/.08_k8s_network_model_images/ipvlan.png)
 - 查看mac地址，其实net1和net2的mac地址一样的。
 - 子接口172.12.1.5和子接口172.12.1.6通的
@@ -159,6 +161,7 @@ docker官方并没有提供多主机的容器通信方案，单机网络的模�
 
 
 
+
 ### Pod 与 Netns 的关系
 ![](../img/.08_k8s_network_model_images/relation_between_pod_and_netns.png)
 
@@ -166,6 +169,7 @@ docker官方并没有提供多主机的容器通信方案，单机网络的模�
 ![](../img/.08_k8s_network_model_images/iso_protocol.png)
 
 1. hub 集线器
+
 ![](../img/.08_k8s_network_model_images/hub.png)
 
 特点  
@@ -173,8 +177,9 @@ docker官方并没有提供多主机的容器通信方案，单机网络的模�
 ![](../img/.08_k8s_network_model_images/hub_info2.png)
 ![](../img/.08_k8s_network_model_images/hub_info3.png)
 
-
+ 
 2. bridge 网桥  
+
 ![](../img/.08_k8s_network_model_images/bridge_device.png)
 ![](../img/.08_k8s_network_model_images/bridge_device_info.png)
 ![](../img/.08_k8s_network_model_images/bridge_device_mechanism.png)
@@ -324,3 +329,5 @@ Flannel为每个主机提供独立的子网，整个集群的网络信息存储�
 例如，我们从etcd中监听到一个EventAdded事件subnet为10.1.15.0/24被分配给主机Public IP 192.168.0.100，hostgw要做的工作就是在本主机上添加一条目的地址为10.1.15.0/24，网关地址为192.168.0.100，输出设备为上文中选择的集群间交互的网卡即可。对于EventRemoved事件，只需删除对应的路由
 
 
+## 参考资料
+1. [ip 命令使用](https://blog.csdn.net/qq_35029061/article/details/125967340)

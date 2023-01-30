@@ -43,11 +43,11 @@ Helm客户端可以指向0个或多个chart仓库。默认没有配置仓库。C
 ## 基本使用
 1. 创建项目
 ```shell
-(⎈ |teleport.gllue.com-test:danny-xia)➜  helm_test helm create nginx
+(⎈ |danny.com-test:danny-xia)➜  helm_test helm create nginx
 Creating nginx
-(⎈ |teleport.gllue.com-test:danny-xia)➜  helm_test ls
+(⎈ |danny.com-test:danny-xia)➜  helm_test ls
 nginx
-(⎈ |teleport.gllue.com-test:danny-xia)➜  helm_test tree
+(⎈ |danny.com-test:danny-xia)➜  helm_test tree
 .
 ├── charts  #包含chart依赖的其他chart
 ├── Chart.yaml #包含了chart信息的YAML文件

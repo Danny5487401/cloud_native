@@ -17,5 +17,4 @@
 #不需要js
 node_modules
 # 不需要idea
-.idea/
 .idea
