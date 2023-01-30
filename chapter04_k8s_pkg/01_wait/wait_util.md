@@ -1,4 +1,4 @@
-# kubernetes源码阅读之工具函数wait使用
+# kubernetes 工具函数 wait 使用
 
 ## 源码
 ```go

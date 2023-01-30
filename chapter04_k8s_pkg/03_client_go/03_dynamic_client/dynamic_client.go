@@ -4,19 +4,22 @@ import (
 	"context"
 	"flag"
 	"fmt"
+	"path/filepath"
+
 	apiv1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/runtime/schema"
 	"k8s.io/client-go/dynamic"
 	"k8s.io/client-go/tools/clientcmd"
+	clientcmdapi "k8s.io/client-go/tools/clientcmd/api"
 	"k8s.io/client-go/util/homedir"
-	"path/filepath"
 )
 
 func main() {
 
 	var kubeconfig *string
+	var masterUrl string
 
 	// home是家目录，如果能取得家目录的值，就可以用来做默认值
 	if home := homedir.HomeDir(); home != "" {
@@ -31,7 +34,9 @@ func main() {
 	flag.Parse()
 
 	// 从本机加载kubeconfig配置文件，因此第一个参数为空字符串
-	config, err := clientcmd.BuildConfigFromFlags("", *kubeconfig)
+	config, err := clientcmd.NewNonInteractiveDeferredLoadingClientConfig(
+		&clientcmd.ClientConfigLoadingRules{ExplicitPath: *kubeconfig},
+		&clientcmd.ConfigOverrides{ClusterInfo: clientcmdapi.Cluster{Server: masterUrl}}).ClientConfig()
 
 	// kubeconfig加载失败就直接退出了
 	if err != nil {
@@ -45,7 +50,9 @@ func main() {
 	}
 
 	// dynamicClient的唯一关联方法所需的入参
-	gvr := schema.GroupVersionResource{Version: "v1", Resource: "pods"}
+	gvr := schema.GroupVersionResource{
+		Version:  "v1",
+		Resource: "pods"}
 
 	// 使用dynamicClient的查询列表方法，查询指定namespace下的所有pod，
 	// 注意此方法返回的数据结构类型是UnstructuredList
