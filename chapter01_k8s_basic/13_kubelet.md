@@ -17,7 +17,7 @@ SandBox就准备好了，然后就可以在其中创建容器了，在同一个S
 Kubelet再通过CSI接口，向远端的存储资源提供者申请对应的存储资源，根据存储类型，可能需要挂载或者格式化成文件系统供Pod使用；
 这里面有点特殊的就是CNI，kubelet没有直接通过CNI跟网络资源提供者交互，而是由Container Runtime来做这件事，kubelet只需要通过CRI向Container Runtime发送请求，即可获得相关的网络信息。
 
-![](kubelet_with_cni_cri_csi.png)
+![](.13_kubelet_images/kubelet_with_cni_cri_csi.png)
 
 ## kubelet组件模块
 ![](.13_kubelet_images/kubelet_module.png)
@@ -39,7 +39,7 @@ Kubelet再通过CSI接口，向远端的存储资源提供者申请对应的存�
 
 kubelet 调用下层容器运行时的执行过程，并不会直接调用 Docker 的 API，而是通过一组叫作 CRI（Container Runtime Interface，容器运行时接口）的 gRPC 接口来间接执行的。
 
-![](kubelet_process2.png)
+![](.13_kubelet_images/kubelet_process2.png)
 
 Kubelet实现对Pod以及各种外部资源的管理，主要依赖两个机制：一个是SyncLoop，一个是各种各样的Manager。
 
