@@ -142,9 +142,9 @@ PVC 的文件里存储的大小、访问模式是不变的。现在需要新加�
 - Capacity：这个很好理解，就是存储对象的大小；
 - AccessModes：也是用户需要关心的，就是说我使用这个 PV 的方式。它有三种使用方式。
 
-  - 一种是单 node 读写访问；
-  - 第二种是多个 node 只读访问，是常见的一种数据的共享方式；
-  - 第三种是多个 node 上读写访问。
+  - ReadWriteOnce 单路读写，卷只能被单一集群节点挂载读写；
+  - ReadOnlyMany 多路只读，卷能被多个集群节点挂载且只能读；
+  - ReadWriteMany 多路读写，卷能被集群多个节点挂载并读写。
 
   用户在提交 PVC 的时候，最重要的两个字段 —— Capacity 和 AccessModes。在提交 PVC 后，k8s 集群中的相关组件是如何去找到合适的 PV 呢？
   首先它是通过为 PV 建立的 AccessModes 索引找到所有能够满足用户的 PVC 里面的 AccessModes 要求的 PV list，
@@ -188,7 +188,7 @@ K8s中的 StatefulSet 管理的 Pod 带存储的迁移就是通过这种方式�
 ![](../img/.07_volume_images/nas_pod.png)
 
 - volumeAttributes是我在阿里云nas控制台预先创建的 NAS 文件系统的相关信息，我们主要需要关心的有 capacity 为5Gi;
-- accessModes 为多node读写访问;
+- accessModes: readWriteMany 为多node读写访问;
 - reclaimPolicy：
   - Retain：这个策略允许手动回收资源，当PVC被删除后，PV仍然可以存在，管理员可以手动的执行删除PV，并且和PV绑定的存储资源也不会被删除，如果想要删除相应的存储资源的数据，需要手动删除对应存储资源的数据。
   - Delete：这个策略会在PVC被删除之后，连带将PV以及PV管理的存储资源也删除。
