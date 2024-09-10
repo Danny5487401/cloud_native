@@ -1,3 +1,32 @@
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+**Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
+
+- [Informer机制](#informer%E6%9C%BA%E5%88%B6)
+  - [为什么需要 Informer 机制？](#%E4%B8%BA%E4%BB%80%E4%B9%88%E9%9C%80%E8%A6%81-informer-%E6%9C%BA%E5%88%B6)
+  - [Informer 的主要功能：](#informer-%E7%9A%84%E4%B8%BB%E8%A6%81%E5%8A%9F%E8%83%BD)
+  - [Informer 需要满足哪些要求？](#informer-%E9%9C%80%E8%A6%81%E6%BB%A1%E8%B6%B3%E5%93%AA%E4%BA%9B%E8%A6%81%E6%B1%82)
+  - [Informer运行原理](#informer%E8%BF%90%E8%A1%8C%E5%8E%9F%E7%90%86)
+  - [Informer的工作流程](#informer%E7%9A%84%E5%B7%A5%E4%BD%9C%E6%B5%81%E7%A8%8B)
+    - [List & Watch](#list--watch)
+    - [二级缓存](#%E4%BA%8C%E7%BA%A7%E7%BC%93%E5%AD%98)
+    - [Resync](#resync)
+  - [源码](#%E6%BA%90%E7%A0%81)
+    - [SharedInformer](#sharedinformer)
+    - [SharedIndexInformer](#sharedindexinformer)
+    - [ListerWatcher](#listerwatcher)
+  - [Reflector 映射/对称](#reflector-%E6%98%A0%E5%B0%84%E5%AF%B9%E7%A7%B0)
+  - [reflector的初始化](#reflector%E7%9A%84%E5%88%9D%E5%A7%8B%E5%8C%96)
+    - [DeltaFIFO](#deltafifo)
+    - [DeltaFIFO](#deltafifo-1)
+    - [Delta](#delta)
+    - [Deltas](#deltas)
+    - [ResourceEventHandler](#resourceeventhandler)
+    - [reflector的初始化](#reflector%E7%9A%84%E5%88%9D%E5%A7%8B%E5%8C%96-1)
+    - [Indexer](#indexer)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 # Informer机制
 ![](.14_informer_images/informer_chain.png)
 参考高清图：https://www.processon.com/view/link/5f55f3f3e401fd60bde48d31

@@ -1,3 +1,17 @@
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+**Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
+
+- [Service](#service)
+  - [Service：Kubernetes 中的服务返现与负载均衡](#servicekubernetes-%E4%B8%AD%E7%9A%84%E6%9C%8D%E5%8A%A1%E8%BF%94%E7%8E%B0%E4%B8%8E%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1)
+  - [使用yaml格式](#%E4%BD%BF%E7%94%A8yaml%E6%A0%BC%E5%BC%8F)
+  - [集群内访问 Service](#%E9%9B%86%E7%BE%A4%E5%86%85%E8%AE%BF%E9%97%AE-service)
+    - [Headless Service](#headless-service)
+  - [向集群外暴露 Service](#%E5%90%91%E9%9B%86%E7%BE%A4%E5%A4%96%E6%9A%B4%E9%9C%B2-service)
+  - [架构设计](#%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 # Service 
 
 一个Kubernetes的Service是一种抽象，它定义了一组Pods的逻辑集合和一个用于访问它们的策略 - 有的时候被称之为微服务

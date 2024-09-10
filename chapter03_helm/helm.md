@@ -1,3 +1,17 @@
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+**Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
+
+- [helm](#helm)
+  - [helm组件](#helm%E7%BB%84%E4%BB%B6)
+    - [helm 客户端](#helm-%E5%AE%A2%E6%88%B7%E7%AB%AF)
+    - [Chart](#chart)
+    - [Helm 仓库/存储库](#helm-%E4%BB%93%E5%BA%93%E5%AD%98%E5%82%A8%E5%BA%93)
+    - [Release](#release)
+  - [基本使用](#%E5%9F%BA%E6%9C%AC%E4%BD%BF%E7%94%A8)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 # helm
 Helm是一个由CNCF孵化和管理的项目，用于对需要在Kubernetes 上部署的复杂应用进行定义、安装和更新。Helm以Chart的方式对应用软件进行描述，可以方便地创建、版本化、共享和发布复杂的应用软件。
 

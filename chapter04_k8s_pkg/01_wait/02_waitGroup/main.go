@@ -7,11 +7,11 @@ import (
 	"time"
 )
 
-func main(){
-	f1:= func(ctx context.Context) {
+func main() {
+	f1 := func(ctx context.Context) {
 		for {
 			select {
-			case <- ctx.Done():
+			case <-ctx.Done():
 				return
 			default:
 				fmt.Println("hi11")
@@ -21,8 +21,8 @@ func main(){
 	}
 	wg := wait.Group{}
 	ctx, cancel := context.WithCancel(context.Background())
-	wg.StartWithContext(ctx,f1)
-	time.Sleep(time.Second*3)
+	wg.StartWithContext(ctx, f1)
+	time.Sleep(time.Second * 3)
 	cancel()
 	wg.Wait()
 }

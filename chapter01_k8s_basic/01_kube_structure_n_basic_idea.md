@@ -1,3 +1,26 @@
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+**Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
+
+- [Kubernetes架构](#kubernetes%E6%9E%B6%E6%9E%84)
+  - [1. Master节点的组件](#1-master%E8%8A%82%E7%82%B9%E7%9A%84%E7%BB%84%E4%BB%B6)
+    - [常用的控制器controller](#%E5%B8%B8%E7%94%A8%E7%9A%84%E6%8E%A7%E5%88%B6%E5%99%A8controller)
+    - [scheduler默认调度流程](#scheduler%E9%BB%98%E8%AE%A4%E8%B0%83%E5%BA%A6%E6%B5%81%E7%A8%8B)
+      - [预选策略](#%E9%A2%84%E9%80%89%E7%AD%96%E7%95%A5)
+      - [优选策略](#%E4%BC%98%E9%80%89%E7%AD%96%E7%95%A5)
+  - [2. Node节点的组件](#2-node%E8%8A%82%E7%82%B9%E7%9A%84%E7%BB%84%E4%BB%B6)
+  - [Pod](#pod)
+  - [Volume](#volume)
+  - [deployment](#deployment)
+  - [service](#service)
+  - [namespace](#namespace)
+  - [API/label](#apilabel)
+  - [Ingress](#ingress)
+    - [背景](#%E8%83%8C%E6%99%AF)
+    - [特点](#%E7%89%B9%E7%82%B9)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 # Kubernetes架构
 ![](../img/.01_basis_idea/kube_structure.png)
 

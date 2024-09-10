@@ -1,3 +1,12 @@
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+**Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
+
+- [k8s.io/client-go 中rest模块源码分析](#k8sioclient-go-%E4%B8%ADrest%E6%A8%A1%E5%9D%97%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90)
+  - [client-go 目录介绍](#client-go-%E7%9B%AE%E5%BD%95%E4%BB%8B%E7%BB%8D)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 # k8s.io/client-go 中rest模块源码分析
 对于不同的kubernetes版本使用标签 v0.x.y 来表示对应的客户端版本。
 

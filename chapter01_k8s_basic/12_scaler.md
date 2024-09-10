@@ -1,3 +1,27 @@
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+**Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
+
+- [autoscaler](#autoscaler)
+  - [autoscaler要处理问题](#autoscaler%E8%A6%81%E5%A4%84%E7%90%86%E9%97%AE%E9%A2%98)
+  - [解决](#%E8%A7%A3%E5%86%B3)
+  - [不同业务需求](#%E4%B8%8D%E5%90%8C%E4%B8%9A%E5%8A%A1%E9%9C%80%E6%B1%82)
+  - [分类](#%E5%88%86%E7%B1%BB)
+  - [pod级别](#pod%E7%BA%A7%E5%88%AB)
+    - [1. HPA（Horizontal Pod Autoscaler）Pod自动弹性伸缩](#1-hpahorizontal-pod-autoscalerpod%E8%87%AA%E5%8A%A8%E5%BC%B9%E6%80%A7%E4%BC%B8%E7%BC%A9)
+      - [HPA设置](#hpa%E8%AE%BE%E7%BD%AE)
+      - [HPA获取自定义指标（Custom Metrics）的底层实现（基于Prometheus）](#hpa%E8%8E%B7%E5%8F%96%E8%87%AA%E5%AE%9A%E4%B9%89%E6%8C%87%E6%A0%87custom-metrics%E7%9A%84%E5%BA%95%E5%B1%82%E5%AE%9E%E7%8E%B0%E5%9F%BA%E4%BA%8Eprometheus)
+      - [算法](#%E7%AE%97%E6%B3%95)
+    - [2. VPA（Vertical Pods Autoscaler纵向扩容）](#2-vpavertical-pods-autoscaler%E7%BA%B5%E5%90%91%E6%89%A9%E5%AE%B9)
+  - [Cluster Autoscaler: Node级别自动扩/缩容](#cluster-autoscaler-node%E7%BA%A7%E5%88%AB%E8%87%AA%E5%8A%A8%E6%89%A9%E7%BC%A9%E5%AE%B9)
+    - [CA架构](#ca%E6%9E%B6%E6%9E%84)
+    - [什么样的节点不会被CA删除](#%E4%BB%80%E4%B9%88%E6%A0%B7%E7%9A%84%E8%8A%82%E7%82%B9%E4%B8%8D%E4%BC%9A%E8%A2%ABca%E5%88%A0%E9%99%A4)
+  - [CA如何与HPA协同工作](#ca%E5%A6%82%E4%BD%95%E4%B8%8Ehpa%E5%8D%8F%E5%90%8C%E5%B7%A5%E4%BD%9C)
+  - [源码分析：待补充](#%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90%E5%BE%85%E8%A1%A5%E5%85%85)
+  - [参考链接：](#%E5%8F%82%E8%80%83%E9%93%BE%E6%8E%A5)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 # autoscaler
 ![](.12_scaler_images/autoscaler_situation.png)
 应用部署在集群中，应用的负载本身是会随着时间动态发生变化的，为了更好的平衡资源使用率以及性能，kubernetes引入了autoscaler.

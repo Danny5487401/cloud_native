@@ -1,3 +1,23 @@
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+**Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
+
+- [配置管理](#%E9%85%8D%E7%BD%AE%E7%AE%A1%E7%90%86)
+  - [背景](#%E8%83%8C%E6%99%AF)
+  - [ConfigMap](#configmap)
+    - [configMap使用](#configmap%E4%BD%BF%E7%94%A8)
+  - [Secret](#secret)
+    - [secret创建](#secret%E5%88%9B%E5%BB%BA)
+    - [secret使用](#secret%E4%BD%BF%E7%94%A8)
+      - [使用私有镜像](#%E4%BD%BF%E7%94%A8%E7%A7%81%E6%9C%89%E9%95%9C%E5%83%8F)
+  - [ServiceAccount](#serviceaccount)
+    - [实现原理](#%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86)
+  - [资源配置管理](#%E8%B5%84%E6%BA%90%E9%85%8D%E7%BD%AE%E7%AE%A1%E7%90%86)
+    - [SecurityContext](#securitycontext)
+  - [initContainer](#initcontainer)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 # 配置管理
 ![](../img/.06_configMap_images/pod_config_management.png)
 

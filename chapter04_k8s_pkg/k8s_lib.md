@@ -1,3 +1,18 @@
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+**Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
+
+- [k8s库](#k8s%E5%BA%93)
+  - [k8s中 Apimachinery、Api、Client-go库之间的关系](#k8s%E4%B8%AD-apimachineryapiclient-go%E5%BA%93%E4%B9%8B%E9%97%B4%E7%9A%84%E5%85%B3%E7%B3%BB)
+  - [1 apimachinery](#1-apimachinery)
+  - [2 api](#2-api)
+    - [metav1.TypeMeta](#metav1typemeta)
+    - [metav1.ObjectMeta](#metav1objectmeta)
+    - [metav1.ListMeta](#metav1listmeta)
+    - [runtime.Object](#runtimeobject)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 # k8s库
 
 ## k8s中 Apimachinery、Api、Client-go库之间的关系

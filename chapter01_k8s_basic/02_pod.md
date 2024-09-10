@@ -1,3 +1,29 @@
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+**Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
+
+- [Pod](#pod)
+  - [为什么Pod必须是原子调度单位](#%E4%B8%BA%E4%BB%80%E4%B9%88pod%E5%BF%85%E9%A1%BB%E6%98%AF%E5%8E%9F%E5%AD%90%E8%B0%83%E5%BA%A6%E5%8D%95%E4%BD%8D)
+  - [Pod需要解决的问题](#pod%E9%9C%80%E8%A6%81%E8%A7%A3%E5%86%B3%E7%9A%84%E9%97%AE%E9%A2%98)
+    - [解决](#%E8%A7%A3%E5%86%B3)
+  - [容器设计模式](#%E5%AE%B9%E5%99%A8%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F)
+    - [SideCar](#sidecar)
+  - [Pod的生命周期](#pod%E7%9A%84%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F)
+  - [Pod中的资源限制](#pod%E4%B8%AD%E7%9A%84%E8%B5%84%E6%BA%90%E9%99%90%E5%88%B6)
+  - [Pod中的网络资源](#pod%E4%B8%AD%E7%9A%84%E7%BD%91%E7%BB%9C%E8%B5%84%E6%BA%90)
+  - [Pod中的Volume](#pod%E4%B8%AD%E7%9A%84volume)
+  - [Pod中重要字段含义与用法](#pod%E4%B8%AD%E9%87%8D%E8%A6%81%E5%AD%97%E6%AE%B5%E5%90%AB%E4%B9%89%E4%B8%8E%E7%94%A8%E6%B3%95)
+    - [NodeSelector](#nodeselector)
+    - [HostAliases](#hostaliases)
+  - [ImagePullPolicy](#imagepullpolicy)
+  - [Lifecycle](#lifecycle)
+  - [Pod中的Projected Volume](#pod%E4%B8%AD%E7%9A%84projected-volume)
+    - [Secret](#secret)
+  - [ConfigMap](#configmap)
+  - [Downward API](#downward-api)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 # Pod
 ![](../img/.02_pod_images/Pod.png)
 ## 为什么Pod必须是原子调度单位

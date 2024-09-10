@@ -1,3 +1,16 @@
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+**Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
+
+- [CustomResourcesDefinition(crd )](#customresourcesdefinitioncrd-)
+  - [案例](#%E6%A1%88%E4%BE%8B)
+    - [1. 定义资源](#1-%E5%AE%9A%E4%B9%89%E8%B5%84%E6%BA%90)
+    - [2. 使用实例](#2-%E4%BD%BF%E7%94%A8%E5%AE%9E%E4%BE%8B)
+    - [3. 使用控制器](#3-%E4%BD%BF%E7%94%A8%E6%8E%A7%E5%88%B6%E5%99%A8)
+      - [流程](#%E6%B5%81%E7%A8%8B)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 # CustomResourcesDefinition(crd )
 
 CRD 功能是在 Kubernetes 1.7 版本被引入的，用户可以根据自己的需求添加自定义的 Kubernetes 对象资源。

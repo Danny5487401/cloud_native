@@ -1,3 +1,17 @@
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+**Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
+
+- [Container Runtime Interface 容器运行时接口(CRI)](#container-runtime-interface-%E5%AE%B9%E5%99%A8%E8%BF%90%E8%A1%8C%E6%97%B6%E6%8E%A5%E5%8F%A3cri)
+  - [背景](#%E8%83%8C%E6%99%AF)
+  - [CRI 接口分组](#cri-%E6%8E%A5%E5%8F%A3%E5%88%86%E7%BB%84)
+    - [1. 通过 CRI 操作容器的生命周期](#1-%E9%80%9A%E8%BF%87-cri-%E6%93%8D%E4%BD%9C%E5%AE%B9%E5%99%A8%E7%9A%84%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F)
+    - [2. CRI streaming 接口](#2-cri-streaming-%E6%8E%A5%E5%8F%A3)
+    - [目前 CRI 的一些实现](#%E7%9B%AE%E5%89%8D-cri-%E7%9A%84%E4%B8%80%E4%BA%9B%E5%AE%9E%E7%8E%B0)
+    - [Containerd结构](#containerd%E7%BB%93%E6%9E%84)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 # Container Runtime Interface 容器运行时接口(CRI)
 本质上就是 Kubernetes 定义的一组与容器运行时进行交互的接口，所以只要实现了这套接口的容器运行时都可以对接到 Kubernetes 平台上来。
 

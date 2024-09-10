@@ -1,3 +1,23 @@
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+**Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
+
+- [Deployment](#deployment)
+  - [问题](#%E9%97%AE%E9%A2%98)
+  - [解决方式](#%E8%A7%A3%E5%86%B3%E6%96%B9%E5%BC%8F)
+  - [语法解读](#%E8%AF%AD%E6%B3%95%E8%A7%A3%E8%AF%BB)
+    - [spec 字段解析](#spec-%E5%AD%97%E6%AE%B5%E8%A7%A3%E6%9E%90)
+    - [查看pod](#%E6%9F%A5%E7%9C%8Bpod)
+    - [Deployment状态](#deployment%E7%8A%B6%E6%80%81)
+    - [历史版本保留 revisionHistoryLimit](#%E5%8E%86%E5%8F%B2%E7%89%88%E6%9C%AC%E4%BF%9D%E7%95%99-revisionhistorylimit)
+  - [架构设计](#%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1)
+    - [管理模式](#%E7%AE%A1%E7%90%86%E6%A8%A1%E5%BC%8F)
+    - [Deployment原理](#deployment%E5%8E%9F%E7%90%86)
+    - [Deployment 控制器](#deployment-%E6%8E%A7%E5%88%B6%E5%99%A8)
+    - [ReplicaSet 控制器](#replicaset-%E6%8E%A7%E5%88%B6%E5%99%A8)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 # Deployment
 
 ## 问题

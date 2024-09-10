@@ -1,3 +1,18 @@
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+**Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
+
+- [k8s使用的web框架：go-restful 源码分析](#k8s%E4%BD%BF%E7%94%A8%E7%9A%84web%E6%A1%86%E6%9E%B6go-restful-%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90)
+  - [数据结构](#%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84)
+    - [核心数据结构Route](#%E6%A0%B8%E5%BF%83%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84route)
+    - [2. webservice](#2-webservice)
+    - [3. container](#3-container)
+  - [流程分析](#%E6%B5%81%E7%A8%8B%E5%88%86%E6%9E%90)
+    - [路由分发函数dispatch](#%E8%B7%AF%E7%94%B1%E5%88%86%E5%8F%91%E5%87%BD%E6%95%B0dispatch)
+      - [路由选择](#%E8%B7%AF%E7%94%B1%E9%80%89%E6%8B%A9)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 # k8s使用的web框架：go-restful 源码分析
 
 go-restful是一个用go语言开发的快速构建restful风格的web框架。k8s最核心的组件kube-apiserver使用到了该框架

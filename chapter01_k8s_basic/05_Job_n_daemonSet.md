@@ -1,3 +1,24 @@
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+**Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
+
+- [Job](#job)
+  - [背景](#%E8%83%8C%E6%99%AF)
+  - [Job的功能](#job%E7%9A%84%E5%8A%9F%E8%83%BD)
+  - [语法分析](#%E8%AF%AD%E6%B3%95%E5%88%86%E6%9E%90)
+    - [查看pod](#%E6%9F%A5%E7%9C%8Bpod)
+  - [并行运行Job](#%E5%B9%B6%E8%A1%8C%E8%BF%90%E8%A1%8Cjob)
+  - [CronJob定时任务](#cronjob%E5%AE%9A%E6%97%B6%E4%BB%BB%E5%8A%A1)
+    - [语法分析](#%E8%AF%AD%E6%B3%95%E5%88%86%E6%9E%90-1)
+  - [架构设计](#%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1)
+- [DaemonSet](#daemonset)
+  - [背景](#%E8%83%8C%E6%99%AF-1)
+  - [DaemonSet功能](#daemonset%E5%8A%9F%E8%83%BD)
+  - [语法分析](#%E8%AF%AD%E6%B3%95%E5%88%86%E6%9E%90-2)
+  - [架构设计](#%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1-1)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 # Job
 
 ## 背景
