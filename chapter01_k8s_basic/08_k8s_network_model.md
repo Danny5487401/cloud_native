@@ -22,7 +22,7 @@
     - [2. pod与pod的通讯](#2-pod%E4%B8%8Epod%E7%9A%84%E9%80%9A%E8%AE%AF)
       - [同一Node内的pod之间通讯](#%E5%90%8C%E4%B8%80node%E5%86%85%E7%9A%84pod%E4%B9%8B%E9%97%B4%E9%80%9A%E8%AE%AF)
       - [不同Node的pod之间通讯](#%E4%B8%8D%E5%90%8Cnode%E7%9A%84pod%E4%B9%8B%E9%97%B4%E9%80%9A%E8%AE%AF)
-    - [IASS主流网络方案](#iass%E4%B8%BB%E6%B5%81%E7%BD%91%E7%BB%9C%E6%96%B9%E6%A1%88)
+    - [IASS 主流网络方案](#iass-%E4%B8%BB%E6%B5%81%E7%BD%91%E7%BB%9C%E6%96%B9%E6%A1%88)
     - [Flannel](#flannel)
       - [实现的功能](#%E5%AE%9E%E7%8E%B0%E7%9A%84%E5%8A%9F%E8%83%BD)
       - [缺点](#%E7%BC%BA%E7%82%B9)
@@ -283,12 +283,24 @@ docker最终被访问的ip和端口，与提供的不一致，引起配置的复
 
 
 
-### IASS主流网络方案
-我们可以把云计算理解成一栋大楼，而这栋楼又可以分为顶楼、中间、低层三大块。那么我们就可以把Iass(基础设施)、Pass(平台)、Sass(软件)理解成这栋楼的三部分
+### IASS 主流网络方案
+我们可以把云计算理解成一栋大楼，而这栋楼又可以分为顶楼、中间、低层三大块。那么我们就可以把 Iass(基础设施)、Pass(平台)、Sass(软件)理解成这栋楼的三部分
 ![](../img/.08_k8s_network_model_images/container_network.png)
 
 ### Flannel
 ![](../img/.08_k8s_network_model_images/flannel.png)
+
+Flannel是CoreOS开源的，Overlay模式的CNI网络插件，Flannel在每个集群节点上运行一个flanneld的代理守护服务，为每个集群节点（HOST）分配一个子网（SUBNET），同时为节点上的容器组（POD）分配IP，在整个集群节点间构建一个虚拟的网络，实现集群内部跨节点通信。
+
+Flannel的数据包在集群节点间转发是由backend实现的，目前，已经支持核心官方推荐的模式有UDP、VXLAN、HOST-GW，以及扩展试用实验的模式有 IPIP，AWS VPC、GCE、Ali VPC、Tencent VPC等路由，其中VXLAN模式在实际的生产中使用最多。
+
+| 模式	| 底层网络要求 | 	实现模式	| 封包/解包 |	overlay网络	| 转发效率 |
+| :--: |:------:|:--------------------------:|:-----:|:---------:|:----:|
+| Flannel UDP |  三层互通  |             overlay             |  用户态  |    三层     |  低   |
+| Flannel VXLAN |  三层互通  |             overlay             |  内核态  |     二层      |  中   |
+| Flannel host-gw |  二层互通  |            	路由            |   无   |    三层     |  高   |
+| IPIP模式 |  三层互通  |             overlay             |  内核态  |    三层     |  高   |
+| Cloud VPC |  三层互通  |             	路由            |   无   |    三层     |  高   |
 
 #### 实现的功能
 协助k8s给每个Node上的docker容器分配互不冲突的ip地址
@@ -366,4 +378,7 @@ Flannel为每个主机提供独立的子网，整个集群的网络信息存储�
 
 
 ## 参考资料
-1. [ip 命令使用](https://blog.csdn.net/qq_35029061/article/details/125967340)
+ 
+- [ip 命令使用](https://blog.csdn.net/qq_35029061/article/details/125967340)
+- [Kubernetes 网络插件详解 – Flannel篇](https://www.infvie.com/ops-notes/kubernetes-cni-flannel.html)
+- [揭秘 IPIP 隧道](https://morven.life/posts/networking-3-ipip/)

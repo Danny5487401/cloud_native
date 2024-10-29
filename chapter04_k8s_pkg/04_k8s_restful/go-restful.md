@@ -2,26 +2,30 @@
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 **Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
 
-- [k8s使用的web框架：go-restful 源码分析](#k8s%E4%BD%BF%E7%94%A8%E7%9A%84web%E6%A1%86%E6%9E%B6go-restful-%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90)
+- [github.com/emicklei/go-restful  -->k8s使用的web框架](#githubcomemickleigo-restful----k8s%E4%BD%BF%E7%94%A8%E7%9A%84web%E6%A1%86%E6%9E%B6)
   - [数据结构](#%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84)
-    - [核心数据结构Route](#%E6%A0%B8%E5%BF%83%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84route)
+    - [1. 核心数据结构Route](#1-%E6%A0%B8%E5%BF%83%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84route)
     - [2. webservice](#2-webservice)
     - [3. container](#3-container)
   - [流程分析](#%E6%B5%81%E7%A8%8B%E5%88%86%E6%9E%90)
-    - [路由分发函数dispatch](#%E8%B7%AF%E7%94%B1%E5%88%86%E5%8F%91%E5%87%BD%E6%95%B0dispatch)
+    - [路由分发函数 dispatch](#%E8%B7%AF%E7%94%B1%E5%88%86%E5%8F%91%E5%87%BD%E6%95%B0-dispatch)
       - [路由选择](#%E8%B7%AF%E7%94%B1%E9%80%89%E6%8B%A9)
+  - [第三方应用：k8s](#%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%94%E7%94%A8k8s)
+  - [参考](#%E5%8F%82%E8%80%83)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
-# k8s使用的web框架：go-restful 源码分析
+# github.com/emicklei/go-restful  -->k8s使用的web框架
+
 
 go-restful是一个用go语言开发的快速构建restful风格的web框架。k8s最核心的组件kube-apiserver使用到了该框架
 
 ## 数据结构
 ![](.go-restful_images/restful_data_structure.png)
+
 go-restful定义了三个重要的数据结构：
 
-- Router：表示一条路由，包含url、回调处理函数
+- Route：表示一条路由，包含url、回调处理函数
 - Webservice：表示一个服务
 - Container：表示一个服务器
 
@@ -32,7 +36,7 @@ go-restful定义了三个重要的数据结构：
 - 每个webservice包含多个Router（路由），Router根据http请求的URL路由到对应的处理函数（Handler Func）
 
 
-### 核心数据结构Route
+### 1. 核心数据结构Route
 ```go
 type Route struct {
 	ExtensionProperties
@@ -40,8 +44,8 @@ type Route struct {
 	Produces []string
 	Consumes []string
 	Path     string // webservice root path + described path
-	Function RouteFunction
-	Filters  []FilterFunction
+	Function RouteFunction // 单路由处理函数
+	Filters  []FilterFunction // 拦截器
 	If       []RouteSelectionConditionFunction
 
 	// cached values for dispatching
@@ -75,6 +79,8 @@ type Route struct {
 	// Must have uppercase HTTP Method names such as GET,HEAD,OPTIONS,...
 	allowedMethodsWithoutContentType []string
 }
+
+type RouteFunction func(*Request, *Response)
 ```
 
 ### 2. webservice
@@ -119,6 +125,7 @@ type Container struct {
 
 ## 流程分析
 1. 创建WebService对象
+
 2. 为WebService对象添加路由地址和处理函数
 ```go
 ws.Route(ws.GET("/hello").To(hello))
@@ -137,12 +144,18 @@ func (b *RouteBuilder) typeNameHandler(handler TypeNameHandleFunction) *RouteBui
   b.typeNameHandleFunc = handler
   return b
 }
-```
-```go
+
+
 // Get方法后，属性并没有完全构造完，handler处理函数是用单独的To方法赋值的
 func (b *RouteBuilder) To(function RouteFunction) *RouteBuilder {
   b.function = function
   return b
+}
+
+// Path specifies the relative (w.r.t WebService root path) URL path to match. Default is "/".
+func (b *RouteBuilder) Path(subPath string) *RouteBuilder {
+	b.currentPath = subPath
+	return b
 }
 ```
 
@@ -161,9 +174,11 @@ func (w *WebService) Route(builder *RouteBuilder) *WebService {
 
 // Build方法返回Route对象
 func (b *RouteBuilder) Build() Route {
-  ...
+  // ...
   route := Route{
-    ...
+    Method:                           b.httpMethod,
+    Path:                             concatPath(b.rootPath, b.currentPath),
+    // ...
   }
   route.postBuild()
   return route
@@ -236,7 +251,7 @@ func (c *Container) Add(service *WebService) *Container {
 // addHandler
 func (c *Container) addHandler(service *WebService, serveMux *http.ServeMux) bool {
   pattern := fixedPrefixPath(service.RootPath())
-  ...
+  // ...
   // 这里的关键函数：serveMux.HandleFunc，是Golang标准包中实现路由的函数
   // go-restful中将路由处理函数统一交给c.dispatch函数，可以看出整个go-restful框架中，最核心的就是这个函数了
   if !alreadyMapped {
@@ -249,8 +264,11 @@ func (c *Container) addHandler(service *WebService, serveMux *http.ServeMux) boo
 }
 ```
 
-### 路由分发函数dispatch
-如何由container -> webservice -> handler 实现层级分发？ go-restful框架通过serveMux.HandleFunc(pattern, c.dispatch)函数，一边连接了Golang提供的官方http扩展机制，另一边通过一个dispatch实现了路由的分发，这样就不用单独写很多的handler了。
+
+
+### 路由分发函数 dispatch
+如何由container -> webservice -> handler 实现层级分发？ 
+go-restful框架通过serveMux.HandleFunc(pattern, c.dispatch)函数，一边连接了Golang提供的官方http扩展机制，另一边通过一个dispatch实现了路由的分发，这样就不用单独写很多的handler了。
 
 这个函数的核心是c.router.SelectRoute，根据请求找到合适的webservice和route
 ```go
@@ -259,12 +277,12 @@ func (c *Container) dispatch(httpWriter http.ResponseWriter, httpRequest *http.R
   // 根据请求，找到最合适的webService和route
   // 这个方法后面单独介绍
   func() {
-    ...
+    // ...
     webService, route, err = c.router.SelectRoute(
       c.webServices,
       httpRequest)
   }()
-  ...
+  // ...
   if err != nil {
     // 构造过滤器
     chain := FilterChain{Filters: c.containerFilters, Target: func(req *Request, resp *Response) {
@@ -514,3 +532,9 @@ func (r RouterJSR311) detectRoute(routes []Route, httpRequest *http.Request) (*R
   return candidates[0], nil
 }
 ```
+
+## 第三方应用：k8s 
+
+## 参考
+
+- [k8s使用的web框架：go-restful 源码分析](https://cloud.tencent.com/developer/article/1951995)

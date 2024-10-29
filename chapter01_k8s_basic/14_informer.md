@@ -29,6 +29,7 @@
 
 # Informer机制
 ![](.14_informer_images/informer_chain.png)
+
 参考高清图：https://www.processon.com/view/link/5f55f3f3e401fd60bde48d31
 
 

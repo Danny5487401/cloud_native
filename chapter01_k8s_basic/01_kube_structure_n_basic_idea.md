@@ -4,7 +4,7 @@
 
 - [Kubernetes架构](#kubernetes%E6%9E%B6%E6%9E%84)
   - [1. Master节点的组件](#1-master%E8%8A%82%E7%82%B9%E7%9A%84%E7%BB%84%E4%BB%B6)
-    - [常用的控制器controller](#%E5%B8%B8%E7%94%A8%E7%9A%84%E6%8E%A7%E5%88%B6%E5%99%A8controller)
+    - [kube-controller-manager 下常用的控制器 controller](#kube-controller-manager-%E4%B8%8B%E5%B8%B8%E7%94%A8%E7%9A%84%E6%8E%A7%E5%88%B6%E5%99%A8-controller)
     - [scheduler默认调度流程](#scheduler%E9%BB%98%E8%AE%A4%E8%B0%83%E5%BA%A6%E6%B5%81%E7%A8%8B)
       - [预选策略](#%E9%A2%84%E9%80%89%E7%AD%96%E7%95%A5)
       - [优选策略](#%E4%BC%98%E9%80%89%E7%AD%96%E7%95%A5)
@@ -48,7 +48,71 @@
 - scheduler
   - 作用：将待调度的pod按照调度算法绑定到合适的Node上
 
-### 常用的控制器controller
+### kube-controller-manager 下常用的控制器 controller
+```go
+// https://github.com/kubernetes/kubernetes/blob/27e23bad7d595f64519de70f1a82539d14327a28/cmd/kube-controller-manager/app/controllermanager.go
+func NewControllerInitializers(loopMode ControllerLoopMode) map[string]InitFunc {
+	controllers := map[string]InitFunc{}
+
+	// All of the controllers must have unique names, or else we will explode.
+	register := func(name string, fn InitFunc) {
+		if _, found := controllers[name]; found {
+			panic(fmt.Sprintf("controller name %q was registered twice", name))
+		}
+		controllers[name] = fn
+	}
+
+	register("endpoint", startEndpointController)
+	register("endpointslice", startEndpointSliceController)
+	register("endpointslicemirroring", startEndpointSliceMirroringController)
+	register("replicationcontroller", startReplicationController)
+	register("podgc", startPodGCController)
+	register("resourcequota", startResourceQuotaController)
+	register("namespace", startNamespaceController)
+	register("serviceaccount", startServiceAccountController)
+	register("garbagecollector", startGarbageCollectorController)
+	register("daemonset", startDaemonSetController)
+	register("job", startJobController)
+	register("deployment", startDeploymentController)
+	register("replicaset", startReplicaSetController)
+	register("horizontalpodautoscaling", startHPAController)
+	register("disruption", startDisruptionController)
+	register("statefulset", startStatefulSetController)
+	register("cronjob", startCronJobController)
+	register("csrsigning", startCSRSigningController)
+	register("csrapproving", startCSRApprovingController)
+	register("csrcleaner", startCSRCleanerController)
+	register("ttl", startTTLController)
+	register("bootstrapsigner", startBootstrapSignerController)
+	register("tokencleaner", startTokenCleanerController)
+	register("nodeipam", startNodeIpamController)
+	register("nodelifecycle", startNodeLifecycleController)
+	if loopMode == IncludeCloudLoops {
+		register("service", startServiceController)
+		register("route", startRouteController)
+		register("cloud-node-lifecycle", startCloudNodeLifecycleController)
+		// TODO: volume controller into the IncludeCloudLoops only set.
+	}
+	register("persistentvolume-binder", startPersistentVolumeBinderController)
+	register("attachdetach", startAttachDetachController)
+	register("persistentvolume-expander", startVolumeExpandController)
+	register("clusterrole-aggregation", startClusterRoleAggregrationController)
+	register("pvc-protection", startPVCProtectionController)
+	register("pv-protection", startPVProtectionController)
+	register("ttl-after-finished", startTTLAfterFinishedController)
+	register("root-ca-cert-publisher", startRootCACertPublisher)
+	register("ephemeral-volume", startEphemeralVolumeController)
+	if utilfeature.DefaultFeatureGate.Enabled(genericfeatures.APIServerIdentity) &&
+		utilfeature.DefaultFeatureGate.Enabled(genericfeatures.StorageVersionAPI) {
+		register("storage-version-gc", startStorageVersionGCController)
+	}
+	if utilfeature.DefaultFeatureGate.Enabled(kubefeatures.DynamicResourceAllocation) {
+		register("resource-claim-controller", startResourceClaimController)
+	}
+
+	return controllers
+}
+```
 1. ReplicationController
 - 确保集群中Pod副本一直保持预设状态
 - 确保集群中有正确数量的副本（spec.replicas)
@@ -179,6 +243,7 @@ spec:
 
 
 ## Ingress
+
 ### 背景
 service提供了ip:port的访问方式，即工作在tcp/ip层，而http服务需要将不同的url对应到不同的后端服务，service是无法实现这一功能的
 ```yaml

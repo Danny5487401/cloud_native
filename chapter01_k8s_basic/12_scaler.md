@@ -18,7 +18,7 @@
     - [什么样的节点不会被CA删除](#%E4%BB%80%E4%B9%88%E6%A0%B7%E7%9A%84%E8%8A%82%E7%82%B9%E4%B8%8D%E4%BC%9A%E8%A2%ABca%E5%88%A0%E9%99%A4)
   - [CA如何与HPA协同工作](#ca%E5%A6%82%E4%BD%95%E4%B8%8Ehpa%E5%8D%8F%E5%90%8C%E5%B7%A5%E4%BD%9C)
   - [源码分析：待补充](#%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90%E5%BE%85%E8%A1%A5%E5%85%85)
-  - [参考链接：](#%E5%8F%82%E8%80%83%E9%93%BE%E6%8E%A5)
+  - [参考链接](#%E5%8F%82%E8%80%83%E9%93%BE%E6%8E%A5)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -247,11 +247,10 @@ HPA（Horizontal Pod Autoscaling）是k8s中pod的水平自动扩展，HPA的操
 当CPU负载减小，HPA减少pod，CA发现有节点资源利用率低甚至已经是空时，CA就会删除此节点
 
 ## 源码分析：待补充
-// /Users/python/Desktop/kubernetes/pkg/controller/podautoscaler/horizontal.go
-```go
-```
 
-## 参考链接：
+
+
+## 参考链接
 1. 容器定时伸缩（CronHPA）：https://help.aliyun.com/document_detail/151557.html
 
 
