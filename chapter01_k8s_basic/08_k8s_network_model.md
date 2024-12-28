@@ -36,13 +36,20 @@
 
 # k8s基本网络模型
 ![](../img/.08_k8s_network_model_images/k8s_network_model2.png)
+
 分类：根据是否寄生在 Host 网络之上可以把容器网络方案大体分为 Underlay/Overlay 两大派别
     
 * Underlay 的标准是它与 Host 网络是同层的，从外在可见的一个特征就是它是不是使用了 Host 网络同样的网段、输入输出基础设备、容器的 IP 地址是不是需要与 Host 网络取得协同（来自同一个中心分配或统一划分）。
 
 * Overlay 不一样的地方就在于它并不需要从 Host 网络的 IPM 的管理的组件去申请IP，一般来说，它只需要跟 Host 网络不冲突，这个 IP 可以自由分配的。
 
-## underlay(对网络比如有bgp能力)
+![](.08_k8s_network_model_images/sr-iov process.png)
+SR-IOV（Single Root I/O Virtualization）:Intel 在 2007年提出的一种基于硬件的虚拟化解决方案,支持了单个物理PCIe设备虚拟出多个虚拟PCIe设备，然后将虚拟PCIe设备直通到各虚拟机，以实现单个物理PCIe设备支撑多虚拟机的应用场景
+
+SR-IOV 使用 physical functions (PF) 和 virtual functions (VF) 为 SR-IOV 设备管理全局功能。
+
+
+## underlay
 ### 1. 大二层网络（node和pod在同一个网段）
 ![](.08_k8s_network_model_images/big_2_network.png)
 - 主要依据：交换机arp广播获取mac地址
@@ -81,9 +88,7 @@
     2. 经过交换机或则路由器，node2上的eth0进行解包。
     3. 经过netfilter进行forward,本地路由表直接通过veth pair发给对应应用,同网段可以没有bridge。
 
-
-
-
+  
 
 
 ## docker的网络方案
