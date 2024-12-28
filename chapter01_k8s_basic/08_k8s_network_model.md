@@ -3,7 +3,7 @@
 **Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
 
 - [k8s基本网络模型](#k8s%E5%9F%BA%E6%9C%AC%E7%BD%91%E7%BB%9C%E6%A8%A1%E5%9E%8B)
-  - [underlay(对网络比如有bgp能力)](#underlay%E5%AF%B9%E7%BD%91%E7%BB%9C%E6%AF%94%E5%A6%82%E6%9C%89bgp%E8%83%BD%E5%8A%9B)
+  - [underlay](#underlay)
     - [1. 大二层网络（node和pod在同一个网段）](#1-%E5%A4%A7%E4%BA%8C%E5%B1%82%E7%BD%91%E7%BB%9Cnode%E5%92%8Cpod%E5%9C%A8%E5%90%8C%E4%B8%80%E4%B8%AA%E7%BD%91%E6%AE%B5)
     - [2. 大三层网络（node和pod在不同一个网段）](#2-%E5%A4%A7%E4%B8%89%E5%B1%82%E7%BD%91%E7%BB%9Cnode%E5%92%8Cpod%E5%9C%A8%E4%B8%8D%E5%90%8C%E4%B8%80%E4%B8%AA%E7%BD%91%E6%AE%B5)
     - [扩展：中间不是交换机，是路由器(跨网段,可以跨vpc)](#%E6%89%A9%E5%B1%95%E4%B8%AD%E9%97%B4%E4%B8%8D%E6%98%AF%E4%BA%A4%E6%8D%A2%E6%9C%BA%E6%98%AF%E8%B7%AF%E7%94%B1%E5%99%A8%E8%B7%A8%E7%BD%91%E6%AE%B5%E5%8F%AF%E4%BB%A5%E8%B7%A8vpc)
@@ -43,7 +43,8 @@
 
 * Overlay 不一样的地方就在于它并不需要从 Host 网络的 IPM 的管理的组件去申请IP，一般来说，它只需要跟 Host 网络不冲突，这个 IP 可以自由分配的。
 
-![](.08_k8s_network_model_images/sr-iov process.png)
+![](.08_k8s_network_model_images/sr-iov_process.png)
+
 SR-IOV（Single Root I/O Virtualization）:Intel 在 2007年提出的一种基于硬件的虚拟化解决方案,支持了单个物理PCIe设备虚拟出多个虚拟PCIe设备，然后将虚拟PCIe设备直通到各虚拟机，以实现单个物理PCIe设备支撑多虚拟机的应用场景
 
 SR-IOV 使用 physical functions (PF) 和 virtual functions (VF) 为 SR-IOV 设备管理全局功能。

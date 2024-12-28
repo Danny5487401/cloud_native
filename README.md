@@ -3,11 +3,11 @@
 **Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
 
 - [kubernetes_learning(K8S及生态学习)](#kubernetes_learningk8s%E5%8F%8A%E7%94%9F%E6%80%81%E5%AD%A6%E4%B9%A0)
-  - [[第一章 k8s基础]](#%E7%AC%AC%E4%B8%80%E7%AB%A0-k8s%E5%9F%BA%E7%A1%80)
-  - [[第二章 k8s高级篇]](#%E7%AC%AC%E4%BA%8C%E7%AB%A0-k8s%E9%AB%98%E7%BA%A7%E7%AF%87)
+  - [第一章 k8s基础](#%E7%AC%AC%E4%B8%80%E7%AB%A0-k8s%E5%9F%BA%E7%A1%80)
+  - [第二章 k8s高级篇](#%E7%AC%AC%E4%BA%8C%E7%AB%A0-k8s%E9%AB%98%E7%BA%A7%E7%AF%87)
   - [第三章 k8s资源管理helm](#%E7%AC%AC%E4%B8%89%E7%AB%A0-k8s%E8%B5%84%E6%BA%90%E7%AE%A1%E7%90%86helm)
   - [第四章 k8s client-go 工具包](#%E7%AC%AC%E5%9B%9B%E7%AB%A0-k8s-client-go-%E5%B7%A5%E5%85%B7%E5%8C%85)
-  - [参考资料](#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99)
+  - [参考](#%E5%8F%82%E8%80%83)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -16,7 +16,7 @@
 ![](img/.01_basis_idea/k8s_roadMap.png)
 ![](img/.01_basis_idea/k8s_roadMap2.png)
 
-## [第一章 k8s基础]
+## 第一章 k8s基础
 
 - [1.1  k8s架构及基本概念](chapter01_k8s_basic/01_kube_structure_n_basic_idea.md)
 - [1.2  Pod基本单元及相关使用](chapter01_k8s_basic/02_pod.md)
@@ -33,7 +33,7 @@
 - [1.13 kubelet](chapter01_k8s_basic/13_kubelet.md)
 - [1.14 informer机制](chapter01_k8s_basic/14_informer.md)
 
-## [第二章 k8s高级篇]
+## 第二章 k8s高级篇
 - [2.1 CRD自定义资源](chapter02_k8s_advanced/01_CustomResourcesDefinition/crd.md)
 
 ## [第三章 k8s资源管理helm](chapter03_helm/helm.md)
@@ -56,6 +56,5 @@
 
 
 
-## 参考资料
-1. [官方网址](https://kubernetes.io/docs/tasks/extend-kubernetes/custom-resources/custom-resource-definitions/#create-a-customresourcedefinition)
-2. [腾讯程序员欣宸博客](https://xinchen.blog.csdn.net/?type=blog)
+## 参考
+1. https://kubernetes.io/docs/home/
