@@ -766,4 +766,4 @@ service Node {
 ```
 ## 参考资料
 
-1.[Container Storage Interface (CSI) Specification 官方](https://github.com/container-storage-interface/spec)
+- [Container Storage Interface (CSI) Specification 官方](https://github.com/container-storage-interface/spec)

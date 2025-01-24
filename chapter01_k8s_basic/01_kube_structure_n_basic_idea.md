@@ -18,6 +18,7 @@
   - [Ingress](#ingress)
     - [背景](#%E8%83%8C%E6%99%AF)
     - [特点](#%E7%89%B9%E7%82%B9)
+  - [参考](#%E5%8F%82%E8%80%83)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -153,7 +154,7 @@ func NewControllerInitializers(loopMode ControllerLoopMode) map[string]InitFunc 
 #### 预选策略
 默认的预选策略包括5个维度的筛选，只有都通过了才作为候选节点
 预选策略说明：
-- NoDiskConfilct：Volume相关冲突检测
+- NoDiskConflict：Volume相关冲突检测
 - PodFitsResources：资源是否满足的检测
 - PodSelectorMatches：pod标签选择器的检测
 - PodFitsHost：是否指定被调度到特定Node的检测
@@ -161,7 +162,7 @@ func NewControllerInitializers(loopMode ControllerLoopMode) map[string]InitFunc 
 
 #### 优选策略
 LeastRequestedPriority：选出资源消耗最小的节点
-CalcuateNodeLabelPriority：通过调用用户注册的策略计算
+CalculateNodeLabelPriority：通过调用用户注册的策略计算
 BalancedResourceAllocation：选出各项资源使用率最均衡的节点
 
 
@@ -266,3 +267,5 @@ spec:
 - Ingress提供http层的负载分发功能
 - Ingress可以实现不同的请求，分发到不同的后端服务
 - Ingress定义后，需要结合Ingress Controller，才能形成完整的功能
+
+## 参考

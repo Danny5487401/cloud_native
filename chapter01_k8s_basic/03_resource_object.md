@@ -5,7 +5,7 @@
 - [K8s资源对象](#k8s%E8%B5%84%E6%BA%90%E5%AF%B9%E8%B1%A1)
   - [Labels](#labels)
   - [annotations](#annotations)
-  - [ownereference](#ownereference)
+  - [ownerReference](#ownerreference)
   - [控制循环](#%E6%8E%A7%E5%88%B6%E5%BE%AA%E7%8E%AF)
     - [Sensor](#sensor)
     - [控制循环案例-扩容](#%E6%8E%A7%E5%88%B6%E5%BE%AA%E7%8E%AF%E6%A1%88%E4%BE%8B-%E6%89%A9%E5%AE%B9)
@@ -38,7 +38,7 @@ selector
 ## annotations
 ![](../img/.03_resource_object_images/annotations.png)
 
-## ownereference
+## ownerReference
 ![](../img/.03_resource_object_images/ownereference.png)
 
 

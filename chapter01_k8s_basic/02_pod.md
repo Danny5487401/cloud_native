@@ -21,6 +21,7 @@
     - [Secret](#secret)
   - [ConfigMap](#configmap)
   - [Downward API](#downward-api)
+  - [参考](#%E5%8F%82%E8%80%83)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -113,7 +114,6 @@ Volume也是设计在 Pod 层级。一个 Volume 对应的宿主机目录对于 
 ```yaml
 apiVersion: v1
 kind: Pod
-...
 spec:
  nodeSelector:
    disktype: ssd
@@ -347,3 +347,5 @@ metadata.annotations - Pod的所有Annotation
 容器的memory limit
 容器的memory request
 ```
+
+## 参考

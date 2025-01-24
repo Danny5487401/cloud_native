@@ -12,11 +12,16 @@ import (
 // and use admin,admin for the credentials
 
 func main() {
+
 	// 创建WebService
 	ws := new(restful.WebService)
 
 	// 为WebService设置路由和回调函数
-	ws.Route(ws.GET("/secret").Filter(basicAuthenticate).To(secret))
+	ws.Route(ws.GET("/secret").
+		Filter(basicAuthenticate).
+		To(secret)).
+		Consumes(restful.MIME_XML, restful.MIME_JSON).
+		Produces(restful.MIME_JSON, restful.MIME_XML)
 
 	// 将WebService添加到默认生成的Container中
 	// 默认生成的container的代码在web_service_container.go的init方法中
