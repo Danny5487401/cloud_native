@@ -22,14 +22,8 @@
     - [2. pod与pod的通讯](#2-pod%E4%B8%8Epod%E7%9A%84%E9%80%9A%E8%AE%AF)
       - [同一Node内的pod之间通讯](#%E5%90%8C%E4%B8%80node%E5%86%85%E7%9A%84pod%E4%B9%8B%E9%97%B4%E9%80%9A%E8%AE%AF)
       - [不同Node的pod之间通讯](#%E4%B8%8D%E5%90%8Cnode%E7%9A%84pod%E4%B9%8B%E9%97%B4%E9%80%9A%E8%AE%AF)
-    - [IASS 主流网络方案](#iass-%E4%B8%BB%E6%B5%81%E7%BD%91%E7%BB%9C%E6%96%B9%E6%A1%88)
-    - [Flannel](#flannel)
-      - [实现的功能](#%E5%AE%9E%E7%8E%B0%E7%9A%84%E5%8A%9F%E8%83%BD)
-      - [缺点](#%E7%BC%BA%E7%82%B9)
-      - [Flannel的大致流程](#flannel%E7%9A%84%E5%A4%A7%E8%87%B4%E6%B5%81%E7%A8%8B)
-      - [Flannel的设置方式](#flannel%E7%9A%84%E8%AE%BE%E7%BD%AE%E6%96%B9%E5%BC%8F)
-      - [Network Policy](#network-policy)
-      - [实现原理](#%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86)
+  - [IASS 主流网络方案](#iass-%E4%B8%BB%E6%B5%81%E7%BD%91%E7%BB%9C%E6%96%B9%E6%A1%88)
+  - [Network Policy](#network-policy)
   - [参考资料](#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
@@ -129,6 +123,7 @@ docker官方并没有提供多主机的容器通信方案，单机网络的模�
 ![](../img/.08_k8s_network_model_images/trace_route.png)
 
 1. 自己创建netns
+
 ![](../img/.08_k8s_network_model_images/add_netns.png)
 ![](../img/.08_k8s_network_model_images/netns_operator.png)
 ![](../img/.08_k8s_network_model_images/netns_operator2.png)
@@ -289,62 +284,17 @@ docker最终被访问的ip和端口，与提供的不一致，引起配置的复
 
 
 
-### IASS 主流网络方案
+## IASS 主流网络方案
 我们可以把云计算理解成一栋大楼，而这栋楼又可以分为顶楼、中间、低层三大块。那么我们就可以把 Iass(基础设施)、Pass(平台)、Sass(软件)理解成这栋楼的三部分
 ![](../img/.08_k8s_network_model_images/container_network.png)
 
-### Flannel
-![](../img/.08_k8s_network_model_images/flannel.png)
-
-Flannel是CoreOS开源的，Overlay模式的CNI网络插件，Flannel在每个集群节点上运行一个flanneld的代理守护服务，为每个集群节点（HOST）分配一个子网（SUBNET），同时为节点上的容器组（POD）分配IP，在整个集群节点间构建一个虚拟的网络，实现集群内部跨节点通信。
-
-Flannel的数据包在集群节点间转发是由backend实现的，目前，已经支持核心官方推荐的模式有UDP、VXLAN、HOST-GW，以及扩展试用实验的模式有 IPIP，AWS VPC、GCE、Ali VPC、Tencent VPC等路由，其中VXLAN模式在实际的生产中使用最多。
-
-| 模式	| 底层网络要求 | 	实现模式	| 封包/解包 |	overlay网络	| 转发效率 |
-| :--: |:------:|:--------------------------:|:-----:|:---------:|:----:|
-| Flannel UDP |  三层互通  |             overlay             |  用户态  |    三层     |  低   |
-| Flannel VXLAN |  三层互通  |             overlay             |  内核态  |     二层      |  中   |
-| Flannel host-gw |  二层互通  |            	路由            |   无   |    三层     |  高   |
-| IPIP模式 |  三层互通  |             overlay             |  内核态  |    三层     |  高   |
-| Cloud VPC |  三层互通  |             	路由            |   无   |    三层     |  高   |
-
-#### 实现的功能
-协助k8s给每个Node上的docker容器分配互不冲突的ip地址
-能在这些ip地址之间建立覆盖网络（Overlay Network），将数据传递到目标容器
 
 
-#### 缺点
-- 引入多个网络组件，带来网络时延和损耗
-- 默认使用udp作为底层传输协议，具有不可靠性
-
-它首先要解决的是 container 的包如何到达 Host，这里采用的是加一个 Bridge 的方式。
-它的 backend 其实是独立的，也就是说这个包如何离开 Host，是采用哪种封装方式，还是不需要封装，都是可选择的
-
-三种主要的 backend：
-![](../img/.08_k8s_network_model_images/flannel_backend.png)
-* 一种是用户态的 udp，这种是最早期的实现；
-* 然后是内核的 Vxlan，这两种都算是 overlay 的方案。Vxlan 的性能会比较好一点，但是它对内核的版本是有要求的，需要内核支持 Vxlan 的特性功能；
-* 如果你的集群规模不够大，又处于同一个二层域，也可以选择采用 host-gw 的方式。这种方式的 backend 基本上是由一段广播路由规则来启动的，性能比较高
-
-#### Flannel的大致流程
-1. flannel利用Kubernetes API或者etcd用于存储整个集群的网络配置，其中最主要的内容为设置集群的网络地址空间。例如，设定整个集群内所有容器的IP都取自网段“10.1.0.0/16”。
-2. flannel在每个主机中运行flanneld作为agent，它会为所在主机从集群的网络地址空间中，获取一个小的网段subnet，本主机内所有容器的IP地址都将从中分配。
-3. flanneld再将本主机获取的subnet以及用于主机间通信的Public IP，同样通过kubernetes API或者etcd存储起来。
-4. flannel利用各种backend ，例如udp，vxlan，host-gw等等，跨主机转发容器间的网络流量，完成容器间的跨主机通信。
 
 
-#### Flannel的设置方式
-Flanneld是Flannel守护程序，通常作为守护程序安装在kubernetes集群上，并以install-cni作为初始化容器。
-install-cni容器在每个节点上创建CNI配置文件-/etc/cni/net.d/10-flannel.conflist。
-Flanneld创建一个vxlan设备，从apiserver获取网络元数据，并监视pod上的更新。
-创建Pod时，它将为整个集群中的所有Pod分配路由，这些路由允许Pod通过其IP地址相互连接。
 
-![](../img/.08_k8s_network_model_images/cri_n_cni.png)
 
-kubelet调用Containered CRI插件以创建容器，而Containered CRI插件调用CNI插件为容器配置网络。
-网络提供商CNI插件调用其他基本CNI插件来配置网络。
-
-#### Network Policy
+## Network Policy
 定义：提供了基于策略的网络控制，用于隔离应用并减少攻击面。他使用标签选择器模拟传统的分段网络，并通过策略控制他们之间的流量和外部的流量。
 注意：在使用network policy之前
     
@@ -355,32 +305,6 @@ Configuration
 ![](../img/.08_k8s_network_model_images/configuration.png)
 
 
-#### 实现原理
-Flannel为每个主机提供独立的子网，整个集群的网络信息存储在etcd上。对于跨主机的转发，目标容器的IP地址，需要从etcd获取。
-![](../img/.08_k8s_network_model_images/flannel_process.png)
-- Flannel创建名为flannel0的网桥
-- flannel0网桥一端连接docker0网桥，另一端连接flanneld进程
-- flanneld进程一端连接etcd，利用etcd管理分配的ip地址资源，同时监控pod地址，建立pod节点路由表
-- flanneld进程一端连接docker0和物理网络，配合路由表，完成数据包投递，完成pod之间通讯
-
-步骤：
-
-- IP数据报被封装并通过容器的eth0发送。
-- Container1的eth0通过veth对与Docker0交互并将数据包发送到Docker0。然后Docker0转发包。
-- Docker0确定Container3的IP地址，通过查询本地路由表到外部容器，并将数据包发送到虚拟NIC Flannel0。
-- Flannel0收到的数据包被转发到Flanneld进程。 Flanneld进程封装了数据包通过查询etcd维护的路由表并发送数据包通过主机的eth0。
-- 数据包确定网络中的目标主机主机。
-- 目的主机的Flanneld进程监听8285端口，负责解封包。
-- 解封装的数据包将转发到虚拟NICFlannel0。
-- Flannel0查询路由表，解封包，并将数据包发送到Docker0。
-- Docker0确定目标容器并发送包到目标容器。
-
-1. 在常用的vxlan模式中，涉及到上面步骤提到的封包和拆包，这也是Flannel网络传输效率相对低的原因。
-![](../img/.08_k8s_network_model_images/vxlan_info.png)
-
-2. hostgw是最简单的backend:
-它的原理非常简单，直接添加路由，将目的主机当做网关，直接路由原始封包。
-例如，我们从etcd中监听到一个EventAdded事件subnet为10.1.15.0/24被分配给主机Public IP 192.168.0.100，hostgw要做的工作就是在本主机上添加一条目的地址为10.1.15.0/24，网关地址为192.168.0.100，输出设备为上文中选择的集群间交互的网卡即可。对于EventRemoved事件，只需删除对应的路由
 
 
 ## 参考资料

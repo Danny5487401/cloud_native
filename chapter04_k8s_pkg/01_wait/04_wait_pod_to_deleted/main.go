@@ -15,11 +15,11 @@ import (
 )
 
 func main() {
-	WaitClean()
+	waitClean()
 
 }
 
-func WaitClean() error {
+func waitClean() error {
 	var kubeconfig *string
 
 	// home是家目录，如果能取得家目录的值，就可以用来做默认值

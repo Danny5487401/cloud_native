@@ -4,11 +4,12 @@
 
 - [Service](#service)
   - [Service：Kubernetes 中的服务返现与负载均衡](#servicekubernetes-%E4%B8%AD%E7%9A%84%E6%9C%8D%E5%8A%A1%E8%BF%94%E7%8E%B0%E4%B8%8E%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1)
-  - [使用yaml格式](#%E4%BD%BF%E7%94%A8yaml%E6%A0%BC%E5%BC%8F)
+  - [使用 yaml 格式](#%E4%BD%BF%E7%94%A8-yaml-%E6%A0%BC%E5%BC%8F)
   - [集群内访问 Service](#%E9%9B%86%E7%BE%A4%E5%86%85%E8%AE%BF%E9%97%AE-service)
     - [Headless Service](#headless-service)
   - [向集群外暴露 Service](#%E5%90%91%E9%9B%86%E7%BE%A4%E5%A4%96%E6%9A%B4%E9%9C%B2-service)
   - [架构设计](#%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1)
+  - [参考](#%E5%8F%82%E8%80%83)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -23,7 +24,7 @@ K8s 对接了另外一组 pod，即可以通过 K8s Service 的方式去负载�
 或者提供了统一的访问入口去做服务发现，然后又可以给外部网络访问，解决不同的 pod 之间的访问，提供统一的访问地址
 
 
-## 使用yaml格式
+## 使用 yaml 格式
 ![](../img/.09_service_images/service_yaml.png)
 
 声明了一个名叫 my-service 的一个 K8s Service，它有一个 app:my-service 的 label，它选择了 app:MyApp 这样一个 label 的 pod 作为它的后端
@@ -43,7 +44,7 @@ Endpoints 的属性，就是我们通过 Endpoints 可以看到：通过前面�
 
 ![](../img/.09_service_images/pod_visit_service_ip.png)
 
-1. 首先我们可以通过 service 的虚拟 IP 去访问，比如说刚创建的 my-service 这个服务，通过 kubectl get svc 或者 kubectl discribe service 都可以看到它的虚拟 IP 地址是 10.1.13.211，端口是 80，
+1. 首先我们可以通过 service 的虚拟 IP 去访问，比如说刚创建的 my-service 这个服务，通过 kubectl get svc 或者 kubectl describe service 都可以看到它的虚拟 IP 地址是 10.1.13.211，端口是 80，
 然后就可以通过这个虚拟 IP 及端口在 pod 里面直接访问到这个 service 的地址。
      
 
@@ -96,6 +97,85 @@ spec:
 1. NodePort 的方式就是在集群的 node 上面（即集群的节点的宿主机上面）去暴露节点上的一个端口，这样相当于在节点的一个端口上面访问到之后就会再去做一层转发，
     转发到虚拟的 IP 地址上面，就是刚刚宿主机上面 service 虚拟 IP 地址。此时我们可以通过http://4.4.4.1:30080或http://4.4.4.2:30080 对pod-python访问。该端口有一定的范围，比如默认Kubernetes 控制平面将在--service-node-port-range标志指定的范围内分配端口（默认值：30000-32767）。
   
+```shell
+[root@master-01 ~]# kubectl get svc -n monitor -o wide
+NAME                                      TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)                      AGE   SELECTOR
+alertmanager-operated                     ClusterIP   None            <none>        9093/TCP,9094/TCP,9094/UDP   47d   app.kubernetes.io/name=alertmanager
+prometheus-grafana                        NodePort    10.68.177.6     <none>        80:30903/TCP                 47d   app.kubernetes.io/instance=prometheus,app.kubernetes.io/name=grafana
+prometheus-kube-prometheus-alertmanager   NodePort    10.68.124.250   <none>        9093:30902/TCP               47d   alertmanager=prometheus-kube-prometheus-alertmanager,app.kubernetes.io/name=alertmanager
+prometheus-kube-prometheus-operator       NodePort    10.68.92.18     <none>        443:30900/TCP                47d   app=kube-prometheus-stack-operator,release=prometheus
+prometheus-kube-prometheus-prometheus     NodePort    10.68.209.111   <none>        9090:30901/TCP               47d   app.kubernetes.io/name=prometheus,prometheus=prometheus-kube-prometheus-prometheus
+[root@master-01 ~]# iptables -nvL -t nat
+Chain PREROUTING (policy ACCEPT 4 packets, 532 bytes)
+ pkts bytes target     prot opt in     out     source               destination
+ 744K   69M KUBE-SERVICES  all  --  *      *       0.0.0.0/0            0.0.0.0/0            /* kubernetes service portals */
+ 250K   23M DOCKER     all  --  *      *       0.0.0.0/0            0.0.0.0/0            ADDRTYPE match dst-type LOCAL
+
+Chain INPUT (policy ACCEPT 4 packets, 532 bytes)
+ pkts bytes target     prot opt in     out     source               destination
+
+Chain OUTPUT (policy ACCEPT 10 packets, 925 bytes)
+....
+
+Chain POSTROUTING (policy ACCEPT 8 packets, 805 bytes)
+....
+
+Chain DOCKER (2 references)
+ pkts bytes target     prot opt in     out     source               destination
+    0     0 RETURN     all  --  docker0 *       0.0.0.0/0            0.0.0.0/0
+
+Chain FLANNEL-POSTRTG (1 references)
+ pkts bytes target     prot opt in     out     source               destination
+    0     0 RETURN     all  --  *      *       0.0.0.0/0            0.0.0.0/0            mark match 0x4000/0x4000 /* flanneld masq */
+ 579K   35M RETURN     all  --  *      *       192.168.0.0/24       192.168.0.0/16       /* flanneld masq */
+44230 2654K RETURN     all  --  *      *       192.168.0.0/16       192.168.0.0/24       /* flanneld masq */
+    0     0 RETURN     all  --  *      *      !192.168.0.0/16       192.168.0.0/24       /* flanneld masq */
+   24  1440 MASQUERADE  all  --  *      *       192.168.0.0/16      !224.0.0.0/4          /* flanneld masq */
+    0     0 MASQUERADE  all  --  *      *      !192.168.0.0/16       192.168.0.0/16       /* flanneld masq */
+
+Chain KUBE-KUBELET-CANARY (0 references)
+....
+
+Chain KUBE-LOAD-BALANCER (0 references)
+....
+
+Chain KUBE-MARK-MASQ (3 references)
+ pkts bytes target     prot opt in     out     source               destination
+    0     0 MARK       all  --  *      *       0.0.0.0/0            0.0.0.0/0            MARK or 0x4000
+
+Chain KUBE-NODE-PORT (1 references)
+ pkts bytes target     prot opt in     out     source               destination
+    0     0 KUBE-MARK-MASQ  tcp  --  *      *       0.0.0.0/0            0.0.0.0/0            /* Kubernetes nodeport TCP port for masquerade purpose */ match-set KUBE-NODE-PORT-TCP dst
+
+Chain KUBE-POSTROUTING (1 references)
+....
+
+Chain KUBE-SERVICES (2 references)
+ pkts bytes target     prot opt in     out     source               destination
+    0     0 RETURN     all  --  *      *       127.0.0.0/8          0.0.0.0/0
+    0     0 KUBE-MARK-MASQ  all  --  *      *      !192.168.0.0/16       0.0.0.0/0            /* Kubernetes service cluster ip + port for masquerade purpose */ match-set KUBE-CLUSTER-IP dst,dst
+    7   712 KUBE-NODE-PORT  all  --  *      *       0.0.0.0/0            0.0.0.0/0            ADDRTYPE match dst-type LOCAL
+    0     0 ACCEPT     all  --  *      *       0.0.0.0/0            0.0.0.0/0            match-set KUBE-CLUSTER-IP dst,dst
+    
+
+[root@master-01 ~]# ipset list KUBE-NODE-PORT-TCP
+Name: KUBE-NODE-PORT-TCP
+Type: bitmap:port
+Revision: 3
+Header: range 0-65535
+Size in memory: 8300
+References: 1
+Number of entries: 8
+Members:
+30492
+30555
+30900
+30901
+30902
+30903
+30907
+30908
+```
 
 
 ![](../img/.09_service_images/load_balancer.png)
@@ -120,7 +200,7 @@ spec:
 ```    
 ![](../img/.09_service_images/external_ip.png)
     
-##  架构设计
+## 架构设计
 ![](../img/.09_service_images/structure.png)
 
 k8s 分为 master 节点和 worker 节点：
@@ -144,3 +224,7 @@ Client Pod3 首先通过 Coredns 这里去解析出 ServiceIP，Coredns 会返�
 对于外部的流量，比如说刚才通过公网访问的一个请求。它是通过外部的一个负载均衡器 Cloud Controller Manager 去监听 service 的变化之后，
 去配置的一个负载均衡器，然后转发到节点上的一个 NodePort 上面去，NodePort 也会经过 kube-proxy 的一个配置的一个 iptables，
 把 NodePort 的流量转换成 ClusterIP，紧接着转换成后端的一个 pod 的 IP 地址，去做负载均衡以及服务发现。这就是整个 K8s 服务发现以及 K8s Service 整体的结构
+
+
+## 参考
+- [service 之 ipvs node port实现原理](https://cloud.tencent.com/developer/article/1607777)

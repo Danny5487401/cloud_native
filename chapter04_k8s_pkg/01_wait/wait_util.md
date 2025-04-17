@@ -9,6 +9,7 @@
     - [第三方应用 WaitForCacheSync -->argo workflow](#%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%94%E7%94%A8-waitforcachesync---argo-workflow)
   - [backoff 退让](#backoff-%E9%80%80%E8%AE%A9)
   - [wait.Group 源码](#waitgroup-%E6%BA%90%E7%A0%81)
+  - [参考](#%E5%8F%82%E8%80%83)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -293,6 +294,12 @@ func WaitForCacheSync(stopCh <-chan struct{}, cacheSyncs ...InformerSynced) bool
 
 
 ## backoff 退让
+
+常见的退避策略，如：
+
+- 线性退避：每次等待固定时间后重试。
+- 随机退避：在一定范围内随机等待一个时间后重试。
+- 指数退避：连续重试时，每次等待时间都是前一次的倍数。
 ```go
 func ExponentialBackoff(backoff Backoff, condition ConditionFunc) error {
     // 在最外层限定了backoff函数的最多重复执行次数，即等于Steps字段值
@@ -386,3 +393,8 @@ func (g *Group) Wait()
 func (g *Group) StartWithChannel(stopCh <-chan struct{}, f func(stopCh <-chan struct{}))
 func (g *Group) StartWithContext(ctx context.Context, f func(context.Context))
 ```
+
+
+## 参考
+
+- [如何优雅地重试](https://mp.weixin.qq.com/s/6IkTnUbBlHjM3GM_bT35tA)
